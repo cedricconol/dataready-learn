@@ -15,7 +15,7 @@ const config: Config = {
     },
   },
 
-  url: "https://learn.byconol.com",
+  url: "https://learndataready.byconol.com",
   baseUrl: "/",
 
   organizationName: "cedricconol",
