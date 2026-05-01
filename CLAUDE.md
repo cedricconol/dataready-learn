@@ -6,7 +6,7 @@ Instructions and context for Claude Code sessions working in this repository.
 
 ## Project Overview
 
-**DataReady Learn** is an open-source data analytics curriculum hosted at [learn.byconol.com](https://learn.byconol.com). It is built with [Docusaurus v3](https://docusaurus.io/) (TypeScript, React) and deployed as a static site.
+**DataReady Learn** is an open-source data analytics curriculum hosted at [learndataready.byconol.com](https://learndataready.byconol.com). It is built with [Docusaurus v3](https://docusaurus.io/) (TypeScript, React) and deployed as a static site.
 
 ---
 
@@ -18,7 +18,7 @@ Instructions and context for Claude Code sessions working in this repository.
 | Package manager | npm |
 | Styling | Infima (Docusaurus default) + custom CSS variables |
 | Content | Markdown / MDX in `docs/` |
-| Hosting | learn.byconol.com |
+| Hosting | learndataready.byconol.com |
 | Source | github.com/cedricconol/dataready-learn |
 
 ---

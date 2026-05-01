@@ -1,6 +1,6 @@
 # DataReady Learn
 
-Open-source data analytics curriculum powering [learn.byconol.com](https://learn.byconol.com).
+Open-source data analytics curriculum powering [learndataready.byconol.com](https://learndataready.byconol.com).
 
 DataReady is a free, community-driven curriculum that teaches the modern data stack from the ground up — SQL, dbt, Data Warehouses, and BI Tools.
 
@@ -10,10 +10,10 @@ DataReady is a free, community-driven curriculum that teaches the modern data st
 
 | Section | Description |
 |---------|-------------|
-| [SQL](https://learn.byconol.com/sql) | Foundations of querying relational databases |
-| [dbt](https://learn.byconol.com/dbt) | Data transformation with engineering best practices |
-| [Data Warehouse](https://learn.byconol.com/data-warehouse) | Cloud warehouses, dimensional modeling, query optimization |
-| [BI Tools](https://learn.byconol.com/bi-tools) | Dashboards and self-serve analytics with Metabase, Looker, Tableau, and more |
+| [SQL](https://learndataready.byconol.com/sql) | Foundations of querying relational databases |
+| [dbt](https://learndataready.byconol.com/dbt) | Data transformation with engineering best practices |
+| [Data Warehouse](https://learndataready.byconol.com/data-warehouse) | Cloud warehouses, dimensional modeling, query optimization |
+| [BI Tools](https://learndataready.byconol.com/bi-tools) | Dashboards and self-serve analytics with Metabase, Looker, Tableau, and more |
 
 ---
 
