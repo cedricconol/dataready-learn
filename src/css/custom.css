@@ -1,0 +1,174 @@
+/**
+ * DataReady – global styles.
+ * Dark palette mirrors dataready-web globals.css.
+ * Infima colour shades generated via https://docusaurus.io/docs/styling-layout#styling-your-site-with-infima
+ */
+
+:root {
+  --ifm-color-primary: #3b82f6;
+  --ifm-color-primary-dark: #2172f5;
+  --ifm-color-primary-darker: #1469f4;
+  --ifm-color-primary-darkest: #0756d5;
+  --ifm-color-primary-light: #5592f7;
+  --ifm-color-primary-lighter: #629bf7;
+  --ifm-color-primary-lightest: #89b5f9;
+
+  --ifm-font-family-base: "Inter", system-ui, -apple-system, sans-serif;
+  --ifm-heading-font-weight: 600;
+  --ifm-code-font-size: 94%;
+  --docusaurus-highlighted-code-line-bg: rgba(59, 130, 246, 0.1);
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #60a5fa;
+  --ifm-color-primary-dark: #3b8ef9;
+  --ifm-color-primary-darker: #2882f9;
+  --ifm-color-primary-darkest: #0763e5;
+  --ifm-color-primary-light: #85bbfb;
+  --ifm-color-primary-lighter: #98c4fb;
+  --ifm-color-primary-lightest: #c2dbfd;
+
+  --ifm-background-color: #07090f;
+  --ifm-background-surface-color: #0f1623;
+  --ifm-navbar-background-color: #07090f;
+  --ifm-footer-background-color: #07090f;
+  --ifm-toc-border-color: #1e2d45;
+  --ifm-hr-border-color: #1e2d45;
+  --ifm-color-emphasis-300: #1e2d45;
+  --docusaurus-highlighted-code-line-bg: rgba(96, 165, 250, 0.12);
+}
+
+/* ── Base ────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: #1e3a6e;
+  color: #f1f5f9;
+}
+
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #07090f;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e2d45;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3d5c;
+}
+
+/* ── Navbar ─────────────────────────────────────────────────── */
+.navbar {
+  border-bottom: 1px solid #1e2d45;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .navbar {
+  background: rgba(7, 9, 15, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.navbar__logo {
+  height: 1.5rem;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+.theme-doc-sidebar-container {
+  border-right: 1px solid #1e2d45;
+}
+
+/* ── Content ─────────────────────────────────────────────────── */
+.markdown h1:first-child {
+  font-size: 2rem;
+}
+
+/* ── YouTube embed ───────────────────────────────────────────── */
+.youtube-embed-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  background: #000;
+}
+
+.youtube-embed-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ── Hero (homepage) ─────────────────────────────────────────── */
+.hero--dataready {
+  background: linear-gradient(135deg, #07090f 0%, #0f1e3d 100%);
+  padding: 5rem 0;
+}
+
+.hero--dataready .hero__title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #f1f5f9;
+}
+
+.hero--dataready .hero__subtitle {
+  color: #94a3b8;
+  font-size: 1.25rem;
+}
+
+.hero-cta-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+/* ── Cards (homepage) ────────────────────────────────────────── */
+.curriculum-card {
+  border: 1px solid #1e2d45;
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  height: 100%;
+}
+
+.curriculum-card:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 1px var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.curriculum-card__icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.curriculum-card__title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+  color: var(--ifm-font-color-base);
+}
+
+.curriculum-card__desc {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.5;
+}
