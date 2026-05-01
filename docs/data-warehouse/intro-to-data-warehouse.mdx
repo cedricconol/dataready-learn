@@ -1,0 +1,55 @@
+---
+id: intro-to-data-warehouse
+title: Introduction to Data Warehouses
+sidebar_label: Introduction to Data Warehouses
+sidebar_position: 2
+youtube_url: ""
+---
+
+# Introduction to Data Warehouses
+
+A **data warehouse** is a system specifically designed for reporting and analysis. Unlike an operational database (OLTP) optimized for fast reads and writes of individual records, a warehouse is built for scanning millions of rows and aggregating results quickly.
+
+:::note Placeholder Lesson
+This lesson is a work in progress. Content will be expanded with architecture diagrams, hands-on labs, and a video walkthrough.
+:::
+
+## OLTP vs OLAP
+
+| Property | OLTP Database | Data Warehouse (OLAP) |
+|----------|--------------|----------------------|
+| Purpose | Run the application | Analyze the business |
+| Query type | Single-row lookups | Full-table scans, aggregations |
+| Schema | Normalized (3NF) | Denormalized (star schema) |
+| Update frequency | Continuous | Batch / streaming |
+| Examples | PostgreSQL, MySQL | Snowflake, BigQuery, Redshift |
+
+## The Modern Cloud Data Warehouse
+
+Cloud warehouses separate **compute** from **storage**. This means you only pay for the queries you run, and you can scale compute independently of how much data you store.
+
+Popular options:
+
+- **Snowflake** — multi-cloud, virtual warehouses, time travel
+- **BigQuery** — serverless, Google Cloud native, per-query pricing
+- **Amazon Redshift** — provisioned or serverless, AWS native
+- **DuckDB** — embedded, local-first, great for development and small datasets
+
+## Dimensional Modeling Basics
+
+The most common warehouse schema pattern is the **star schema**:
+
+```
+         dim_customers
+               |
+dim_dates — fact_orders — dim_products
+               |
+         dim_channels
+```
+
+- **Fact tables** store measurable events (orders, sessions, clicks)
+- **Dimension tables** store descriptive attributes (customer name, product category)
+
+## What's Next
+
+In the next lesson you'll choose a warehouse, connect to it, and run your first analytical query.

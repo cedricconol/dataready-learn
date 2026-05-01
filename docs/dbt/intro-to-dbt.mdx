@@ -1,0 +1,67 @@
+---
+id: intro-to-dbt
+title: Introduction to dbt
+sidebar_label: Introduction to dbt
+sidebar_position: 2
+youtube_url: ""
+---
+
+# Introduction to dbt
+
+dbt (data build tool) lets analysts write data transformation logic as SQL `SELECT` statements, then handles materializing those queries as tables or views in your warehouse, running tests, and generating documentation — all from the command line or dbt Cloud.
+
+:::note Placeholder Lesson
+This lesson is a work in progress. Content will be expanded with a full project walkthrough, exercises, and a video.
+:::
+
+## Where dbt Fits
+
+The modern data stack typically looks like this:
+
+```
+Raw data sources
+      ↓
+  Ingestion (Fivetran, Airbyte)
+      ↓
+  Data Warehouse (Snowflake, BigQuery, Redshift)
+      ↓
+  Transformation → dbt ← you are here
+      ↓
+  BI / Analytics (Metabase, Looker, Tableau)
+```
+
+dbt operates entirely **inside your warehouse**. It never moves data — it only transforms data that is already there.
+
+## Key Concepts
+
+| Concept | What it means |
+|---------|--------------|
+| **Model** | A `.sql` file containing a single `SELECT` statement |
+| **Materialization** | How dbt persists a model: `view`, `table`, `incremental`, or `ephemeral` |
+| `ref()` | How one model references another — dbt builds the DAG automatically |
+| **Test** | An assertion about your data (e.g., no nulls, unique keys) |
+| **Source** | A raw table in your warehouse declared in `sources.yml` |
+
+## Your First dbt Model
+
+Create a file at `models/staging/stg_orders.sql`:
+
+```sql
+-- models/staging/stg_orders.sql
+select
+    order_id,
+    customer_id,
+    order_date,
+    total_amount
+from {{ source('raw', 'orders') }}
+```
+
+Run it with:
+
+```bash
+dbt run --select stg_orders
+```
+
+## What's Next
+
+In the next lesson you'll learn how to structure a dbt project with staging, intermediate, and mart layers.
