@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-docusaurus@latest . classic --typescript --skip-install)",
+      "Bash(npx create-docusaurus@latest _tmp classic --typescript --skip-install)",
+      "Bash(rsync -a _tmp/ . --exclude README.md)",
+      "Bash(rm -rf _tmp)",
+      "Bash(npm install *)",
+      "Bash(mkdir -p /Users/cedric/projects/dataready-learn/src/components)",
+      "Bash(mkdir -p /Users/cedric/projects/dataready-learn/docs/sql /Users/cedric/projects/dataready-learn/docs/dbt /Users/cedric/projects/dataready-learn/docs/data-warehouse /Users/cedric/projects/dataready-learn/docs/bi-tools)",
+      "Bash(npm run *)"
+    ],
+    "additionalDirectories": [
+      "/Users/cedric/projects/dataready-learn/src"
+    ]
+  }
+}
