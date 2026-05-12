@@ -8,7 +8,7 @@ youtube_url: ""
 
 # Introduction to dbt
 
-dbt (data build tool) lets analysts write data transformation logic as SQL `SELECT` statements, then handles materializing those queries as tables or views in your warehouse, running tests, and generating documentation — all from the command line or dbt Cloud.
+dbt (data build tool) lets analysts write data transformation logic as SQL `SELECT` statements, then handles materializing those queries as tables or views in your warehouse, running tests, and generating documentation - all from the command line or dbt Cloud.
 
 :::note Placeholder Lesson
 This lesson is a work in progress. Content will be expanded with a full project walkthrough, exercises, and a video.
@@ -30,7 +30,7 @@ Raw data sources
   BI / Analytics (Metabase, Looker, Tableau)
 ```
 
-dbt operates entirely **inside your warehouse**. It never moves data — it only transforms data that is already there.
+dbt operates entirely **inside your warehouse**. It never moves data - it only transforms data that is already there.
 
 ## Key Concepts
 
@@ -38,7 +38,7 @@ dbt operates entirely **inside your warehouse**. It never moves data — it only
 |---------|--------------|
 | **Model** | A `.sql` file containing a single `SELECT` statement |
 | **Materialization** | How dbt persists a model: `view`, `table`, `incremental`, or `ephemeral` |
-| `ref()` | How one model references another — dbt builds the DAG automatically |
+| `ref()` | How one model references another - dbt builds the DAG automatically |
 | **Test** | An assertion about your data (e.g., no nulls, unique keys) |
 | **Source** | A raw table in your warehouse declared in `sources.yml` |
 

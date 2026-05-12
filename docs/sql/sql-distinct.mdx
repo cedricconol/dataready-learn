@@ -1,17 +1,17 @@
 ---
 id: sql-distinct
-title: "DISTINCT — Removing Duplicate Rows"
+title: "DISTINCT: Removing Duplicate Rows"
 sidebar_label: "DISTINCT"
 sidebar_position: 14
 youtube_url: ""
 ---
 
-# `DISTINCT` — Removing Duplicate Rows
+# `DISTINCT`: Removing Duplicate Rows
 
 `DISTINCT` eliminates duplicate rows from the result set. Two rows are considered duplicates only if every selected column has the same value.
 
 :::tip Prior lesson
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -23,7 +23,7 @@ FROM table_name;
 
 ## Examples
 
-### Example 1 — Unique cities
+### Example 1: Unique cities
 
 ```sql
 SELECT DISTINCT city
@@ -41,7 +41,7 @@ FROM customers;
 
 Without `DISTINCT`, "New York" would appear twice (Alice and Eve are both from New York).
 
-### Example 2 — Unique order statuses
+### Example 2: Unique order statuses
 
 ```sql
 SELECT DISTINCT status
@@ -56,7 +56,7 @@ FROM orders;
 | pending   |
 | cancelled |
 
-### Example 3 — DISTINCT on multiple columns
+### Example 3: DISTINCT on multiple columns
 
 `DISTINCT` applies to the entire combination of selected columns.
 
@@ -76,12 +76,12 @@ FROM customers;
 | Australia | Sydney   |
 | Canada    | Toronto  |
 
-Both Alice and Eve are `(USA, New York)` — that combination appears once.
+Both Alice and Eve are `(USA, New York)` - that combination appears once.
 
 ## Common Mistake
 
 :::warning DISTINCT applies to the whole row, not a single column
-When you select multiple columns, `DISTINCT` deduplicates based on the combination of all selected columns — not just the first one.
+When you select multiple columns, `DISTINCT` deduplicates based on the combination of all selected columns - not just the first one.
 
 ```sql
 -- Returns unique (status, customer_id) combinations, NOT just unique statuses

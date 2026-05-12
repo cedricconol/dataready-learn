@@ -54,6 +54,40 @@ INSERT INTO orders VALUES
 
 const DEFAULT_QUERY = "SELECT * FROM orders LIMIT 5;";
 
+const SCHEMA = [
+  {
+    table: "customers",
+    columns: [
+      { name: "customer_id", type: "INTEGER", note: "PK" },
+      { name: "name",        type: "TEXT" },
+      { name: "email",       type: "TEXT" },
+      { name: "city",        type: "TEXT" },
+      { name: "country",     type: "TEXT" },
+    ],
+  },
+  {
+    table: "products",
+    columns: [
+      { name: "product_id", type: "INTEGER", note: "PK" },
+      { name: "name",       type: "TEXT" },
+      { name: "category",   type: "TEXT" },
+      { name: "price",      type: "REAL" },
+    ],
+  },
+  {
+    table: "orders",
+    columns: [
+      { name: "order_id",     type: "INTEGER", note: "PK" },
+      { name: "customer_id",  type: "INTEGER", note: "FK" },
+      { name: "product_id",   type: "INTEGER", note: "FK" },
+      { name: "order_date",   type: "TEXT" },
+      { name: "quantity",     type: "INTEGER" },
+      { name: "total_amount", type: "REAL" },
+      { name: "status",       type: "TEXT" },
+    ],
+  },
+];
+
 type QueryResult = {
   columns: string[];
   rows: (string | number | null)[][];
@@ -65,6 +99,7 @@ export default function SqlPlayground(): React.ReactElement {
   const [results, setResults] = useState<QueryResult[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [schemaOpen, setSchemaOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -113,8 +148,33 @@ export default function SqlPlayground(): React.ReactElement {
     <div className={styles.playground}>
       <div className={styles.header}>
         <span className={styles.title}>SQL Playground</span>
-        <span className={styles.hint}>Tables: <code>orders</code>, <code>customers</code>, <code>products</code></span>
+        <button
+          className={styles.schemaToggle}
+          onClick={() => setSchemaOpen((o) => !o)}
+          aria-expanded={schemaOpen}
+        >
+          {schemaOpen ? "▾" : "▸"} Schema
+        </button>
       </div>
+
+      {schemaOpen && (
+        <div className={styles.schema}>
+          {SCHEMA.map(({ table, columns }) => (
+            <div key={table} className={styles.schemaTable}>
+              <div className={styles.schemaTableName}>{table}</div>
+              <div className={styles.schemaColumns}>
+                {columns.map(({ name, type, note }) => (
+                  <div key={name} className={styles.schemaColumn}>
+                    <span className={styles.schemaColName}>{name}</span>
+                    <span className={styles.schemaColType}>{type}</span>
+                    {note && <span className={styles.schemaColNote}>{note}</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <textarea
         className={styles.editor}
@@ -143,7 +203,7 @@ export default function SqlPlayground(): React.ReactElement {
       )}
 
       {results !== null && results.length === 0 && (
-        <div className={styles.empty}>Query ran successfully — no rows returned.</div>
+        <div className={styles.empty}>Query ran successfully - no rows returned.</div>
       )}
 
       {results && results.map((result, i) => (

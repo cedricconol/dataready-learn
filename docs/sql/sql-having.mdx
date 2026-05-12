@@ -1,18 +1,18 @@
 ---
 id: sql-having
-title: "HAVING — Filtering Groups After Aggregation"
+title: "HAVING: Filtering Groups After Aggregation"
 sidebar_label: "HAVING"
 sidebar_position: 15
 youtube_url: ""
 ---
 
-# `HAVING` — Filtering Groups After Aggregation
+# `HAVING`: Filtering Groups After Aggregation
 
-`HAVING` filters the results of a `GROUP BY` query. It works like `WHERE`, but it runs **after** aggregation — so you can filter on the aggregated values themselves (e.g., only show groups where `COUNT(*) > 2`).
+`HAVING` filters the results of a `GROUP BY` query. It works like `WHERE`, but it runs **after** aggregation - so you can filter on the aggregated values themselves (e.g., only show groups where `COUNT(*) > 2`).
 
 :::tip Prior lessons
 This lesson builds on [GROUP BY](./sql-group-by) and [Aggregate Functions](./sql-aggregate-functions).
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -27,15 +27,15 @@ HAVING AGGREGATE_FUNCTION(other_column) condition;
 ## Query execution order
 
 1. `FROM`
-2. `WHERE` — filter individual rows
-3. `GROUP BY` — collapse rows into groups
-4. `HAVING` — filter groups
+2. `WHERE` - filter individual rows
+3. `GROUP BY` - collapse rows into groups
+4. `HAVING` - filter groups
 5. `SELECT`
 6. `ORDER BY`
 
 ## Examples
 
-### Example 1 — Customers with more than one order
+### Example 1: Customers with more than one order
 
 ```sql
 SELECT
@@ -57,7 +57,7 @@ HAVING COUNT(*) > 1;
 
 Customer 5 (Eve) has only 1 order and is excluded.
 
-### Example 2 — Product categories with total revenue above a threshold
+### Example 2: Product categories with total revenue above a threshold
 
 ```sql
 SELECT
@@ -79,7 +79,7 @@ ORDER BY total_revenue DESC;
 
 Stationery (`74.85`) is below the threshold and is excluded.
 
-### Example 3 — Combining WHERE and HAVING
+### Example 3: Combining WHERE and HAVING
 
 `WHERE` filters rows before grouping; `HAVING` filters after. They can be used in the same query.
 
@@ -106,7 +106,7 @@ ORDER BY total_spent DESC;
 ## Common Mistake
 
 :::warning Use WHERE for row filters, HAVING for group filters
-It's technically valid to put some conditions in `HAVING` that could go in `WHERE`, but it's slower — the database groups all rows first and then filters, rather than filtering before grouping.
+It's technically valid to put some conditions in `HAVING` that could go in `WHERE`, but it's slower - the database groups all rows first and then filters, rather than filtering before grouping.
 
 ```sql
 -- Slow: filtering on a non-aggregated column in HAVING

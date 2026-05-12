@@ -1,17 +1,17 @@
 ---
 id: sql-limit
-title: "LIMIT / TOP — Restricting Row Count"
+title: "LIMIT / TOP: Restricting Row Count"
 sidebar_label: "LIMIT / TOP"
 sidebar_position: 12
 youtube_url: ""
 ---
 
-# `LIMIT` / `TOP` — Restricting Row Count
+# `LIMIT` / `TOP`: Restricting Row Count
 
 `LIMIT` (and its SQL Server equivalent `TOP`) caps the number of rows returned by a query. This is useful for previewing data, implementing pagination, and fetching top-N results.
 
 :::tip Prior lesson
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -37,7 +37,7 @@ FETCH FIRST n ROWS ONLY;
 
 ## Examples
 
-### Example 1 — Top 3 orders by value
+### Example 1: Top 3 orders by value
 
 ```sql
 SELECT
@@ -57,7 +57,7 @@ LIMIT 3;
 | 7        | 2           | 999.00       |
 | 9        | 3           | 999.00       |
 
-### Example 2 — Most recent 5 orders
+### Example 2: Most recent 5 orders
 
 ```sql
 SELECT
@@ -80,7 +80,7 @@ LIMIT 5;
 | 7        | 2024-03-15 | 999.00       | completed |
 | 6        | 2024-03-01 | 349.00       | cancelled |
 
-### Example 3 — Pagination with LIMIT and OFFSET
+### Example 3: Pagination with LIMIT and OFFSET
 
 `OFFSET` skips a number of rows before starting to return results. Together, `LIMIT` and `OFFSET` implement pagination.
 
@@ -105,7 +105,7 @@ LIMIT 3 OFFSET 3;
 ## Common Mistake
 
 :::warning LIMIT without ORDER BY is non-deterministic
-Without `ORDER BY`, the database can return any rows — and the selection may differ between runs.
+Without `ORDER BY`, the database can return any rows - and the selection may differ between runs.
 
 ```sql
 -- Don't do this: which 3 rows you get is undefined

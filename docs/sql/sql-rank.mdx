@@ -1,23 +1,23 @@
 ---
 id: sql-rank
-title: "ROW_NUMBER, RANK, DENSE_RANK — Ranking Rows"
+title: "ROW_NUMBER, RANK, DENSE_RANK: Ranking Rows"
 sidebar_label: "ROW_NUMBER / RANK / DENSE_RANK"
 sidebar_position: 31
 youtube_url: ""
 ---
 
-# `ROW_NUMBER`, `RANK`, `DENSE_RANK` — Ranking Rows
+# `ROW_NUMBER`, `RANK`, `DENSE_RANK`: Ranking Rows
 
 These three window functions assign a rank to each row within a partition. They differ only in how they handle ties.
 
 | Function | Ties get the same rank? | Gaps after ties? |
 |---|---|---|
-| `ROW_NUMBER()` | No — always unique | — |
+| `ROW_NUMBER()` | No - always unique | - |
 | `RANK()` | Yes | Yes |
 | `DENSE_RANK()` | Yes | No |
 
 :::tip Prior lesson
-This lesson builds on [Window Functions](./sql-window-functions). The sample dataset is defined in the [SELECT](./sql-select) lesson.
+This lesson builds on [Window Functions](./sql-window-functions). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -32,7 +32,7 @@ DENSE_RANK()   OVER (PARTITION BY col ORDER BY col)
 
 ## Examples
 
-### Example 1 — Compare all three on order amounts
+### Example 1: Compare all three on order amounts
 
 ```sql
 SELECT
@@ -62,9 +62,9 @@ FROM orders;
 
 Orders 1, 7, 9 all have `999.00`. `RANK` gives all three rank 1 then jumps to 4. `DENSE_RANK` gives them rank 1 then continues at 2.
 
-### Example 2 — Top order per customer (ROW_NUMBER pattern)
+### Example 2: Top order per customer (ROW_NUMBER pattern)
 
-`ROW_NUMBER` is ideal for "keep only the first/last N rows per group" — a very common pattern.
+`ROW_NUMBER` is ideal for "keep only the first/last N rows per group" - a very common pattern.
 
 ```sql
 WITH ranked_orders AS (
@@ -88,7 +88,7 @@ FROM ranked_orders
 WHERE rn = 1;
 ```
 
-**Result — the single highest-value order per customer:**
+**Result - the single highest-value order per customer:**
 
 | order_id | customer_id | total_amount | order_date |
 |----------|-------------|--------------|------------|
@@ -98,7 +98,7 @@ WHERE rn = 1;
 | 5        | 4           | 49.90        | 2024-02-10 |
 | 8        | 5           | 89.97        | 2024-04-01 |
 
-### Example 3 — NTILE: divide into buckets
+### Example 3: NTILE: divide into buckets
 
 `NTILE(n)` assigns each row to one of `n` equal-sized buckets.
 
@@ -115,7 +115,7 @@ This splits orders into 4 revenue quartiles (Q1 = lowest, Q4 = highest).
 ## Common Mistake
 
 :::warning ROW_NUMBER ties are broken arbitrarily
-When two rows have the same `ORDER BY` value, `ROW_NUMBER` assigns different numbers — but which row gets 1 vs 2 is non-deterministic. Add a tiebreaker column (like `order_id`) to make the result stable.
+When two rows have the same `ORDER BY` value, `ROW_NUMBER` assigns different numbers - but which row gets 1 vs 2 is non-deterministic. Add a tiebreaker column (like `order_id`) to make the result stable.
 
 ```sql
 ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY total_amount DESC, order_id ASC)

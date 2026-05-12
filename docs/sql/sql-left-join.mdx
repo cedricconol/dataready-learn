@@ -1,19 +1,19 @@
 ---
 id: sql-left-join
-title: "LEFT JOIN — Keeping All Left-Side Rows"
+title: "LEFT JOIN: Keeping All Left-Side Rows"
 sidebar_label: "LEFT JOIN"
 sidebar_position: 11
 youtube_url: ""
 ---
 
-# `LEFT JOIN` — Keeping All Left-Side Rows
+# `LEFT JOIN`: Keeping All Left-Side Rows
 
 `LEFT JOIN` returns **all rows from the left table**, plus matching rows from the right table. When there's no match in the right table, the right-side columns are filled with `NULL`.
 
 This contrasts with [INNER JOIN](./sql-join), which drops any row that doesn't have a match on both sides.
 
 :::tip Prior lesson
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -33,7 +33,7 @@ LEFT JOIN right_table r ON l.key = r.key;
 
 ## Examples
 
-### Example 1 — All customers, including those with no orders
+### Example 1: All customers, including those with no orders
 
 Add a new customer who hasn't placed any orders yet: imagine customer 6 (`Frank`) exists in `customers` but has no rows in `orders`. A LEFT JOIN would still include Frank.
 
@@ -66,9 +66,9 @@ LEFT JOIN orders o ON c.customer_id = o.customer_id;
 
 If there were a customer with no orders, their row would appear with `NULL` in `order_id` and `total_amount`.
 
-### Example 2 — Find customers with NO orders
+### Example 2: Find customers with NO orders
 
-Use `IS NULL` on the right side to identify unmatched rows — a classic anti-join pattern.
+Use `IS NULL` on the right side to identify unmatched rows - a classic anti-join pattern.
 
 ```sql
 SELECT
@@ -81,7 +81,7 @@ WHERE o.order_id IS NULL;
 
 With our dataset, all customers have at least one order, so this returns an empty result. But this pattern is extremely common in real-world data quality checks.
 
-### Example 3 — Aggregate with LEFT JOIN
+### Example 3: Aggregate with LEFT JOIN
 
 Count orders per customer, including customers with zero orders.
 
@@ -111,7 +111,7 @@ Note: `COUNT(o.order_id)` counts non-NULL values, so a customer with no orders w
 ## Common Mistake
 
 :::warning Filtering on the right-side table in WHERE turns LEFT JOIN into INNER JOIN
-Once you add a `WHERE` condition on the right-side table, rows that were NULL (unmatched) fail the condition and get dropped — effectively converting your LEFT JOIN into an INNER JOIN.
+Once you add a `WHERE` condition on the right-side table, rows that were NULL (unmatched) fail the condition and get dropped - effectively converting your LEFT JOIN into an INNER JOIN.
 
 ```sql
 -- This looks like a LEFT JOIN but behaves like INNER JOIN:

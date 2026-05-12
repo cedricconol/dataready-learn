@@ -1,17 +1,17 @@
 ---
 id: sql-subqueries
-title: "Subqueries — Queries Inside Queries"
+title: "Subqueries: Queries Inside Queries"
 sidebar_label: "Subqueries"
 sidebar_position: 34
 youtube_url: ""
 ---
 
-# Subqueries — Queries Inside Queries
+# Subqueries: Queries Inside Queries
 
-A **subquery** is a `SELECT` statement nested inside another query. It lets you use the result of one query as input to another — without creating a temporary table.
+A **subquery** is a `SELECT` statement nested inside another query. It lets you use the result of one query as input to another - without creating a temporary table.
 
 :::tip Prior lesson
-Subqueries are closely related to [WITH (CTEs)](./sql-with-cte), which are often a more readable alternative. The sample dataset is defined in the [SELECT](./sql-select) lesson.
+Subqueries are closely related to [WITH (CTEs)](./sql-with-cte), which are often a more readable alternative. The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Types of subqueries
@@ -25,7 +25,7 @@ Subqueries are closely related to [WITH (CTEs)](./sql-with-cte), which are often
 
 ## Examples
 
-### Example 1 — Scalar subquery: orders above average
+### Example 1: Scalar subquery: orders above average
 
 ```sql
 SELECT
@@ -49,7 +49,7 @@ The inner query runs once and returns a single value (`471.58`). The outer `WHER
 | 9        | 999.00       |
 | 4        | 796.00       |
 
-### Example 2 — Table subquery in FROM
+### Example 2: Table subquery in FROM
 
 A subquery in `FROM` acts as an inline view. You must give it an alias.
 
@@ -79,7 +79,7 @@ ORDER BY total_spent DESC;
 | 2           | 2           | 1348.00     |
 | 4           | 2           | 74.85       |
 
-### Example 3 — Correlated subquery
+### Example 3: Correlated subquery
 
 A **correlated subquery** references a column from the outer query, so it re-runs for every row. Use with caution on large tables.
 
@@ -129,12 +129,12 @@ SELECT * FROM sub WHERE ...
 A correlated subquery re-executes for every row in the outer query. On a table with a million rows, it runs a million times. The same result can often be expressed more efficiently with a window function or a JOIN.
 
 ```sql
--- Slow (correlated subquery — runs once per order row)
+-- Slow (correlated subquery - runs once per order row)
 WHERE o.total_amount = (
     SELECT MAX(total_amount) FROM orders WHERE customer_id = o.customer_id
 )
 
--- Fast (window function — single pass)
+-- Fast (window function - single pass)
 WITH ranked AS (
     SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY total_amount DESC) AS rn
     FROM orders

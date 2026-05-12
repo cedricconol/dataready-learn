@@ -1,17 +1,17 @@
 ---
 id: sql-join
-title: "JOIN — Combining Rows from Two Tables"
+title: "JOIN: Combining Rows from Two Tables"
 sidebar_label: "JOIN (INNER JOIN)"
 sidebar_position: 7
 youtube_url: ""
 ---
 
-# `JOIN` — Combining Rows from Two Tables
+# `JOIN`: Combining Rows from Two Tables
 
 `JOIN` (also written as `INNER JOIN`) combines rows from two tables where a matching condition is met. Rows that don't have a match in the other table are **excluded** from the result.
 
 :::tip Prior lesson
-This lesson builds on [FROM](./sql-from) and [WHERE](./sql-where). The sample dataset is defined in the [SELECT](./sql-select) lesson.
+This lesson builds on [FROM](./sql-from) and [WHERE](./sql-where). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -29,7 +29,7 @@ INNER JOIN table_b ON table_a.key = table_b.key;
 
 ## Examples
 
-### Example 1 — Join orders to customers
+### Example 1: Join orders to customers
 
 Pair each order with the customer who placed it.
 
@@ -57,9 +57,9 @@ JOIN customers c ON o.customer_id = c.customer_id;
 | 8        | Eve Davis     | 2024-04-01 | 89.97        |
 | 9        | Carol White   | 2024-04-10 | 999.00       |
 
-Note that order 10 (`customer_id = 4`) maps to Dave Brown — but if you look at the original data, order 10 has `customer_id = 4`. Dave Brown (customer 4) does appear here. Let's also note that if a row had no matching customer, it would be dropped entirely.
+Note that order 10 (`customer_id = 4`) maps to Dave Brown - but if you look at the original data, order 10 has `customer_id = 4`. Dave Brown (customer 4) does appear here. Let's also note that if a row had no matching customer, it would be dropped entirely.
 
-### Example 2 — Join orders to products
+### Example 2: Join orders to products
 
 Add product details to each order.
 
@@ -89,7 +89,7 @@ JOIN products p ON o.product_id = p.product_id;
 | 9        | Laptop       | Electronics | 1        | 999.00       |
 | 10       | Notebook     | Stationery  | 5        | 24.95        |
 
-### Example 3 — Joining three tables
+### Example 3: Joining three tables
 
 You can chain multiple JOINs to bring together three or more tables.
 

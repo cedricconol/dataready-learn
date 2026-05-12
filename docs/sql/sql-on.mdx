@@ -1,17 +1,17 @@
 ---
 id: sql-on
-title: "ON — Defining the Join Condition"
+title: "ON: Defining the Join Condition"
 sidebar_label: "ON"
 sidebar_position: 8
 youtube_url: ""
 ---
 
-# `ON` — Defining the Join Condition
+# `ON`: Defining the Join Condition
 
 `ON` specifies the condition used to match rows between two tables in a `JOIN`. It almost always links a foreign key in one table to a primary key in another.
 
 :::tip Prior lesson
-`ON` always appears with a `JOIN`. See the [JOIN lesson](./sql-join) first. The sample dataset is defined in the [SELECT](./sql-select) lesson.
+`ON` always appears with a `JOIN`. See the [JOIN lesson](./sql-join) first. The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -30,7 +30,7 @@ JOIN table_b b ON a.key1 = b.key1
 
 ## Examples
 
-### Example 1 — Standard foreign key join
+### Example 1: Standard foreign key join
 
 Link each order to its customer using the shared `customer_id` column.
 
@@ -59,7 +59,7 @@ JOIN customers c ON o.customer_id = c.customer_id;
 | 9        | 999.00       | Carol White   | Australia |
 | 10       | 24.95        | Dave Brown    | Canada    |
 
-### Example 2 — Multiple conditions in ON
+### Example 2: Multiple conditions in ON
 
 Sometimes you need to match on more than one column. For example, if a table were partitioned by both `customer_id` and `country`, you'd join on both.
 
@@ -90,7 +90,7 @@ Adding a filter condition to `ON` vs `WHERE` has different behavior for `LEFT JO
 ## Common Mistake
 
 :::warning Joining on the wrong column produces unexpected results
-If you accidentally join on a column that doesn't represent the actual relationship, you'll get a result that looks plausible but is factually wrong — or a massive row explosion if many values happen to match.
+If you accidentally join on a column that doesn't represent the actual relationship, you'll get a result that looks plausible but is factually wrong - or a massive row explosion if many values happen to match.
 
 Always double-check:
 1. Which column is the foreign key in the left table?

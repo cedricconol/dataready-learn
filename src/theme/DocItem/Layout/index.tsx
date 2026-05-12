@@ -9,27 +9,19 @@ import type LayoutType from "@theme/DocItem/Layout";
 import type { WrapperProps } from "@docusaurus/types";
 import { useDoc } from "@docusaurus/plugin-content-docs/client";
 import YouTubeEmbed from "@site/src/components/YouTubeEmbed";
-import BrowserOnly from "@docusaurus/BrowserOnly";
-import SqlPlayground from "@site/src/components/SqlPlayground";
-
+// SqlPlayground is injected via DocItem/Footer swizzle (renders before pagination)
 type Props = WrapperProps<typeof LayoutType>;
 
 export default function DocItemLayout(props: Props): JSX.Element {
-  const { frontMatter, metadata } = useDoc();
+  const { frontMatter } = useDoc();
   const youtubeUrl = (frontMatter as Record<string, unknown>)[
     "youtube_url"
   ] as string | undefined;
-
-  const isSqlLesson =
-    metadata.id.startsWith("sql/") && metadata.id !== "sql/sql";
 
   return (
     <>
       {youtubeUrl && <YouTubeEmbed url={youtubeUrl} />}
       <Layout {...props} />
-      {isSqlLesson && (
-        <BrowserOnly>{() => <SqlPlayground />}</BrowserOnly>
-      )}
     </>
   );
 }

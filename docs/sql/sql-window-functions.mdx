@@ -1,19 +1,19 @@
 ---
 id: sql-window-functions
-title: "Window Functions — Computing Across Rows Without Collapsing Them"
+title: "Window Functions: Computing Across Rows Without Collapsing Them"
 sidebar_label: "Window Functions"
 sidebar_position: 30
 youtube_url: ""
 ---
 
-# Window Functions — Computing Across Rows Without Collapsing Them
+# Window Functions: Computing Across Rows Without Collapsing Them
 
-A **window function** performs a calculation across a set of rows related to the current row — and unlike `GROUP BY`, it keeps every individual row in the result.
+A **window function** performs a calculation across a set of rows related to the current row - and unlike `GROUP BY`, it keeps every individual row in the result.
 
 The "window" is the set of rows the function looks at for each calculation. You define the window with the `OVER` clause.
 
 :::tip Prior lessons
-Window functions build on [Aggregate Functions](./sql-aggregate-functions), [GROUP BY](./sql-group-by), and [ORDER BY](./sql-order-by). The sample dataset is defined in the [SELECT](./sql-select) lesson.
+Window functions build on [Aggregate Functions](./sql-aggregate-functions), [GROUP BY](./sql-group-by), and [ORDER BY](./sql-order-by). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -25,20 +25,20 @@ FUNCTION() OVER (
 )
 ```
 
-- **`PARTITION BY`** — splits rows into independent windows (like `GROUP BY`, but without collapsing)
-- **`ORDER BY`** — orders rows within each window (required for running totals and ranking functions)
-- Both are optional — `OVER ()` with nothing applies the function across all rows
+- **`PARTITION BY`** - splits rows into independent windows (like `GROUP BY`, but without collapsing)
+- **`ORDER BY`** - orders rows within each window (required for running totals and ranking functions)
+- Both are optional - `OVER ()` with nothing applies the function across all rows
 
 ## GROUP BY vs window functions
 
 | | GROUP BY | Window function |
 |---|---|---|
-| Collapses rows? | Yes — one row per group | No — all rows remain |
+| Collapses rows? | Yes - one row per group | No - all rows remain |
 | Can mix detail + aggregate? | No | Yes |
 
 ## Examples
 
-### Example 1 — Per-customer average alongside each order
+### Example 1: Per-customer average alongside each order
 
 With `GROUP BY` you'd lose the individual order rows. With a window function you keep them and add the average as a new column.
 
@@ -69,7 +69,7 @@ ORDER BY customer_id, order_id;
 
 Each row retains its detail; `customer_avg` is computed per partition.
 
-### Example 2 — Overall average without PARTITION BY
+### Example 2: Overall average without PARTITION BY
 
 Omitting `PARTITION BY` applies the function across all rows as a single window.
 
@@ -92,7 +92,7 @@ ORDER BY order_id;
 | 3        | 349.00       | 471.58      | -122.58       |
 | ...      | ...          | ...         | ...           |
 
-### Example 3 — Running total with ORDER BY in OVER
+### Example 3: Running total with ORDER BY in OVER
 
 Adding `ORDER BY` inside `OVER` makes the window cumulative: each row's window includes all preceding rows (by the specified order) plus itself.
 

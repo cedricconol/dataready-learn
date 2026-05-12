@@ -1,20 +1,20 @@
 ---
 id: sql-exists
-title: "EXISTS and NOT EXISTS — Testing for Row Presence"
+title: "EXISTS and NOT EXISTS: Testing for Row Presence"
 sidebar_label: "EXISTS / NOT EXISTS"
 sidebar_position: 36
 youtube_url: ""
 ---
 
-# `EXISTS` and `NOT EXISTS` — Testing for Row Presence
+# `EXISTS` and `NOT EXISTS`: Testing for Row Presence
 
-`EXISTS` checks whether a subquery returns **any rows at all**. It returns `TRUE` as soon as one matching row is found — it doesn't scan the rest. This makes it efficient for large datasets.
+`EXISTS` checks whether a subquery returns **any rows at all**. It returns `TRUE` as soon as one matching row is found - it doesn't scan the rest. This makes it efficient for large datasets.
 
-- **`EXISTS`** — include the row if the subquery finds at least one match
-- **`NOT EXISTS`** — include the row only if the subquery finds no match
+- **`EXISTS`** - include the row if the subquery finds at least one match
+- **`NOT EXISTS`** - include the row only if the subquery finds no match
 
 :::tip Prior lessons
-`EXISTS` is closely related to [IN](./sql-in) and [Subqueries](./sql-subqueries). The key advantage of `NOT EXISTS` over `NOT IN` is safe NULL handling — see the common mistake below.
+`EXISTS` is closely related to [IN](./sql-in) and [Subqueries](./sql-subqueries). The key advantage of `NOT EXISTS` over `NOT IN` is safe NULL handling - see the common mistake below.
 :::
 
 ## Syntax
@@ -29,11 +29,11 @@ WHERE EXISTS (
 );
 ```
 
-The inner `SELECT` typically uses `SELECT 1` — the actual column values don't matter, only whether any row is returned.
+The inner `SELECT` typically uses `SELECT 1` - the actual column values don't matter, only whether any row is returned.
 
 ## Examples
 
-### Example 1 — Customers who have placed at least one order
+### Example 1: Customers who have placed at least one order
 
 ```sql
 SELECT
@@ -59,7 +59,7 @@ WHERE EXISTS (
 
 All five customers have at least one order, so all are returned.
 
-### Example 2 — Customers with NO completed orders
+### Example 2: Customers with NO completed orders
 
 ```sql
 SELECT
@@ -80,9 +80,9 @@ WHERE NOT EXISTS (
 |-------------|------------|
 | 4           | Dave Brown |
 
-Dave's two orders are both `pending` — he has no completed orders.
+Dave's two orders are both `pending` - he has no completed orders.
 
-### Example 3 — Products that have never been ordered
+### Example 3: Products that have never been ordered
 
 ```sql
 SELECT
@@ -96,15 +96,15 @@ WHERE NOT EXISTS (
 );
 ```
 
-With our dataset, every product appears in at least one order, so this returns no rows — but this pattern is invaluable for data quality checks in real systems.
+With our dataset, every product appears in at least one order, so this returns no rows - but this pattern is invaluable for data quality checks in real systems.
 
-## EXISTS vs IN — when to use which
+## EXISTS vs IN: when to use which
 
 | | `IN` | `EXISTS` |
 |---|---|---|
 | Best when | The list is small and known | The subquery is large or correlated |
 | NULL safety | `NOT IN` breaks with NULLs | `NOT EXISTS` is NULL-safe |
-| Short-circuits | No | Yes — stops at first match |
+| Short-circuits | No | Yes - stops at first match |
 
 ```sql
 -- These are logically equivalent when no NULLs are involved:
@@ -121,7 +121,7 @@ WHERE NOT EXISTS (SELECT 1 FROM orders WHERE customer_id = c.customer_id)
 :::warning NOT IN silently fails when the subquery contains NULLs
 This is one of the most dangerous SQL gotchas. If a `NOT IN` subquery returns even one `NULL`, the entire `WHERE` clause evaluates to `UNKNOWN` and returns no rows.
 
-`NOT EXISTS` does not have this problem — always prefer it for negative existence checks.
+`NOT EXISTS` does not have this problem - always prefer it for negative existence checks.
 
 ```sql
 -- Dangerous: if any customer_id in orders is NULL, returns zero rows

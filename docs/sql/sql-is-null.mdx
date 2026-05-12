@@ -1,17 +1,17 @@
 ---
 id: sql-is-null
-title: "IS NULL / IS NOT NULL — Checking for Missing Values"
+title: "IS NULL / IS NOT NULL: Checking for Missing Values"
 sidebar_label: "IS NULL / IS NOT NULL"
 sidebar_position: 17
 youtube_url: ""
 ---
 
-# `IS NULL` / `IS NOT NULL` — Checking for Missing Values
+# `IS NULL` / `IS NOT NULL`: Checking for Missing Values
 
-`NULL` in SQL represents missing or unknown data — not zero, not an empty string, but the complete absence of a value. `IS NULL` and `IS NOT NULL` are the only correct way to check for it.
+`NULL` in SQL represents missing or unknown data - not zero, not an empty string, but the complete absence of a value. `IS NULL` and `IS NOT NULL` are the only correct way to check for it.
 
 :::tip Prior lesson
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -33,7 +33,7 @@ WHERE column IS NOT NULL;
 SQL uses three-valued logic: `TRUE`, `FALSE`, and `UNKNOWN`. Any comparison involving `NULL` evaluates to `UNKNOWN`, not `FALSE`. Since `WHERE` only passes rows that evaluate to `TRUE`, rows with `NULL` are always silently excluded.
 
 ```sql
--- This never returns any rows — even if customer_id IS NULL
+-- This never returns any rows - even if customer_id IS NULL
 WHERE customer_id = NULL     -- evaluates to UNKNOWN, not TRUE
 
 -- Correct
@@ -42,7 +42,7 @@ WHERE customer_id IS NULL
 
 ## Examples
 
-### Example 1 — Extend the dataset with a NULL
+### Example 1: Extend the dataset with a NULL
 
 For these examples, imagine we've added order 11 with no associated customer (`customer_id` is `NULL`):
 
@@ -51,7 +51,7 @@ For these examples, imagine we've added order 11 with no associated customer (`c
 INSERT INTO orders VALUES (11, NULL, 2, '2024-06-01', 1, 29.99, 'pending');
 ```
 
-### Example 2 — Find orders with no customer
+### Example 2: Find orders with no customer
 
 ```sql
 SELECT
@@ -69,7 +69,7 @@ WHERE customer_id IS NULL;
 |----------|-------------|--------------|---------|
 | 11       | NULL        | 29.99        | pending |
 
-### Example 3 — Find orders that do have a customer
+### Example 3: Find orders that do have a customer
 
 ```sql
 SELECT
@@ -83,7 +83,7 @@ ORDER BY order_id;
 
 This returns all 10 standard orders and excludes order 11.
 
-### Example 4 — NULL in LEFT JOIN results
+### Example 4: NULL in LEFT JOIN results
 
 A common place NULLs appear naturally is in the results of a [LEFT JOIN](./sql-left-join). When the right table has no matching row, all its columns come back as `NULL`.
 

@@ -1,17 +1,17 @@
 ---
 id: sql-where
-title: "WHERE — Filtering Rows"
+title: "WHERE: Filtering Rows"
 sidebar_label: "WHERE"
 sidebar_position: 5
 youtube_url: ""
 ---
 
-# `WHERE` — Filtering Rows
+# `WHERE`: Filtering Rows
 
 `WHERE` filters the rows returned by a query. Only rows where the condition evaluates to `TRUE` are included in the result.
 
 :::tip Prior lesson
-This lesson builds on [SELECT](./sql-select) and [FROM](./sql-from). The sample dataset is defined in the SELECT lesson.
+This lesson builds on [SELECT](./sql-select) and [FROM](./sql-from). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -35,7 +35,7 @@ Supported comparison operators:
 
 ## Examples
 
-### Example 1 — Filter by a number
+### Example 1: Filter by a number
 
 ```sql
 SELECT
@@ -57,7 +57,7 @@ WHERE total_amount > 200;
 | 7        | 2           | 999.00       |
 | 9        | 3           | 999.00       |
 
-### Example 2 — Filter by a string value
+### Example 2: Filter by a string value
 
 String values must be wrapped in single quotes.
 
@@ -82,7 +82,7 @@ WHERE status = 'completed';
 | 7        | 2024-03-15 | 999.00       | completed |
 | 8        | 2024-04-01 | 89.97        | completed |
 
-### Example 3 — Filter by a date
+### Example 3: Filter by a date
 
 ```sql
 SELECT

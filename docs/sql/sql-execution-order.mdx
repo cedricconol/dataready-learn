@@ -21,7 +21,7 @@ ORDER BY ...
 LIMIT    ...
 ```
 
-But SQL does **not** execute it in that order. The database processes the clauses in a different sequence — called the **logical query processing order** — and understanding this explains many common errors.
+But SQL does **not** execute it in that order. The database processes the clauses in a different sequence - called the **logical query processing order** - and understanding this explains many common errors.
 
 ## Execution order
 
@@ -139,7 +139,7 @@ LIMIT 3;                        -- 8. top 3 only
 | 5    | SELECT         | Computes output columns             | Aliases defined here  |
 | 6    | DISTINCT       | Removes duplicate rows              | SELECT output         |
 | 7    | ORDER BY       | Sorts the result                    | SELECT aliases ✓      |
-| 8    | LIMIT / TOP    | Caps the number of rows             | —                     |
+| 8    | LIMIT / TOP    | Caps the number of rows             | -                     |
 
 :::tip The mental model
 Write your query in SQL's written order (`SELECT … FROM … WHERE …`) but mentally execute it from the bottom up: **start with your data source, filter it, group it, filter the groups, then decide what to show and how to sort it.**

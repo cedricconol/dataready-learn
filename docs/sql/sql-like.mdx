@@ -1,20 +1,20 @@
 ---
 id: sql-like
-title: "LIKE — Pattern Matching on Strings"
+title: "LIKE: Pattern Matching on Strings"
 sidebar_label: "LIKE"
 sidebar_position: 18
 youtube_url: ""
 ---
 
-# `LIKE` — Pattern Matching on Strings
+# `LIKE`: Pattern Matching on Strings
 
 `LIKE` filters rows based on a text pattern. It uses two wildcard characters:
 
-- `%` — matches **zero or more** characters
-- `_` — matches **exactly one** character
+- `%` - matches **zero or more** characters
+- `_` - matches **exactly one** character
 
 :::tip Prior lesson
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -40,7 +40,7 @@ WHERE column NOT LIKE 'pattern';
 
 ## Examples
 
-### Example 1 — Names starting with a letter
+### Example 1: Names starting with a letter
 
 ```sql
 SELECT
@@ -56,7 +56,7 @@ WHERE name LIKE 'A%';
 |---------------|-------------------|
 | Alice Johnson | alice@example.com |
 
-### Example 2 — Email domain matching
+### Example 2: Email domain matching
 
 ```sql
 SELECT
@@ -70,7 +70,7 @@ WHERE email LIKE '%@example.com';
 
 All five customers, since every email ends with `@example.com`.
 
-### Example 3 — Products containing a word
+### Example 3: Products containing a word
 
 ```sql
 SELECT
@@ -91,7 +91,7 @@ WHERE name LIKE '%o%';
 
 (All three contain the letter "o".)
 
-### Example 4 — Single-character wildcard
+### Example 4: Single-character wildcard
 
 ```sql
 -- Match exactly 4-character names ending in "esk" with one leading character
@@ -116,7 +116,7 @@ SELECT name FROM products WHERE name LIKE '_esk';
 ## Common Mistake
 
 :::warning Leading wildcards prevent index use
-A pattern like `'%Johnson'` or `'%example%'` forces the database to scan every row — it cannot use an index to speed up the search. This is usually fine on small tables but can cripple performance on large ones.
+A pattern like `'%Johnson'` or `'%example%'` forces the database to scan every row - it cannot use an index to speed up the search. This is usually fine on small tables but can cripple performance on large ones.
 
 If you need full-text search, most databases have a dedicated `FULL TEXT` search capability that uses inverted indexes and is far more efficient.
 :::

@@ -11,7 +11,7 @@ youtube_url: ""
 Window functions with an `ORDER BY` inside `OVER` compute **cumulative** (running) values by default. You can also control exactly which rows to include using a **window frame**.
 
 :::tip Prior lesson
-This lesson builds on [Window Functions](./sql-window-functions). The sample dataset is defined in the [SELECT](./sql-select) lesson.
+This lesson builds on [Window Functions](./sql-window-functions). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Window frames
@@ -38,7 +38,7 @@ Common frame boundaries:
 
 ## Examples
 
-### Example 1 — Running total of revenue
+### Example 1: Running total of revenue
 
 ```sql
 SELECT
@@ -68,7 +68,7 @@ ORDER BY order_date;
 | 9        | 2024-04-10 | 999.00       | 4690.85       |
 | 10       | 2024-05-01 | 24.95        | 4715.80       |
 
-### Example 2 — Running total per customer
+### Example 2: Running total per customer
 
 Add `PARTITION BY` to reset the running total for each customer.
 
@@ -95,7 +95,7 @@ ORDER BY customer_id, order_date;
 | 2        | 1           | 2024-01-10 | 59.98        | 1058.98                |
 | 6        | 1           | 2024-03-01 | 349.00       | 1407.98                |
 
-### Example 3 — 3-period moving average
+### Example 3: 3-period moving average
 
 Use a sliding frame of the current row plus the 2 preceding rows.
 
@@ -133,7 +133,7 @@ ORDER BY month;
 
 January and February use fewer rows (they don't have 2 preceding months), so the frame shrinks automatically.
 
-### Example 4 — Percentage of total
+### Example 4: Percentage of total
 
 Divide each order's amount by the grand total using `OVER ()` with no frame.
 
@@ -154,7 +154,7 @@ ORDER BY total_amount DESC;
 :::warning ROWS BETWEEN vs RANGE BETWEEN behave differently on ties
 `ROWS BETWEEN` counts physical rows; `RANGE BETWEEN` counts logical values. On a date column with multiple orders on the same day, `RANGE BETWEEN ... CURRENT ROW` includes all rows with the same date value, not just the current physical row.
 
-For running totals, `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` is almost always what you want — it's deterministic and avoids surprises with ties.
+For running totals, `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` is almost always what you want - it's deterministic and avoids surprises with ties.
 :::
 
 ## Practice

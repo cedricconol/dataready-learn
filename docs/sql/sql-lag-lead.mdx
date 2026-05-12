@@ -1,22 +1,22 @@
 ---
 id: sql-lag-lead
-title: "LAG and LEAD — Accessing Adjacent Rows"
+title: "LAG and LEAD: Accessing Adjacent Rows"
 sidebar_label: "LAG / LEAD"
 sidebar_position: 32
 youtube_url: ""
 ---
 
-# `LAG` and `LEAD` — Accessing Adjacent Rows
+# `LAG` and `LEAD`: Accessing Adjacent Rows
 
-`LAG` and `LEAD` let you access a value from a different row within the same window — without a self-join.
+`LAG` and `LEAD` let you access a value from a different row within the same window - without a self-join.
 
-- **`LAG(col, n)`** — value from `n` rows **before** the current row
-- **`LEAD(col, n)`** — value from `n` rows **after** the current row
+- **`LAG(col, n)`** - value from `n` rows **before** the current row
+- **`LEAD(col, n)`** - value from `n` rows **after** the current row
 
 Both default to `n = 1` (the immediately adjacent row).
 
 :::tip Prior lesson
-This lesson builds on [Window Functions](./sql-window-functions). The sample dataset is defined in the [SELECT](./sql-select) lesson.
+This lesson builds on [Window Functions](./sql-window-functions). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -26,12 +26,12 @@ LAG(column, offset, default)  OVER (PARTITION BY col ORDER BY col)
 LEAD(column, offset, default) OVER (PARTITION BY col ORDER BY col)
 ```
 
-- `offset` — how many rows to look back/forward (default: 1)
-- `default` — value to return when there is no preceding/following row (default: NULL)
+- `offset` - how many rows to look back/forward (default: 1)
+- `default` - value to return when there is no preceding/following row (default: NULL)
 
 ## Examples
 
-### Example 1 — Month-over-month revenue change
+### Example 1: Month-over-month revenue change
 
 First, aggregate revenue by month, then use `LAG` to compare each month to the previous one.
 
@@ -73,7 +73,7 @@ January has no previous month so `LAG` returns `NULL`.
 `DATE_TRUNC('month', col)` is PostgreSQL / BigQuery syntax. In MySQL use `DATE_FORMAT(col, '%Y-%m-01')`; in SQL Server use `DATETRUNC(month, col)` (2022+) or `DATEFROMPARTS(YEAR(col), MONTH(col), 1)`.
 :::
 
-### Example 2 — Days between consecutive orders per customer
+### Example 2: Days between consecutive orders per customer
 
 ```sql
 SELECT
@@ -100,7 +100,7 @@ ORDER BY customer_id, order_date;
 | 2        | 1           | 2024-01-10 | 2024-01-05      | 5                    |
 | 6        | 1           | 2024-03-01 | 2024-01-10      | 51                   |
 
-### Example 3 — LEAD to preview the next order date
+### Example 3: LEAD to preview the next order date
 
 ```sql
 SELECT

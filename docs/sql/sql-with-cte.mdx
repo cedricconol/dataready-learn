@@ -1,17 +1,17 @@
 ---
 id: sql-with-cte
-title: "WITH — Common Table Expressions (CTEs)"
+title: "WITH: Common Table Expressions (CTEs)"
 sidebar_label: "WITH (CTEs)"
 sidebar_position: 22
 youtube_url: ""
 ---
 
-# `WITH` — Common Table Expressions (CTEs)
+# `WITH`: Common Table Expressions (CTEs)
 
 A **Common Table Expression (CTE)** is a named, temporary result set defined at the top of a query using the `WITH` keyword. Instead of writing a complex nested subquery, you break the query into readable, named steps.
 
 :::tip Prior lessons
-CTEs work best when you already understand [SELECT](./sql-select), [JOIN](./sql-join), [GROUP BY](./sql-group-by), and [Aggregate Functions](./sql-aggregate-functions). The sample dataset is defined in the SELECT lesson.
+CTEs work best when you already understand [SELECT](./sql-select), [JOIN](./sql-join), [GROUP BY](./sql-group-by), and [Aggregate Functions](./sql-aggregate-functions). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -41,7 +41,7 @@ FROM second_cte;
 
 ## Examples
 
-### Example 1 — Simplify a complex query
+### Example 1: Simplify a complex query
 
 Find all customers who have placed more than one completed order. Without a CTE this requires a nested subquery. With a CTE it reads like plain English.
 
@@ -70,7 +70,7 @@ ORDER BY co.order_count DESC;
 | Alice Johnson | 2           |
 | Bob Smith     | 2           |
 
-### Example 2 — Chained CTEs
+### Example 2: Chained CTEs
 
 Calculate the top-spending customer per country using two CTEs.
 
@@ -109,7 +109,7 @@ ORDER BY country, total_spent DESC;
 | USA       | Alice Johnson | 1407.98     |
 | USA       | Eve Davis     | 89.97       |
 
-### Example 3 — CTE as a reusable filter
+### Example 3: CTE as a reusable filter
 
 Pre-filter expensive orders, then join that subset to customers.
 
@@ -142,14 +142,14 @@ ORDER BY hvo.total_amount DESC;
 
 | Aspect      | CTE                              | Subquery                         |
 |-------------|----------------------------------|----------------------------------|
-| Readability | High — named, linear flow        | Lower — nested inside main query |
+| Readability | High - named, linear flow        | Lower - nested inside main query |
 | Reuse       | Can reference the same CTE twice | Must copy the subquery           |
 | Performance | Usually equivalent               | Usually equivalent               |
 
 ## Common Mistake
 
 :::warning CTEs are not physically materialized (usually)
-In most databases, a CTE is **not** stored as a temporary table — it's re-evaluated every time it's referenced. If you reference the same CTE twice in a query, it may execute twice.
+In most databases, a CTE is **not** stored as a temporary table - it's re-evaluated every time it's referenced. If you reference the same CTE twice in a query, it may execute twice.
 
 In PostgreSQL you can force materialization with `WITH cte AS MATERIALIZED (...)`. In general, trust your query planner but be aware of this if you're referencing a heavy CTE multiple times.
 

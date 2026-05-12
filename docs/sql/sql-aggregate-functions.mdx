@@ -1,12 +1,12 @@
 ---
 id: sql-aggregate-functions
-title: "Aggregate Functions — COUNT, SUM, AVG, MIN, MAX"
+title: "Aggregate Functions: COUNT, SUM, AVG, MIN, MAX"
 sidebar_label: "Aggregate Functions"
 sidebar_position: 20
 youtube_url: ""
 ---
 
-# Aggregate Functions — `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`
+# Aggregate Functions: `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`
 
 Aggregate functions collapse many rows into a single computed value. They're the foundation of any analytical query.
 
@@ -20,7 +20,7 @@ Aggregate functions collapse many rows into a single computed value. They're the
 
 :::tip Prior lessons
 This lesson pairs closely with [GROUP BY](./sql-group-by) and [HAVING](./sql-having).
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -46,7 +46,7 @@ GROUP BY group_column;
 
 ## Examples
 
-### Example 1 — Overall order statistics
+### Example 1: Overall order statistics
 
 ```sql
 SELECT
@@ -65,7 +65,7 @@ FROM orders;
 |--------------|----------------------|---------------|-----------------|----------------|---------------|
 | 10           | 10                   | 4715.78       | 471.58          | 24.95          | 999.00        |
 
-### Example 2 — Revenue and order count per customer
+### Example 2: Revenue and order count per customer
 
 ```sql
 SELECT
@@ -89,7 +89,7 @@ ORDER BY total_spent DESC;
 | 5           | 1           | 89.97       | 89.97           | 89.97         |
 | 4           | 2           | 74.85       | 37.43           | 49.90         |
 
-### Example 3 — MIN and MAX on product prices by category
+### Example 3: MIN and MAX on product prices by category
 
 ```sql
 SELECT
@@ -122,7 +122,7 @@ If all `customer_id` values are non-NULL, both return the same number. If some a
 
 ## Common Mistake
 
-:::warning AVG ignores NULLs — which can mislead
+:::warning AVG ignores NULLs - which can mislead
 `AVG` automatically skips `NULL` values. If 40% of a column is `NULL`, `AVG` computes the average over only the 60% that have values. This may not be what you want.
 
 ```sql

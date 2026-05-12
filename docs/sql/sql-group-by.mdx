@@ -1,12 +1,12 @@
 ---
 id: sql-group-by
-title: "GROUP BY — Grouping Rows for Aggregation"
+title: "GROUP BY: Grouping Rows for Aggregation"
 sidebar_label: "GROUP BY"
 sidebar_position: 9
 youtube_url: ""
 ---
 
-# `GROUP BY` — Grouping Rows for Aggregation
+# `GROUP BY`: Grouping Rows for Aggregation
 
 `GROUP BY` collapses multiple rows that share the same value in a column into a single summary row. It is always used alongside aggregate functions like `COUNT`, `SUM`, or `AVG`.
 
@@ -27,15 +27,15 @@ GROUP BY column;
 
 Understanding when `GROUP BY` runs helps avoid common errors:
 
-1. `FROM` — load the table
-2. `WHERE` — filter individual rows
-3. `GROUP BY` — collapse rows into groups
-4. `SELECT` — compute output columns (including aggregates)
-5. `ORDER BY` — sort the result
+1. `FROM` - load the table
+2. `WHERE` - filter individual rows
+3. `GROUP BY` - collapse rows into groups
+4. `SELECT` - compute output columns (including aggregates)
+5. `ORDER BY` - sort the result
 
 ## Examples
 
-### Example 1 — Count orders per customer
+### Example 1: Count orders per customer
 
 ```sql
 SELECT
@@ -55,7 +55,7 @@ GROUP BY customer_id;
 | 4           | 2           |
 | 5           | 1           |
 
-### Example 2 — Total revenue by status
+### Example 2: Total revenue by status
 
 ```sql
 SELECT
@@ -74,7 +74,7 @@ GROUP BY status;
 | pending   | 3           | 1073.85       |
 | cancelled | 1           | 349.00        |
 
-### Example 3 — Group by multiple columns
+### Example 3: Group by multiple columns
 
 ```sql
 SELECT

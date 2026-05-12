@@ -1,19 +1,19 @@
 ---
 id: sql-between
-title: "BETWEEN — Filtering by a Range"
+title: "BETWEEN: Filtering by a Range"
 sidebar_label: "BETWEEN"
 sidebar_position: 19
 youtube_url: ""
 ---
 
-# `BETWEEN` — Filtering by a Range
+# `BETWEEN`: Filtering by a Range
 
 `BETWEEN` filters rows where a value falls within a range. **Both boundary values are inclusive.**
 
 It works with numbers, dates, and strings.
 
 :::tip Prior lesson
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -29,7 +29,7 @@ WHERE column >= lower_bound AND column <= upper_bound
 
 ## Examples
 
-### Example 1 — Numeric range
+### Example 1: Numeric range
 
 Return orders where the total amount is between $50 and $500 (inclusive).
 
@@ -53,7 +53,7 @@ ORDER BY total_amount;
 | 3        | 349.00       | completed |
 | 6        | 349.00       | cancelled |
 
-Wait — order 5 has `49.90`, which is less than 50, so it's excluded. Let me re-check:
+Wait - order 5 has `49.90`, which is less than 50, so it's excluded. Let me re-check:
 
 | order_id | total_amount | status    |
 |----------|--------------|-----------|
@@ -62,7 +62,7 @@ Wait — order 5 has `49.90`, which is less than 50, so it's excluded. Let me re
 | 3        | 349.00       | completed |
 | 6        | 349.00       | cancelled |
 
-### Example 2 — Date range
+### Example 2: Date range
 
 Find orders placed in Q1 2024 (January through March).
 
@@ -88,7 +88,7 @@ ORDER BY order_date;
 | 6        | 2024-03-01 | 349.00       |
 | 7        | 2024-03-15 | 999.00       |
 
-### Example 3 — NOT BETWEEN
+### Example 3: NOT BETWEEN
 
 Exclude a range of values.
 

@@ -1,20 +1,20 @@
 ---
 id: sql-and-or
-title: "AND / OR — Combining Conditions"
+title: "AND / OR: Combining Conditions"
 sidebar_label: "AND / OR"
 sidebar_position: 6
 youtube_url: ""
 ---
 
-# `AND` / `OR` — Combining Conditions
+# `AND` / `OR`: Combining Conditions
 
 `AND` and `OR` let you combine multiple conditions inside a `WHERE` clause.
 
-- `AND` — both conditions must be true
-- `OR` — at least one condition must be true
+- `AND` - both conditions must be true
+- `OR` - at least one condition must be true
 
 :::tip Prior lesson
-This lesson builds on [WHERE](./sql-where). The sample dataset is defined in the [SELECT](./sql-select) lesson.
+This lesson builds on [WHERE](./sql-where). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -33,7 +33,7 @@ WHERE condition1 OR condition2;
 
 ## Examples
 
-### Example 1 — AND
+### Example 1: AND
 
 Return completed orders with a total amount over $500.
 
@@ -56,9 +56,9 @@ WHERE status = 'completed'
 | 7        | 999.00       | completed |
 | 9        | 999.00       | completed |
 
-Wait — order 9 has status `pending`. Let's re-check: with `AND`, both conditions must pass. Order 9 (`pending`, `999.00`) does **not** pass the `status = 'completed'` check, so it is excluded.
+Wait - order 9 has status `pending`. Let's re-check: with `AND`, both conditions must pass. Order 9 (`pending`, `999.00`) does **not** pass the `status = 'completed'` check, so it is excluded.
 
-### Example 2 — OR
+### Example 2: OR
 
 Return orders that are either cancelled or pending.
 
@@ -81,7 +81,7 @@ WHERE status = 'cancelled'
 | 9        | 999.00       | pending   |
 | 10       | 24.95        | pending   |
 
-### Example 3 — Mixing AND and OR
+### Example 3: Mixing AND and OR
 
 Find completed orders over $500, **or** any cancelled order.
 

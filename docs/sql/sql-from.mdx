@@ -1,17 +1,17 @@
 ---
 id: sql-from
-title: "FROM — Specifying the Source Table"
+title: "FROM: Specifying the Source Table"
 sidebar_label: "FROM"
 sidebar_position: 4
 youtube_url: ""
 ---
 
-# `FROM` — Specifying the Source Table
+# `FROM`: Specifying the Source Table
 
 `FROM` tells SQL where to get the data. It always pairs with `SELECT` and names the table, view, subquery, or CTE you want to query.
 
 :::tip Prior lesson
-This lesson builds on [SELECT](./sql-select). The sample dataset (`customers`, `products`, `orders`) is defined there.
+This lesson builds on [SELECT](./sql-select). The sample dataset (`customers`, `products`, `orders`) is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -27,7 +27,7 @@ FROM table_name alias;
 
 ## Examples
 
-### Example 1 — Basic FROM
+### Example 1: Basic FROM
 
 ```sql
 SELECT
@@ -47,7 +47,7 @@ FROM products;
 | 4          | Chair    | 199.00 |
 | 5          | Notebook | 4.99   |
 
-### Example 2 — Table alias
+### Example 2: Table alias
 
 A table alias shortens the table name within the query. This is especially useful when joining multiple tables (covered in the [JOIN lesson](./sql-join)).
 
@@ -59,7 +59,7 @@ SELECT
 FROM orders o;
 ```
 
-The alias `o` is now a shorthand for `orders` throughout this query. You can use either `orders.column` or `o.column` — but once you define an alias, most databases require you to use it consistently.
+The alias `o` is now a shorthand for `orders` throughout this query. You can use either `orders.column` or `o.column` - but once you define an alias, most databases require you to use it consistently.
 
 **Result:**
 
@@ -70,7 +70,7 @@ The alias `o` is now a shorthand for `orders` throughout this query. You can use
 | 3        | 2024-01-15 | 349.00       |
 | ...      | ...        | ...          |
 
-### Example 3 — FROM a subquery
+### Example 3: FROM a subquery
 
 `FROM` can also reference an inline query (a subquery) as if it were a table. This is a preview of a concept covered more fully in the [WITH (CTE)](./sql-with-cte) lesson.
 

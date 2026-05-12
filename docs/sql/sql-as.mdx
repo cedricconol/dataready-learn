@@ -1,17 +1,17 @@
 ---
 id: sql-as
-title: "AS — Aliasing Columns and Tables"
+title: "AS: Aliasing Columns and Tables"
 sidebar_label: "AS"
 sidebar_position: 13
 youtube_url: ""
 ---
 
-# `AS` — Aliasing Columns and Tables
+# `AS`: Aliasing Columns and Tables
 
-`AS` lets you assign a temporary name — an alias — to a column or table. Aliases make query output more readable and shorten long table names in joins.
+`AS` lets you assign a temporary name - an alias - to a column or table. Aliases make query output more readable and shorten long table names in joins.
 
 :::tip Prior lesson
-The sample dataset is defined in the [SELECT](./sql-select) lesson.
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## Syntax
@@ -32,7 +32,7 @@ FROM table_name alias;
 
 ## Examples
 
-### Example 1 — Column aliases for readability
+### Example 1: Column aliases for readability
 
 Without aliases, aggregate results get auto-generated column names that are often unhelpful.
 
@@ -67,9 +67,9 @@ ORDER BY total_spent DESC;
 | 4           | 2           | 74.85       |
 | 5           | 1           | 89.97       |
 
-### Example 2 — Table aliases in joins
+### Example 2: Table aliases in joins
 
-Table aliases are almost mandatory when joining multiple tables — they prevent ambiguity when two tables share a column name.
+Table aliases are almost mandatory when joining multiple tables - they prevent ambiguity when two tables share a column name.
 
 ```sql
 SELECT
@@ -93,7 +93,7 @@ Without the `AS p.name` and `AS c.name` aliases, both `name` columns would colli
 | 2        | Alice Johnson | Mouse        | 59.98        |
 | 3        | Bob Smith     | Desk         | 349.00       |
 
-### Example 3 — Computed columns
+### Example 3: Computed columns
 
 You can alias the result of any expression.
 
@@ -133,7 +133,7 @@ FROM orders
 WHERE total_amount * 0.9 < 100;
 ```
 
-`ORDER BY` is an exception — it runs after `SELECT` and can use aliases.
+`ORDER BY` is an exception - it runs after `SELECT` and can use aliases.
 :::
 
 ## Practice

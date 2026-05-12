@@ -1,20 +1,20 @@
 ---
 id: sql-coalesce
-title: "COALESCE and NULLIF — Handling NULLs Gracefully"
+title: "COALESCE and NULLIF: Handling NULLs Gracefully"
 sidebar_label: "COALESCE / NULLIF"
 sidebar_position: 37
 youtube_url: ""
 ---
 
-# `COALESCE` and `NULLIF` — Handling NULLs Gracefully
+# `COALESCE` and `NULLIF`: Handling NULLs Gracefully
 
 Two functions that make working with `NULL` values clean and safe:
 
-- **`COALESCE(a, b, c, ...)`** — returns the first non-NULL value in the list
-- **`NULLIF(a, b)`** — returns `NULL` if `a = b`, otherwise returns `a`
+- **`COALESCE(a, b, c, ...)`** - returns the first non-NULL value in the list
+- **`NULLIF(a, b)`** - returns `NULL` if `a = b`, otherwise returns `a`
 
 :::tip Prior lesson
-This builds on [IS NULL / IS NOT NULL](./sql-is-null). The sample dataset is defined in the [SELECT](./sql-select) lesson.
+This builds on [IS NULL / IS NOT NULL](./sql-is-null). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
 ## COALESCE
@@ -27,7 +27,7 @@ COALESCE(value1, value2, value3, ...)
 
 Returns the first argument that is not `NULL`. If all arguments are `NULL`, it returns `NULL`.
 
-### Example 1 — Replace NULL with a default
+### Example 1: Replace NULL with a default
 
 Imagine some orders have no `customer_id` (guest checkouts). Use `COALESCE` to display a label instead of `NULL`.
 
@@ -40,7 +40,7 @@ FROM orders
 ORDER BY order_id;
 ```
 
-### Example 2 — Fallback chain
+### Example 2: Fallback chain
 
 Check multiple columns for a value, taking the first non-NULL.
 
@@ -52,7 +52,7 @@ SELECT
 FROM customers;
 ```
 
-### Example 3 — COALESCE in aggregation
+### Example 3: COALESCE in aggregation
 
 When a LEFT JOIN produces NULLs, wrap the aggregate column with `COALESCE` to treat missing rows as zero.
 
@@ -79,7 +79,7 @@ NULLIF(value, comparison_value)
 
 Returns `NULL` if `value = comparison_value`, otherwise returns `value`. Most commonly used to prevent division-by-zero errors.
 
-### Example 4 — Safe division
+### Example 4: Safe division
 
 ```sql
 SELECT
@@ -99,7 +99,7 @@ FROM (
 
 If `order_count` were ever `0`, dividing would raise an error. `NULLIF(order_count, 0)` converts it to `NULL` first, making the division return `NULL` instead of crashing.
 
-### Example 5 — Turn empty strings into NULL
+### Example 5: Turn empty strings into NULL
 
 Some data sources store missing values as empty strings instead of `NULL`.
 
@@ -122,8 +122,8 @@ Use `COALESCE` when the logic is simply "first non-NULL value." Use `CASE WHEN` 
 
 ## Common Mistake
 
-:::warning COALESCE short-circuits — but not all databases guarantee it
-`COALESCE` evaluates arguments left to right and stops at the first non-NULL. This means expensive expressions later in the list may not execute. However, SQL does not guarantee expression evaluation order in all contexts — don't rely on side effects inside `COALESCE` arguments.
+:::warning COALESCE short-circuits - but not all databases guarantee it
+`COALESCE` evaluates arguments left to right and stops at the first non-NULL. This means expensive expressions later in the list may not execute. However, SQL does not guarantee expression evaluation order in all contexts - don't rely on side effects inside `COALESCE` arguments.
 :::
 
 ## Practice
