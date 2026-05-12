@@ -40,7 +40,7 @@ function Hero() {
     <header className="hero--dataready hero">
       <div className="container">
         <h1 className="hero__title">
-          Learn the Modern Data Stack — for free.
+          Learn the Modern Data Stack - for free.
         </h1>
         <p className="hero__subtitle">
           DataReady is an open-source curriculum for aspiring data analysts and

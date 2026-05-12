@@ -1,0 +1,186 @@
+---
+id: sql-date-functions
+title: "Date and Time Functions"
+sidebar_label: "Date & Time Functions"
+sidebar_position: 38
+youtube_url: ""
+---
+
+# Date and Time Functions
+
+Dates are everywhere in analytical SQL - order dates, event timestamps, signup dates, reporting periods. SQL provides a rich set of functions for extracting, truncating, comparing, and computing with date values.
+
+:::note Dialect differences
+Date functions vary significantly across databases. This lesson covers the most common patterns with notes on how they differ. Always check your database's documentation.
+:::
+
+:::tip Prior lesson
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Getting the current date/time
+
+| Function | Database | Returns |
+|---|---|---|
+| `CURRENT_DATE` | All | Today's date (no time) |
+| `CURRENT_TIMESTAMP` / `NOW()` | Most | Current date + time |
+| `GETDATE()` | SQL Server | Current date + time |
+| `SYSDATE` | Oracle | Current date + time |
+
+```sql
+SELECT CURRENT_DATE AS today;
+```
+
+## Extracting parts of a date
+
+### EXTRACT / DATE_PART
+
+```sql
+-- PostgreSQL / Standard SQL
+SELECT
+    order_id,
+    order_date,
+    EXTRACT(YEAR  FROM order_date) AS year,
+    EXTRACT(MONTH FROM order_date) AS month,
+    EXTRACT(DAY   FROM order_date) AS day
+FROM orders;
+```
+
+```sql
+-- SQL Server
+SELECT YEAR(order_date), MONTH(order_date), DAY(order_date) FROM orders;
+
+-- MySQL
+SELECT YEAR(order_date), MONTH(order_date), DAY(order_date) FROM orders;
+```
+
+**Result:**
+
+| order_id | order_date | year | month | day |
+|----------|------------|------|-------|-----|
+| 1        | 2024-01-05 | 2024 | 1     | 5   |
+| 2        | 2024-01-10 | 2024 | 1     | 10  |
+| 3        | 2024-01-15 | 2024 | 1     | 15  |
+| ...      | ...        | ...  | ...   | ... |
+
+## Truncating dates
+
+`DATE_TRUNC` rounds a date down to the start of a period. Essential for grouping by week, month, or quarter.
+
+```sql
+-- PostgreSQL / BigQuery
+SELECT
+    DATE_TRUNC('month', order_date) AS month_start,
+    COUNT(*)                        AS order_count,
+    SUM(total_amount)               AS revenue
+FROM orders
+GROUP BY DATE_TRUNC('month', order_date)
+ORDER BY month_start;
+```
+
+**Result:**
+
+| month_start | order_count | revenue |
+|-------------|-------------|---------|
+| 2024-01-01  | 3           | 1407.98 |
+| 2024-02-01  | 2           | 845.90  |
+| 2024-03-01  | 2           | 1348.00 |
+| 2024-04-01  | 2           | 1088.97 |
+| 2024-05-01  | 1           | 24.95   |
+
+| Database | Equivalent syntax |
+|---|---|
+| PostgreSQL | `DATE_TRUNC('month', col)` |
+| BigQuery | `DATE_TRUNC(col, MONTH)` |
+| MySQL | `DATE_FORMAT(col, '%Y-%m-01')` |
+| SQL Server | `DATETRUNC(month, col)` (2022+) |
+
+## Date arithmetic
+
+### Days between two dates
+
+```sql
+-- PostgreSQL: subtract dates directly
+SELECT
+    order_id,
+    order_date,
+    CURRENT_DATE - order_date AS days_ago
+FROM orders
+ORDER BY days_ago;
+
+-- MySQL / SQL Server
+SELECT DATEDIFF(CURRENT_DATE, order_date) AS days_ago FROM orders;
+```
+
+### Add or subtract an interval
+
+```sql
+-- PostgreSQL
+SELECT order_date + INTERVAL '30 days' AS due_date FROM orders;
+
+-- MySQL
+SELECT DATE_ADD(order_date, INTERVAL 30 DAY) AS due_date FROM orders;
+
+-- SQL Server
+SELECT DATEADD(day, 30, order_date) AS due_date FROM orders;
+```
+
+## Filtering by relative dates
+
+```sql
+-- Orders in the last 90 days (PostgreSQL)
+SELECT *
+FROM orders
+WHERE order_date >= CURRENT_DATE - INTERVAL '90 days';
+
+-- Orders in the current year
+SELECT *
+FROM orders
+WHERE EXTRACT(YEAR FROM order_date) = EXTRACT(YEAR FROM CURRENT_DATE);
+```
+
+## Common Mistake
+
+:::warning Filtering on a function-wrapped column skips indexes
+Wrapping a column in a function in `WHERE` prevents index use:
+
+```sql
+-- Slow: index on order_date cannot be used
+WHERE EXTRACT(YEAR FROM order_date) = 2024
+
+-- Fast: use a range instead
+WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01'
+```
+
+For date filtering, always prefer range comparisons (`>=` / `<`) over date functions when performance matters.
+:::
+
+## Practice
+
+Write a query that groups orders by month and returns the `month` (truncated to the first of the month), `order_count`, and `total_revenue`. Sort by month ascending. (Use `DATE_TRUNC` for PostgreSQL, or the equivalent for your database.)
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+-- PostgreSQL / BigQuery
+SELECT
+    DATE_TRUNC('month', order_date) AS month,
+    COUNT(*)                        AS order_count,
+    SUM(total_amount)               AS total_revenue
+FROM orders
+GROUP BY DATE_TRUNC('month', order_date)
+ORDER BY month;
+```
+
+**Expected result:**
+
+| month      | order_count | total_revenue |
+|------------|-------------|---------------|
+| 2024-01-01 | 3           | 1407.98       |
+| 2024-02-01 | 2           | 845.90        |
+| 2024-03-01 | 2           | 1348.00       |
+| 2024-04-01 | 2           | 1088.97       |
+| 2024-05-01 | 1           | 24.95         |
+
+</details>

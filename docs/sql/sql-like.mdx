@@ -1,0 +1,146 @@
+---
+id: sql-like
+title: "LIKE: Pattern Matching on Strings"
+sidebar_label: "LIKE"
+sidebar_position: 18
+youtube_url: ""
+---
+
+# `LIKE`: Pattern Matching on Strings
+
+`LIKE` filters rows based on a text pattern. It uses two wildcard characters:
+
+- `%` - matches **zero or more** characters
+- `_` - matches **exactly one** character
+
+:::tip Prior lesson
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+SELECT columns
+FROM table_name
+WHERE column LIKE 'pattern';
+
+-- Negation
+WHERE column NOT LIKE 'pattern';
+```
+
+## Wildcard reference
+
+| Pattern       | Matches                                          |
+|---------------|--------------------------------------------------|
+| `'A%'`        | Anything starting with "A"                       |
+| `'%son'`      | Anything ending with "son"                       |
+| `'%example%'` | Anything containing "example"                    |
+| `'_o%'`       | Anything where the second character is "o"       |
+| `'__a%'`      | Anything where the third character is "a"        |
+
+## Examples
+
+### Example 1: Names starting with a letter
+
+```sql
+SELECT
+    name,
+    email
+FROM customers
+WHERE name LIKE 'A%';
+```
+
+**Result:**
+
+| name          | email             |
+|---------------|-------------------|
+| Alice Johnson | alice@example.com |
+
+### Example 2: Email domain matching
+
+```sql
+SELECT
+    name,
+    email
+FROM customers
+WHERE email LIKE '%@example.com';
+```
+
+**Result:**
+
+All five customers, since every email ends with `@example.com`.
+
+### Example 3: Products containing a word
+
+```sql
+SELECT
+    name,
+    category,
+    price
+FROM products
+WHERE name LIKE '%o%';
+```
+
+**Result:**
+
+| name     | category    | price  |
+|----------|-------------|--------|
+| Laptop   | Electronics | 999.00 |
+| Mouse    | Electronics | 29.99  |
+| Notebook | Stationery  | 4.99   |
+
+(All three contain the letter "o".)
+
+### Example 4: Single-character wildcard
+
+```sql
+-- Match exactly 4-character names ending in "esk" with one leading character
+SELECT name FROM products WHERE name LIKE '_esk';
+```
+
+**Result:**
+
+| name |
+|------|
+| Desk |
+
+## Dialect notes
+
+| Database   | Case sensitivity                              |
+|------------|-----------------------------------------------|
+| PostgreSQL | `LIKE` is case-sensitive; use `ILIKE` for case-insensitive |
+| MySQL      | `LIKE` is case-insensitive by default (depends on collation) |
+| SQL Server | Depends on collation; usually case-insensitive |
+| SQLite     | Case-insensitive for ASCII characters         |
+
+## Common Mistake
+
+:::warning Leading wildcards prevent index use
+A pattern like `'%Johnson'` or `'%example%'` forces the database to scan every row - it cannot use an index to speed up the search. This is usually fine on small tables but can cripple performance on large ones.
+
+If you need full-text search, most databases have a dedicated `FULL TEXT` search capability that uses inverted indexes and is far more efficient.
+:::
+
+## Practice
+
+Write a query that returns all customers whose name ends with `'son'`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    name,
+    city,
+    country
+FROM customers
+WHERE name LIKE '%son';
+```
+
+**Expected result:**
+
+| name          | city     | country |
+|---------------|----------|---------|
+| Alice Johnson | New York | USA     |
+
+</details>

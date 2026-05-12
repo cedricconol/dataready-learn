@@ -1,0 +1,149 @@
+---
+id: sql-lag-lead
+title: "LAG and LEAD: Accessing Adjacent Rows"
+sidebar_label: "LAG / LEAD"
+sidebar_position: 32
+youtube_url: ""
+---
+
+# `LAG` and `LEAD`: Accessing Adjacent Rows
+
+`LAG` and `LEAD` let you access a value from a different row within the same window - without a self-join.
+
+- **`LAG(col, n)`** - value from `n` rows **before** the current row
+- **`LEAD(col, n)`** - value from `n` rows **after** the current row
+
+Both default to `n = 1` (the immediately adjacent row).
+
+:::tip Prior lesson
+This lesson builds on [Window Functions](./sql-window-functions). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+LAG(column, offset, default)  OVER (PARTITION BY col ORDER BY col)
+LEAD(column, offset, default) OVER (PARTITION BY col ORDER BY col)
+```
+
+- `offset` - how many rows to look back/forward (default: 1)
+- `default` - value to return when there is no preceding/following row (default: NULL)
+
+## Examples
+
+### Example 1: Month-over-month revenue change
+
+First, aggregate revenue by month, then use `LAG` to compare each month to the previous one.
+
+```sql
+WITH monthly_revenue AS (
+    SELECT
+        DATE_TRUNC('month', order_date) AS month,
+        SUM(total_amount)               AS revenue
+    FROM orders
+    GROUP BY DATE_TRUNC('month', order_date)
+)
+SELECT
+    month,
+    revenue,
+    LAG(revenue) OVER (ORDER BY month)                        AS prev_month_revenue,
+    revenue - LAG(revenue) OVER (ORDER BY month)              AS change,
+    ROUND(
+        100.0 * (revenue - LAG(revenue) OVER (ORDER BY month))
+        / NULLIF(LAG(revenue) OVER (ORDER BY month), 0),
+        1
+    )                                                          AS pct_change
+FROM monthly_revenue
+ORDER BY month;
+```
+
+**Result:**
+
+| month      | revenue | prev_month_revenue | change   | pct_change |
+|------------|---------|--------------------|----------|------------|
+| 2024-01-01 | 1407.98 | NULL               | NULL     | NULL       |
+| 2024-02-01 | 845.90  | 1407.98            | -562.08  | -39.9      |
+| 2024-03-01 | 1348.00 | 845.90             | 502.10   | 59.4       |
+| 2024-04-01 | 1088.97 | 1348.00            | -259.03  | -19.2      |
+| 2024-05-01 | 24.95   | 1088.97            | -1064.02 | -97.7      |
+
+January has no previous month so `LAG` returns `NULL`.
+
+:::note DATE_TRUNC dialect
+`DATE_TRUNC('month', col)` is PostgreSQL / BigQuery syntax. In MySQL use `DATE_FORMAT(col, '%Y-%m-01')`; in SQL Server use `DATETRUNC(month, col)` (2022+) or `DATEFROMPARTS(YEAR(col), MONTH(col), 1)`.
+:::
+
+### Example 2: Days between consecutive orders per customer
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    order_date,
+    LAG(order_date) OVER (
+        PARTITION BY customer_id
+        ORDER BY order_date
+    ) AS prev_order_date,
+    order_date - LAG(order_date) OVER (
+        PARTITION BY customer_id
+        ORDER BY order_date
+    ) AS days_since_last_order
+FROM orders
+ORDER BY customer_id, order_date;
+```
+
+**Result (customer 1):**
+
+| order_id | customer_id | order_date | prev_order_date | days_since_last_order |
+|----------|-------------|------------|-----------------|----------------------|
+| 1        | 1           | 2024-01-05 | NULL            | NULL                 |
+| 2        | 1           | 2024-01-10 | 2024-01-05      | 5                    |
+| 6        | 1           | 2024-03-01 | 2024-01-10      | 51                   |
+
+### Example 3: LEAD to preview the next order date
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    order_date,
+    LEAD(order_date) OVER (
+        PARTITION BY customer_id
+        ORDER BY order_date
+    ) AS next_order_date
+FROM orders
+ORDER BY customer_id, order_date;
+```
+
+## Common Mistake
+
+:::warning The first/last row always returns NULL unless you set a default
+The first row has no preceding row for `LAG`, and the last row has no following row for `LEAD`. These positions return `NULL` by default.
+
+Use the third argument to supply a fallback:
+
+```sql
+LAG(revenue, 1, 0) OVER (ORDER BY month)  -- returns 0 instead of NULL
+```
+
+Be careful with percentage-change calculations: dividing by a `NULL` or `0` default will produce `NULL` or an error. Use `NULLIF` to protect the denominator (as shown in Example 1).
+:::
+
+## Practice
+
+Write a query that shows each order's `order_id`, `order_date`, `total_amount`, and the `total_amount` of the immediately preceding order (by date), calling it `prev_order_amount`. Include all orders.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    total_amount,
+    LAG(total_amount) OVER (ORDER BY order_date) AS prev_order_amount
+FROM orders
+ORDER BY order_date;
+```
+
+</details>

@@ -1,0 +1,150 @@
+---
+id: sql-group-by
+title: "GROUP BY: Grouping Rows for Aggregation"
+sidebar_label: "GROUP BY"
+sidebar_position: 9
+youtube_url: ""
+---
+
+# `GROUP BY`: Grouping Rows for Aggregation
+
+`GROUP BY` collapses multiple rows that share the same value in a column into a single summary row. It is always used alongside aggregate functions like `COUNT`, `SUM`, or `AVG`.
+
+:::tip Prior lessons
+This lesson uses concepts from [SELECT](./sql-select), [FROM](./sql-from), and [WHERE](./sql-where). Aggregate functions (`COUNT`, `SUM`, etc.) are covered in detail in the [Aggregate Functions](./sql-aggregate-functions) lesson.
+:::
+
+## Syntax
+
+```sql
+SELECT column, AGGREGATE_FUNCTION(other_column)
+FROM table_name
+WHERE condition          -- optional, applied before grouping
+GROUP BY column;
+```
+
+## Query execution order
+
+Understanding when `GROUP BY` runs helps avoid common errors:
+
+1. `FROM` - load the table
+2. `WHERE` - filter individual rows
+3. `GROUP BY` - collapse rows into groups
+4. `SELECT` - compute output columns (including aggregates)
+5. `ORDER BY` - sort the result
+
+## Examples
+
+### Example 1: Count orders per customer
+
+```sql
+SELECT
+    customer_id,
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY customer_id;
+```
+
+**Result:**
+
+| customer_id | order_count |
+|-------------|-------------|
+| 1           | 3           |
+| 2           | 2           |
+| 3           | 2           |
+| 4           | 2           |
+| 5           | 1           |
+
+### Example 2: Total revenue by status
+
+```sql
+SELECT
+    status,
+    COUNT(*) AS order_count,
+    SUM(total_amount) AS total_revenue
+FROM orders
+GROUP BY status;
+```
+
+**Result:**
+
+| status    | order_count | total_revenue |
+|-----------|-------------|---------------|
+| completed | 6           | 3292.93       |
+| pending   | 3           | 1073.85       |
+| cancelled | 1           | 349.00        |
+
+### Example 3: Group by multiple columns
+
+```sql
+SELECT
+    p.category,
+    o.status,
+    COUNT(*) AS order_count
+FROM orders o
+JOIN products p ON o.product_id = p.product_id
+GROUP BY p.category, o.status
+ORDER BY p.category, o.status;
+```
+
+**Result:**
+
+| category    | status    | order_count |
+|-------------|-----------|-------------|
+| Electronics | completed | 4           |
+| Electronics | pending   | 1           |
+| Furniture   | cancelled | 1           |
+| Furniture   | completed | 2           |
+| Stationery  | pending   | 2           |
+
+## Common Mistake
+
+:::warning Every non-aggregated column in SELECT must appear in GROUP BY
+If a column appears in `SELECT` but is not wrapped in an aggregate function, it must also be listed in `GROUP BY`. Forgetting this causes an error.
+
+```sql
+-- This fails in most databases
+SELECT
+    customer_id,
+    order_date,       -- not aggregated, not in GROUP BY
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY customer_id;
+
+-- Fix: either add order_date to GROUP BY or remove it from SELECT
+SELECT
+    customer_id,
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY customer_id;
+```
+:::
+
+## Practice
+
+Write a query that counts the number of orders and calculates the total revenue for each `product_id`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    product_id,
+    COUNT(*) AS order_count,
+    SUM(total_amount) AS total_revenue
+FROM orders
+GROUP BY product_id
+ORDER BY total_revenue DESC;
+```
+
+**Expected result:**
+
+| product_id | order_count | total_revenue |
+|------------|-------------|---------------|
+| 1          | 3           | 2997.00       |
+| 4          | 1           | 796.00        |
+| 3          | 2           | 698.00        |
+| 2          | 2           | 149.95        |
+| 5          | 2           | 74.85         |
+
+</details>

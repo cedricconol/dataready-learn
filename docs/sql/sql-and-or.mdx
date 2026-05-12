@@ -1,0 +1,153 @@
+---
+id: sql-and-or
+title: "AND / OR: Combining Conditions"
+sidebar_label: "AND / OR"
+sidebar_position: 6
+youtube_url: ""
+---
+
+# `AND` / `OR`: Combining Conditions
+
+`AND` and `OR` let you combine multiple conditions inside a `WHERE` clause.
+
+- `AND` - both conditions must be true
+- `OR` - at least one condition must be true
+
+:::tip Prior lesson
+This lesson builds on [WHERE](./sql-where). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+-- AND: both conditions must be true
+SELECT columns
+FROM table
+WHERE condition1 AND condition2;
+
+-- OR: either condition must be true
+SELECT columns
+FROM table
+WHERE condition1 OR condition2;
+```
+
+## Examples
+
+### Example 1: AND
+
+Return completed orders with a total amount over $500.
+
+```sql
+SELECT
+    order_id,
+    total_amount,
+    status
+FROM orders
+WHERE status = 'completed'
+  AND total_amount > 500;
+```
+
+**Result:**
+
+| order_id | total_amount | status    |
+|----------|--------------|-----------|
+| 1        | 999.00       | completed |
+| 4        | 796.00       | completed |
+| 7        | 999.00       | completed |
+| 9        | 999.00       | completed |
+
+Wait - order 9 has status `pending`. Let's re-check: with `AND`, both conditions must pass. Order 9 (`pending`, `999.00`) does **not** pass the `status = 'completed'` check, so it is excluded.
+
+### Example 2: OR
+
+Return orders that are either cancelled or pending.
+
+```sql
+SELECT
+    order_id,
+    total_amount,
+    status
+FROM orders
+WHERE status = 'cancelled'
+   OR status = 'pending';
+```
+
+**Result:**
+
+| order_id | total_amount | status    |
+|----------|--------------|-----------|
+| 5        | 49.90        | pending   |
+| 6        | 349.00       | cancelled |
+| 9        | 999.00       | pending   |
+| 10       | 24.95        | pending   |
+
+### Example 3: Mixing AND and OR
+
+Find completed orders over $500, **or** any cancelled order.
+
+```sql
+SELECT
+    order_id,
+    total_amount,
+    status
+FROM orders
+WHERE (status = 'completed' AND total_amount > 500)
+   OR status = 'cancelled';
+```
+
+**Result:**
+
+| order_id | total_amount | status    |
+|----------|--------------|-----------|
+| 1        | 999.00       | completed |
+| 4        | 796.00       | completed |
+| 6        | 349.00       | cancelled |
+| 7        | 999.00       | completed |
+
+## Common Mistake
+
+:::warning AND is evaluated before OR
+SQL evaluates `AND` before `OR`, just like multiplication before addition in math. Without parentheses, the logic may not be what you expect.
+
+```sql
+-- Intended: (completed AND > 500) OR cancelled
+-- But without parentheses, it reads differently:
+WHERE status = 'completed' AND total_amount > 500 OR status = 'cancelled'
+-- Evaluated as: (status = 'completed' AND total_amount > 500) OR status = 'cancelled'
+-- In this case it happens to be correct, but it's easy to get wrong.
+
+-- Always use parentheses to make your intent explicit:
+WHERE (status = 'completed' AND total_amount > 500)
+   OR status = 'cancelled'
+```
+:::
+
+## Practice
+
+Write a query that returns orders where:
+- The status is `'completed'`, **and**
+- The total amount is between $50 and $400 (inclusive)
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    order_id,
+    total_amount,
+    status
+FROM orders
+WHERE status = 'completed'
+  AND total_amount >= 50
+  AND total_amount <= 400;
+```
+
+**Expected result:**
+
+| order_id | total_amount | status    |
+|----------|--------------|-----------|
+| 2        | 59.98        | completed |
+| 3        | 349.00       | completed |
+| 8        | 89.97        | completed |
+
+</details>

@@ -90,6 +90,25 @@ html {
   border-right: 1px solid #1e2d45;
 }
 
+.menu__link--sublist {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  margin-top: 0.5rem;
+}
+
+[data-theme="dark"] .menu__link--sublist {
+  color: #60a5fa;
+  opacity: 0.75;
+}
+
+.menu__link--sublist:hover,
+[data-theme="dark"] .menu__link--sublist:hover {
+  color: #60a5fa;
+  opacity: 1;
+}
+
 /* ── Content ─────────────────────────────────────────────────── */
 .markdown h1:first-child {
   font-size: 2rem;

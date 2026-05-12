@@ -1,0 +1,165 @@
+---
+id: sql-as
+title: "AS: Aliasing Columns and Tables"
+sidebar_label: "AS"
+sidebar_position: 13
+youtube_url: ""
+---
+
+# `AS`: Aliasing Columns and Tables
+
+`AS` lets you assign a temporary name - an alias - to a column or table. Aliases make query output more readable and shorten long table names in joins.
+
+:::tip Prior lesson
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+-- Column alias
+SELECT column_name AS alias_name
+FROM table_name;
+
+-- Table alias
+SELECT alias.column_name
+FROM table_name AS alias;
+
+-- AS is optional (both forms are equivalent)
+SELECT column_name alias_name
+FROM table_name alias;
+```
+
+## Examples
+
+### Example 1: Column aliases for readability
+
+Without aliases, aggregate results get auto-generated column names that are often unhelpful.
+
+```sql
+-- Without aliases (ugly column names)
+SELECT
+    customer_id,
+    COUNT(*),
+    SUM(total_amount)
+FROM orders
+GROUP BY customer_id;
+```
+
+```sql
+-- With aliases (clean column names)
+SELECT
+    customer_id,
+    COUNT(*)          AS order_count,
+    SUM(total_amount) AS total_spent
+FROM orders
+GROUP BY customer_id
+ORDER BY total_spent DESC;
+```
+
+**Result:**
+
+| customer_id | order_count | total_spent |
+|-------------|-------------|-------------|
+| 1           | 3           | 1407.98     |
+| 3           | 2           | 1795.00     |
+| 2           | 2           | 1348.00     |
+| 4           | 2           | 74.85       |
+| 5           | 1           | 89.97       |
+
+### Example 2: Table aliases in joins
+
+Table aliases are almost mandatory when joining multiple tables - they prevent ambiguity when two tables share a column name.
+
+```sql
+SELECT
+    o.order_id,
+    c.name       AS customer_name,
+    p.name       AS product_name,
+    o.total_amount
+FROM orders   AS o
+JOIN customers AS c ON o.customer_id = c.customer_id
+JOIN products  AS p ON o.product_id  = p.product_id
+ORDER BY o.order_id;
+```
+
+Without the `AS p.name` and `AS c.name` aliases, both `name` columns would collide in the output.
+
+**Result (first few rows):**
+
+| order_id | customer_name | product_name | total_amount |
+|----------|---------------|--------------|--------------|
+| 1        | Alice Johnson | Laptop       | 999.00       |
+| 2        | Alice Johnson | Mouse        | 59.98        |
+| 3        | Bob Smith     | Desk         | 349.00       |
+
+### Example 3: Computed columns
+
+You can alias the result of any expression.
+
+```sql
+SELECT
+    name,
+    price,
+    price * 1.1 AS price_with_tax
+FROM products
+ORDER BY price_with_tax DESC;
+```
+
+**Result:**
+
+| name     | price  | price_with_tax |
+|----------|--------|----------------|
+| Laptop   | 999.00 | 1098.90        |
+| Desk     | 349.00 | 383.90         |
+| Chair    | 199.00 | 218.90         |
+| Mouse    | 29.99  | 32.99          |
+| Notebook | 4.99   | 5.49           |
+
+## Common Mistake
+
+:::warning Column aliases are not available in WHERE or HAVING
+The `WHERE` and `HAVING` clauses are evaluated before `SELECT`, so they can't reference aliases defined in `SELECT`.
+
+```sql
+-- This fails:
+SELECT total_amount * 0.9 AS discounted
+FROM orders
+WHERE discounted < 100;   -- ERROR
+
+-- Fix: repeat the expression
+SELECT total_amount * 0.9 AS discounted
+FROM orders
+WHERE total_amount * 0.9 < 100;
+```
+
+`ORDER BY` is an exception - it runs after `SELECT` and can use aliases.
+:::
+
+## Practice
+
+Write a query that returns each product's `name`, `price`, and a computed column called `discounted_price` equal to `price * 0.8` (20% off). Sort by `discounted_price` ascending.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    name,
+    price,
+    price * 0.8 AS discounted_price
+FROM products
+ORDER BY discounted_price ASC;
+```
+
+**Expected result:**
+
+| name     | price  | discounted_price |
+|----------|--------|-----------------|
+| Notebook | 4.99   | 3.99            |
+| Mouse    | 29.99  | 23.99           |
+| Chair    | 199.00 | 159.20          |
+| Desk     | 349.00 | 279.20          |
+| Laptop   | 999.00 | 799.20          |
+
+</details>

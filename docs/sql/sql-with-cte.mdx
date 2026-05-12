@@ -1,0 +1,194 @@
+---
+id: sql-with-cte
+title: "WITH: Common Table Expressions (CTEs)"
+sidebar_label: "WITH (CTEs)"
+sidebar_position: 22
+youtube_url: ""
+---
+
+# `WITH`: Common Table Expressions (CTEs)
+
+A **Common Table Expression (CTE)** is a named, temporary result set defined at the top of a query using the `WITH` keyword. Instead of writing a complex nested subquery, you break the query into readable, named steps.
+
+:::tip Prior lessons
+CTEs work best when you already understand [SELECT](./sql-select), [JOIN](./sql-join), [GROUP BY](./sql-group-by), and [Aggregate Functions](./sql-aggregate-functions). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+-- Single CTE
+WITH cte_name AS (
+    SELECT ...
+    FROM ...
+    WHERE ...
+)
+SELECT columns
+FROM cte_name;
+
+-- Multiple CTEs (chained with commas)
+WITH
+    first_cte AS (
+        SELECT ...
+    ),
+    second_cte AS (
+        SELECT ...
+        FROM first_cte    -- can reference a previous CTE
+    )
+SELECT *
+FROM second_cte;
+```
+
+## Examples
+
+### Example 1: Simplify a complex query
+
+Find all customers who have placed more than one completed order. Without a CTE this requires a nested subquery. With a CTE it reads like plain English.
+
+```sql
+WITH completed_orders AS (
+    SELECT
+        customer_id,
+        COUNT(*) AS order_count
+    FROM orders
+    WHERE status = 'completed'
+    GROUP BY customer_id
+)
+SELECT
+    c.name,
+    co.order_count
+FROM completed_orders co
+JOIN customers c ON co.customer_id = c.customer_id
+WHERE co.order_count > 1
+ORDER BY co.order_count DESC;
+```
+
+**Result:**
+
+| name          | order_count |
+|---------------|-------------|
+| Alice Johnson | 2           |
+| Bob Smith     | 2           |
+
+### Example 2: Chained CTEs
+
+Calculate the top-spending customer per country using two CTEs.
+
+```sql
+WITH customer_spending AS (
+    SELECT
+        o.customer_id,
+        SUM(o.total_amount) AS total_spent
+    FROM orders o
+    GROUP BY o.customer_id
+),
+customer_details AS (
+    SELECT
+        c.customer_id,
+        c.name,
+        c.country,
+        cs.total_spent
+    FROM customers c
+    JOIN customer_spending cs ON c.customer_id = cs.customer_id
+)
+SELECT
+    country,
+    name,
+    total_spent
+FROM customer_details
+ORDER BY country, total_spent DESC;
+```
+
+**Result:**
+
+| country   | name          | total_spent |
+|-----------|---------------|-------------|
+| Australia | Carol White   | 1795.00     |
+| Canada    | Dave Brown    | 74.85       |
+| UK        | Bob Smith     | 1348.00     |
+| USA       | Alice Johnson | 1407.98     |
+| USA       | Eve Davis     | 89.97       |
+
+### Example 3: CTE as a reusable filter
+
+Pre-filter expensive orders, then join that subset to customers.
+
+```sql
+WITH high_value_orders AS (
+    SELECT *
+    FROM orders
+    WHERE total_amount >= 500
+)
+SELECT
+    c.name AS customer_name,
+    hvo.order_id,
+    hvo.total_amount,
+    hvo.order_date
+FROM high_value_orders hvo
+JOIN customers c ON hvo.customer_id = c.customer_id
+ORDER BY hvo.total_amount DESC;
+```
+
+**Result:**
+
+| customer_name | order_id | total_amount | order_date |
+|---------------|----------|--------------|------------|
+| Alice Johnson | 1        | 999.00       | 2024-01-05 |
+| Bob Smith     | 7        | 999.00       | 2024-03-15 |
+| Carol White   | 9        | 999.00       | 2024-04-10 |
+| Carol White   | 4        | 796.00       | 2024-02-01 |
+
+## CTEs vs subqueries
+
+| Aspect      | CTE                              | Subquery                         |
+|-------------|----------------------------------|----------------------------------|
+| Readability | High - named, linear flow        | Lower - nested inside main query |
+| Reuse       | Can reference the same CTE twice | Must copy the subquery           |
+| Performance | Usually equivalent               | Usually equivalent               |
+
+## Common Mistake
+
+:::warning CTEs are not physically materialized (usually)
+In most databases, a CTE is **not** stored as a temporary table - it's re-evaluated every time it's referenced. If you reference the same CTE twice in a query, it may execute twice.
+
+In PostgreSQL you can force materialization with `WITH cte AS MATERIALIZED (...)`. In general, trust your query planner but be aware of this if you're referencing a heavy CTE multiple times.
+
+Also: CTEs exist only for the duration of the query. They are not the same as views or temporary tables.
+:::
+
+## Practice
+
+Write a query using a CTE called `order_summary` that calculates `customer_id`, `order_count`, and `total_spent` per customer. Then join that CTE to `customers` to show each customer's `name`, `order_count`, and `total_spent`, sorted by `total_spent` descending.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+WITH order_summary AS (
+    SELECT
+        customer_id,
+        COUNT(*)          AS order_count,
+        SUM(total_amount) AS total_spent
+    FROM orders
+    GROUP BY customer_id
+)
+SELECT
+    c.name,
+    os.order_count,
+    os.total_spent
+FROM order_summary os
+JOIN customers c ON os.customer_id = c.customer_id
+ORDER BY os.total_spent DESC;
+```
+
+**Expected result:**
+
+| name          | order_count | total_spent |
+|---------------|-------------|-------------|
+| Carol White   | 2           | 1795.00     |
+| Alice Johnson | 3           | 1407.98     |
+| Bob Smith     | 2           | 1348.00     |
+| Eve Davis     | 1           | 89.97       |
+| Dave Brown    | 2           | 74.85       |
+
+</details>

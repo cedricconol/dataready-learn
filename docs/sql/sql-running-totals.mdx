@@ -1,0 +1,183 @@
+---
+id: sql-running-totals
+title: "Running Totals and Moving Averages"
+sidebar_label: "Running Totals & Moving Averages"
+sidebar_position: 33
+youtube_url: ""
+---
+
+# Running Totals and Moving Averages
+
+Window functions with an `ORDER BY` inside `OVER` compute **cumulative** (running) values by default. You can also control exactly which rows to include using a **window frame**.
+
+:::tip Prior lesson
+This lesson builds on [Window Functions](./sql-window-functions). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Window frames
+
+A frame defines the subset of rows in the window used for each calculation. Without one, `SUM() OVER (ORDER BY ...)` uses the default frame: all rows from the start of the partition up to (and including) the current row.
+
+```sql
+FUNCTION() OVER (
+    PARTITION BY col
+    ORDER BY col
+    ROWS BETWEEN start AND end
+)
+```
+
+Common frame boundaries:
+
+| Boundary | Meaning |
+|---|---|
+| `UNBOUNDED PRECEDING` | First row of the partition |
+| `N PRECEDING` | N rows before the current row |
+| `CURRENT ROW` | The current row |
+| `N FOLLOWING` | N rows after the current row |
+| `UNBOUNDED FOLLOWING` | Last row of the partition |
+
+## Examples
+
+### Example 1: Running total of revenue
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    total_amount,
+    SUM(total_amount) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_total
+FROM orders
+ORDER BY order_date;
+```
+
+**Result:**
+
+| order_id | order_date | total_amount | running_total |
+|----------|------------|--------------|---------------|
+| 1        | 2024-01-05 | 999.00       | 999.00        |
+| 2        | 2024-01-10 | 59.98        | 1058.98       |
+| 3        | 2024-01-15 | 349.00       | 1407.98       |
+| 4        | 2024-02-01 | 796.00       | 2203.98       |
+| 5        | 2024-02-10 | 49.90        | 2253.88       |
+| 6        | 2024-03-01 | 349.00       | 2602.88       |
+| 7        | 2024-03-15 | 999.00       | 3601.88       |
+| 8        | 2024-04-01 | 89.97        | 3691.85       |
+| 9        | 2024-04-10 | 999.00       | 4690.85       |
+| 10       | 2024-05-01 | 24.95        | 4715.80       |
+
+### Example 2: Running total per customer
+
+Add `PARTITION BY` to reset the running total for each customer.
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    order_date,
+    total_amount,
+    SUM(total_amount) OVER (
+        PARTITION BY customer_id
+        ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS customer_running_total
+FROM orders
+ORDER BY customer_id, order_date;
+```
+
+**Result (customer 1):**
+
+| order_id | customer_id | order_date | total_amount | customer_running_total |
+|----------|-------------|------------|--------------|------------------------|
+| 1        | 1           | 2024-01-05 | 999.00       | 999.00                 |
+| 2        | 1           | 2024-01-10 | 59.98        | 1058.98                |
+| 6        | 1           | 2024-03-01 | 349.00       | 1407.98                |
+
+### Example 3: 3-period moving average
+
+Use a sliding frame of the current row plus the 2 preceding rows.
+
+```sql
+WITH monthly_revenue AS (
+    SELECT
+        DATE_TRUNC('month', order_date) AS month,
+        SUM(total_amount) AS revenue
+    FROM orders
+    GROUP BY DATE_TRUNC('month', order_date)
+)
+SELECT
+    month,
+    revenue,
+    ROUND(
+        AVG(revenue) OVER (
+            ORDER BY month
+            ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+        ),
+        2
+    ) AS moving_avg_3m
+FROM monthly_revenue
+ORDER BY month;
+```
+
+**Result:**
+
+| month      | revenue | moving_avg_3m |
+|------------|---------|---------------|
+| 2024-01-01 | 1407.98 | 1407.98       |
+| 2024-02-01 | 845.90  | 1126.94       |
+| 2024-03-01 | 1348.00 | 1200.63       |
+| 2024-04-01 | 1088.97 | 1094.29       |
+| 2024-05-01 | 24.95   | 820.64        |
+
+January and February use fewer rows (they don't have 2 preceding months), so the frame shrinks automatically.
+
+### Example 4: Percentage of total
+
+Divide each order's amount by the grand total using `OVER ()` with no frame.
+
+```sql
+SELECT
+    order_id,
+    total_amount,
+    ROUND(
+        100.0 * total_amount / SUM(total_amount) OVER (),
+        1
+    ) AS pct_of_total
+FROM orders
+ORDER BY total_amount DESC;
+```
+
+## Common Mistake
+
+:::warning ROWS BETWEEN vs RANGE BETWEEN behave differently on ties
+`ROWS BETWEEN` counts physical rows; `RANGE BETWEEN` counts logical values. On a date column with multiple orders on the same day, `RANGE BETWEEN ... CURRENT ROW` includes all rows with the same date value, not just the current physical row.
+
+For running totals, `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` is almost always what you want - it's deterministic and avoids surprises with ties.
+:::
+
+## Practice
+
+Write a query that calculates, for each order sorted by `order_date`, the `order_id`, `total_amount`, and a 2-period moving average of `total_amount` (current row plus 1 preceding), called `moving_avg_2`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    total_amount,
+    ROUND(
+        AVG(total_amount) OVER (
+            ORDER BY order_date
+            ROWS BETWEEN 1 PRECEDING AND CURRENT ROW
+        ),
+        2
+    ) AS moving_avg_2
+FROM orders
+ORDER BY order_date;
+```
+
+</details>

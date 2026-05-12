@@ -8,7 +8,7 @@ youtube_url: ""
 
 # Introduction to SQL
 
-SQL (Structured Query Language) is the standard language for communicating with relational databases. Almost every data tool you'll encounter — data warehouses, BI platforms, dbt — speaks SQL under the hood.
+SQL (Structured Query Language) is the standard language for communicating with relational databases. Almost every data tool you'll encounter - data warehouses, BI platforms, dbt - speaks SQL under the hood.
 
 :::note Placeholder Lesson
 This lesson is a work in progress. Content will be expanded with examples, exercises, and a video walkthrough.
@@ -16,41 +16,52 @@ This lesson is a work in progress. Content will be expanded with examples, exerc
 
 ## What Is a Relational Database?
 
-A relational database organizes data into **tables** (rows and columns), similar to a spreadsheet. Each table represents one type of entity — for example, `orders`, `customers`, or `products`. Tables are linked together through **keys**.
+A relational database organizes data into **tables** (rows and columns), similar to a spreadsheet. Each table represents one type of entity - for example, `orders`, `customers`, or `products`. Tables are linked together through **keys**.
 
-## Your First Query
+## Sample Dataset
 
-The most basic SQL query retrieves all rows from a table:
+All lessons in this series use the same three tables from a fictional online store: `customers`, `products`, and `orders`. Every example and exercise is written against this data, so it's worth spending a minute getting familiar with it before diving into the lessons.
 
-```sql
-SELECT *
-FROM orders;
-```
+The tables are linked through **foreign keys** — `orders.customer_id` references `customers.customer_id`, and `orders.product_id` references `products.product_id`. This is what makes it a relational dataset: you can combine information across tables by matching those keys.
 
-To retrieve specific columns:
+### `customers`
 
-```sql
-SELECT
-    order_id,
-    customer_id,
-    order_date,
-    total_amount
-FROM orders;
-```
+Stores one row per registered customer. `customer_id` is the primary key.
 
-## Filtering Rows with WHERE
+| customer_id | name          | email               | city      | country   |
+|-------------|---------------|---------------------|-----------|-----------|
+| 1           | Alice Johnson | alice@example.com   | New York  | USA       |
+| 2           | Bob Smith     | bob@example.com     | London    | UK        |
+| 3           | Carol White   | carol@example.com   | Sydney    | Australia |
+| 4           | Dave Brown    | dave@example.com    | Toronto   | Canada    |
+| 5           | Eve Davis     | eve@example.com     | New York  | USA       |
 
-Use `WHERE` to return only the rows that meet a condition:
+### `products`
 
-```sql
-SELECT
-    order_id,
-    customer_id,
-    total_amount
-FROM orders
-WHERE total_amount > 100;
-```
+Stores one row per product in the catalog. `product_id` is the primary key. Products span three categories: Electronics, Furniture, and Stationery.
 
-## What's Next
+| product_id | name     | category    | price  |
+|------------|----------|-------------|--------|
+| 1          | Laptop   | Electronics | 999.00 |
+| 2          | Mouse    | Electronics | 29.99  |
+| 3          | Desk     | Furniture   | 349.00 |
+| 4          | Chair    | Furniture   | 199.00 |
+| 5          | Notebook | Stationery  | 4.99   |
 
-In the next lesson you'll learn how to **aggregate** data — counting rows, summing values, and grouping results.
+### `orders`
+
+Stores one row per order line. Each order belongs to one customer and covers one product. `order_id` is the primary key. `customer_id` and `product_id` are foreign keys back to the other two tables. `status` can be `completed`, `pending`, or `cancelled`.
+
+| order_id | customer_id | product_id | order_date | quantity | total_amount | status    |
+|----------|-------------|------------|------------|----------|--------------|-----------|
+| 1        | 1           | 1          | 2024-01-05 | 1        | 999.00       | completed |
+| 2        | 1           | 2          | 2024-01-10 | 2        | 59.98        | completed |
+| 3        | 2           | 3          | 2024-01-15 | 1        | 349.00       | completed |
+| 4        | 3           | 4          | 2024-02-01 | 4        | 796.00       | completed |
+| 5        | 4           | 5          | 2024-02-10 | 10       | 49.90        | pending   |
+| 6        | 1           | 3          | 2024-03-01 | 1        | 349.00       | cancelled |
+| 7        | 2           | 1          | 2024-03-15 | 1        | 999.00       | completed |
+| 8        | 5           | 2          | 2024-04-01 | 3        | 89.97        | completed |
+| 9        | 3           | 1          | 2024-04-10 | 1        | 999.00       | pending   |
+| 10       | 4           | 5          | 2024-05-01 | 5        | 24.95        | pending   |
+

@@ -1,0 +1,189 @@
+---
+id: sql-case-when
+title: "CASE WHEN: Conditional Logic in Queries"
+sidebar_label: "CASE WHEN"
+sidebar_position: 21
+youtube_url: ""
+---
+
+# `CASE WHEN`: Conditional Logic in Queries
+
+`CASE WHEN` is SQL's if/else construct. It lets you apply conditional logic directly inside a query - in `SELECT`, `ORDER BY`, or `GROUP BY`.
+
+:::tip Prior lesson
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+CASE
+    WHEN condition1 THEN result1
+    WHEN condition2 THEN result2
+    ...
+    ELSE default_result
+END
+```
+
+The `ELSE` clause is optional. If omitted and no `WHEN` condition matches, the expression returns `NULL`.
+
+## Examples
+
+### Example 1: Categorize orders by size
+
+```sql
+SELECT
+    order_id,
+    total_amount,
+    CASE
+        WHEN total_amount >= 500 THEN 'Large'
+        WHEN total_amount >= 100 THEN 'Medium'
+        ELSE 'Small'
+    END AS order_size
+FROM orders
+ORDER BY total_amount DESC;
+```
+
+**Result:**
+
+| order_id | total_amount | order_size |
+|----------|--------------|------------|
+| 1        | 999.00       | Large      |
+| 7        | 999.00       | Large      |
+| 9        | 999.00       | Large      |
+| 4        | 796.00       | Large      |
+| 3        | 349.00       | Medium     |
+| 6        | 349.00       | Medium     |
+| 8        | 89.97        | Small      |
+| 2        | 59.98        | Small      |
+| 5        | 49.90        | Small      |
+| 10       | 24.95        | Small      |
+
+### Example 2: Conditional aggregation
+
+Count orders by status without a `GROUP BY` - useful when you need all counts in a single row.
+
+```sql
+SELECT
+    COUNT(*) AS total_orders,
+    COUNT(CASE WHEN status = 'completed' THEN 1 END) AS completed,
+    COUNT(CASE WHEN status = 'pending'   THEN 1 END) AS pending,
+    COUNT(CASE WHEN status = 'cancelled' THEN 1 END) AS cancelled
+FROM orders;
+```
+
+**Result:**
+
+| total_orders | completed | pending | cancelled |
+|--------------|-----------|---------|-----------|
+| 10           | 6         | 3       | 1         |
+
+`COUNT` only counts non-NULL values, so `CASE … END` returns `NULL` (not counted) when the condition doesn't match.
+
+### Example 3: CASE WHEN in ORDER BY
+
+Sort products so that Electronics appear first, then everything else alphabetically.
+
+```sql
+SELECT
+    name,
+    category,
+    price
+FROM products
+ORDER BY
+    CASE WHEN category = 'Electronics' THEN 0 ELSE 1 END,
+    name ASC;
+```
+
+**Result:**
+
+| name     | category    | price  |
+|----------|-------------|--------|
+| Laptop   | Electronics | 999.00 |
+| Mouse    | Electronics | 29.99  |
+| Chair    | Furniture   | 199.00 |
+| Desk     | Furniture   | 349.00 |
+| Notebook | Stationery  | 4.99   |
+
+### Example 4: CASE WHEN in GROUP BY
+
+Group products into price tiers and count how many are in each tier.
+
+```sql
+SELECT
+    CASE
+        WHEN price < 50    THEN 'Budget'
+        WHEN price < 300   THEN 'Mid-range'
+        ELSE 'Premium'
+    END AS price_tier,
+    COUNT(*) AS product_count
+FROM products
+GROUP BY
+    CASE
+        WHEN price < 50    THEN 'Budget'
+        WHEN price < 300   THEN 'Mid-range'
+        ELSE 'Premium'
+    END;
+```
+
+**Result:**
+
+| price_tier | product_count |
+|------------|---------------|
+| Budget     | 2             |
+| Mid-range  | 2             |
+| Premium    | 1             |
+
+## Common Mistake
+
+:::warning Omitting ELSE returns NULL for unmatched rows
+When no `WHEN` condition matches and there's no `ELSE`, the expression silently returns `NULL`. This is often not what you intend and can cause downstream confusion.
+
+```sql
+-- If total_amount is exactly 100, this returns NULL:
+CASE
+    WHEN total_amount > 100 THEN 'Above'
+    WHEN total_amount < 100 THEN 'Below'
+    -- no ELSE: exactly 100 returns NULL
+END
+
+-- Always add an explicit ELSE:
+CASE
+    WHEN total_amount > 100 THEN 'Above'
+    WHEN total_amount < 100 THEN 'Below'
+    ELSE 'Exactly 100'
+END
+```
+:::
+
+## Practice
+
+Write a query that labels each product as `'Budget'` (price < $30), `'Mid-range'` (price $30–$500), or `'Premium'` (price > $500). Return `name`, `price`, and the label column as `tier`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    name,
+    price,
+    CASE
+        WHEN price < 30   THEN 'Budget'
+        WHEN price <= 500 THEN 'Mid-range'
+        ELSE 'Premium'
+    END AS tier
+FROM products
+ORDER BY price;
+```
+
+**Expected result:**
+
+| name     | price  | tier      |
+|----------|--------|-----------|
+| Notebook | 4.99   | Budget    |
+| Mouse    | 29.99  | Budget    |
+| Chair    | 199.00 | Mid-range |
+| Desk     | 349.00 | Mid-range |
+| Laptop   | 999.00 | Premium   |
+
+</details>

@@ -1,0 +1,162 @@
+---
+id: sql-is-null
+title: "IS NULL / IS NOT NULL: Checking for Missing Values"
+sidebar_label: "IS NULL / IS NOT NULL"
+sidebar_position: 17
+youtube_url: ""
+---
+
+# `IS NULL` / `IS NOT NULL`: Checking for Missing Values
+
+`NULL` in SQL represents missing or unknown data - not zero, not an empty string, but the complete absence of a value. `IS NULL` and `IS NOT NULL` are the only correct way to check for it.
+
+:::tip Prior lesson
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+-- Check for NULL
+SELECT columns
+FROM table_name
+WHERE column IS NULL;
+
+-- Check for non-NULL
+SELECT columns
+FROM table_name
+WHERE column IS NOT NULL;
+```
+
+## Why `= NULL` doesn't work
+
+SQL uses three-valued logic: `TRUE`, `FALSE`, and `UNKNOWN`. Any comparison involving `NULL` evaluates to `UNKNOWN`, not `FALSE`. Since `WHERE` only passes rows that evaluate to `TRUE`, rows with `NULL` are always silently excluded.
+
+```sql
+-- This never returns any rows - even if customer_id IS NULL
+WHERE customer_id = NULL     -- evaluates to UNKNOWN, not TRUE
+
+-- Correct
+WHERE customer_id IS NULL
+```
+
+## Examples
+
+### Example 1: Extend the dataset with a NULL
+
+For these examples, imagine we've added order 11 with no associated customer (`customer_id` is `NULL`):
+
+```sql
+-- Hypothetical order with no customer
+INSERT INTO orders VALUES (11, NULL, 2, '2024-06-01', 1, 29.99, 'pending');
+```
+
+### Example 2: Find orders with no customer
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    total_amount,
+    status
+FROM orders
+WHERE customer_id IS NULL;
+```
+
+**Result:**
+
+| order_id | customer_id | total_amount | status  |
+|----------|-------------|--------------|---------|
+| 11       | NULL        | 29.99        | pending |
+
+### Example 3: Find orders that do have a customer
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    total_amount
+FROM orders
+WHERE customer_id IS NOT NULL
+ORDER BY order_id;
+```
+
+This returns all 10 standard orders and excludes order 11.
+
+### Example 4: NULL in LEFT JOIN results
+
+A common place NULLs appear naturally is in the results of a [LEFT JOIN](./sql-left-join). When the right table has no matching row, all its columns come back as `NULL`.
+
+```sql
+-- Find customers who have no orders
+SELECT
+    c.customer_id,
+    c.name
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.order_id IS NULL;
+```
+
+## Common Mistake
+
+:::danger Never compare to NULL with `=` or `<>`
+```sql
+-- These never match anything:
+WHERE email = NULL
+WHERE email <> NULL
+
+-- Always use:
+WHERE email IS NULL
+WHERE email IS NOT NULL
+```
+
+Also remember that `NULL` in an `IN` list can silently break `NOT IN` (see the [IN lesson](./sql-in)).
+:::
+
+## NULLs and aggregate functions
+
+Most aggregate functions ignore `NULL` values automatically:
+
+```sql
+SELECT
+    COUNT(*)            AS total_rows,        -- counts ALL rows including NULLs
+    COUNT(customer_id)  AS rows_with_customer, -- counts only non-NULL customer_id
+    AVG(total_amount)   AS avg_order_value     -- ignores NULLs
+FROM orders;
+```
+
+This means `AVG` may not reflect what you expect if many values are `NULL`. Always check for NULLs before trusting aggregate results.
+
+## Practice
+
+Write a query that returns all orders from `orders` where `customer_id` is not null, showing `order_id`, `customer_id`, and `status`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    status
+FROM orders
+WHERE customer_id IS NOT NULL
+ORDER BY order_id;
+```
+
+**Expected result (with our standard 10-row dataset where all customer_ids are present):**
+
+| order_id | customer_id | status    |
+|----------|-------------|-----------|
+| 1        | 1           | completed |
+| 2        | 1           | completed |
+| 3        | 2           | completed |
+| 4        | 3           | completed |
+| 5        | 4           | pending   |
+| 6        | 1           | cancelled |
+| 7        | 2           | completed |
+| 8        | 5           | completed |
+| 9        | 3           | pending   |
+| 10       | 4           | pending   |
+
+</details>

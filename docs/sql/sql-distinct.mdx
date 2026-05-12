@@ -1,0 +1,117 @@
+---
+id: sql-distinct
+title: "DISTINCT: Removing Duplicate Rows"
+sidebar_label: "DISTINCT"
+sidebar_position: 14
+youtube_url: ""
+---
+
+# `DISTINCT`: Removing Duplicate Rows
+
+`DISTINCT` eliminates duplicate rows from the result set. Two rows are considered duplicates only if every selected column has the same value.
+
+:::tip Prior lesson
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+SELECT DISTINCT column1, column2
+FROM table_name;
+```
+
+## Examples
+
+### Example 1: Unique cities
+
+```sql
+SELECT DISTINCT city
+FROM customers;
+```
+
+**Result:**
+
+| city      |
+|-----------|
+| New York  |
+| London    |
+| Sydney    |
+| Toronto   |
+
+Without `DISTINCT`, "New York" would appear twice (Alice and Eve are both from New York).
+
+### Example 2: Unique order statuses
+
+```sql
+SELECT DISTINCT status
+FROM orders;
+```
+
+**Result:**
+
+| status    |
+|-----------|
+| completed |
+| pending   |
+| cancelled |
+
+### Example 3: DISTINCT on multiple columns
+
+`DISTINCT` applies to the entire combination of selected columns.
+
+```sql
+SELECT DISTINCT
+    country,
+    city
+FROM customers;
+```
+
+**Result:**
+
+| country   | city     |
+|-----------|----------|
+| USA       | New York |
+| UK        | London   |
+| Australia | Sydney   |
+| Canada    | Toronto  |
+
+Both Alice and Eve are `(USA, New York)` - that combination appears once.
+
+## Common Mistake
+
+:::warning DISTINCT applies to the whole row, not a single column
+When you select multiple columns, `DISTINCT` deduplicates based on the combination of all selected columns - not just the first one.
+
+```sql
+-- Returns unique (status, customer_id) combinations, NOT just unique statuses
+SELECT DISTINCT status, customer_id
+FROM orders;
+```
+
+If you need to deduplicate on one column while keeping other columns, `GROUP BY` or a window function is usually the right tool.
+
+Also be aware: `DISTINCT` requires scanning and sorting a large portion of the data, which can be slow on big tables. If you find yourself using `DISTINCT` frequently, it may be a sign of a JOIN producing unwanted duplicates.
+:::
+
+## Practice
+
+Write a query that returns the distinct categories available in the `products` table.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT DISTINCT category
+FROM products;
+```
+
+**Expected result:**
+
+| category    |
+|-------------|
+| Electronics |
+| Furniture   |
+| Stationery  |
+
+</details>

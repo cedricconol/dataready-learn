@@ -1,0 +1,163 @@
+---
+id: sql-aggregate-functions
+title: "Aggregate Functions: COUNT, SUM, AVG, MIN, MAX"
+sidebar_label: "Aggregate Functions"
+sidebar_position: 20
+youtube_url: ""
+---
+
+# Aggregate Functions: `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`
+
+Aggregate functions collapse many rows into a single computed value. They're the foundation of any analytical query.
+
+| Function  | What it returns                        |
+|-----------|----------------------------------------|
+| `COUNT`   | Number of rows (or non-NULL values)    |
+| `SUM`     | Total of all values                    |
+| `AVG`     | Average of all values                  |
+| `MIN`     | Smallest value                         |
+| `MAX`     | Largest value                          |
+
+:::tip Prior lessons
+This lesson pairs closely with [GROUP BY](./sql-group-by) and [HAVING](./sql-having).
+The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
+:::
+
+## Syntax
+
+```sql
+-- Across the whole table (no grouping)
+SELECT
+    COUNT(*) AS total_rows,
+    SUM(column)  AS total,
+    AVG(column)  AS average,
+    MIN(column)  AS minimum,
+    MAX(column)  AS maximum
+FROM table_name;
+
+-- With grouping
+SELECT
+    group_column,
+    COUNT(*) AS total_rows,
+    SUM(column) AS total
+FROM table_name
+GROUP BY group_column;
+```
+
+## Examples
+
+### Example 1: Overall order statistics
+
+```sql
+SELECT
+    COUNT(*)            AS total_orders,
+    COUNT(customer_id)  AS orders_with_customer,
+    SUM(total_amount)   AS total_revenue,
+    AVG(total_amount)   AS avg_order_value,
+    MIN(total_amount)   AS smallest_order,
+    MAX(total_amount)   AS largest_order
+FROM orders;
+```
+
+**Result:**
+
+| total_orders | orders_with_customer | total_revenue | avg_order_value | smallest_order | largest_order |
+|--------------|----------------------|---------------|-----------------|----------------|---------------|
+| 10           | 10                   | 4715.78       | 471.58          | 24.95          | 999.00        |
+
+### Example 2: Revenue and order count per customer
+
+```sql
+SELECT
+    customer_id,
+    COUNT(*)          AS order_count,
+    SUM(total_amount) AS total_spent,
+    AVG(total_amount) AS avg_order_value,
+    MAX(total_amount) AS largest_order
+FROM orders
+GROUP BY customer_id
+ORDER BY total_spent DESC;
+```
+
+**Result:**
+
+| customer_id | order_count | total_spent | avg_order_value | largest_order |
+|-------------|-------------|-------------|-----------------|---------------|
+| 3           | 2           | 1795.00     | 897.50          | 999.00        |
+| 1           | 3           | 1407.98     | 469.33          | 999.00        |
+| 2           | 2           | 1348.00     | 674.00          | 999.00        |
+| 5           | 1           | 89.97       | 89.97           | 89.97         |
+| 4           | 2           | 74.85       | 37.43           | 49.90         |
+
+### Example 3: MIN and MAX on product prices by category
+
+```sql
+SELECT
+    category,
+    MIN(price) AS cheapest,
+    MAX(price) AS most_expensive,
+    AVG(price) AS avg_price
+FROM products
+GROUP BY category;
+```
+
+**Result:**
+
+| category    | cheapest | most_expensive | avg_price |
+|-------------|----------|----------------|-----------|
+| Electronics | 29.99    | 999.00         | 514.50    |
+| Furniture   | 199.00   | 349.00         | 274.00    |
+| Stationery  | 4.99     | 4.99           | 4.99      |
+
+## COUNT(*) vs COUNT(column)
+
+```sql
+SELECT
+    COUNT(*)           AS all_rows,        -- counts every row, including NULLs
+    COUNT(customer_id) AS non_null_count   -- skips rows where customer_id is NULL
+FROM orders;
+```
+
+If all `customer_id` values are non-NULL, both return the same number. If some are NULL, `COUNT(customer_id)` is smaller.
+
+## Common Mistake
+
+:::warning AVG ignores NULLs - which can mislead
+`AVG` automatically skips `NULL` values. If 40% of a column is `NULL`, `AVG` computes the average over only the 60% that have values. This may not be what you want.
+
+```sql
+-- What you might intend: treat NULLs as 0
+SELECT AVG(COALESCE(total_amount, 0)) AS avg_including_nulls_as_zero
+FROM orders;
+```
+
+Always verify how many NULLs exist before trusting an average.
+:::
+
+## Practice
+
+Write a query that shows, for each order `status`, the number of orders, the total revenue, and the average order value. Sort by total revenue descending.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    status,
+    COUNT(*)          AS order_count,
+    SUM(total_amount) AS total_revenue,
+    AVG(total_amount) AS avg_order_value
+FROM orders
+GROUP BY status
+ORDER BY total_revenue DESC;
+```
+
+**Expected result:**
+
+| status    | order_count | total_revenue | avg_order_value |
+|-----------|-------------|---------------|-----------------|
+| completed | 6           | 3292.93       | 548.82          |
+| pending   | 3           | 1073.85       | 357.95          |
+| cancelled | 1           | 349.00        | 349.00          |
+
+</details>
