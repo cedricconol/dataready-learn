@@ -1,0 +1,162 @@
+---
+id: sql-exists
+title: "EXISTS and NOT EXISTS — Testing for Row Presence"
+sidebar_label: "EXISTS / NOT EXISTS"
+sidebar_position: 36
+youtube_url: ""
+---
+
+# `EXISTS` and `NOT EXISTS` — Testing for Row Presence
+
+`EXISTS` checks whether a subquery returns **any rows at all**. It returns `TRUE` as soon as one matching row is found — it doesn't scan the rest. This makes it efficient for large datasets.
+
+- **`EXISTS`** — include the row if the subquery finds at least one match
+- **`NOT EXISTS`** — include the row only if the subquery finds no match
+
+:::tip Prior lessons
+`EXISTS` is closely related to [IN](./sql-in) and [Subqueries](./sql-subqueries). The key advantage of `NOT EXISTS` over `NOT IN` is safe NULL handling — see the common mistake below.
+:::
+
+## Syntax
+
+```sql
+SELECT columns
+FROM table_a a
+WHERE EXISTS (
+    SELECT 1
+    FROM table_b b
+    WHERE b.key = a.key   -- correlated to outer query
+);
+```
+
+The inner `SELECT` typically uses `SELECT 1` — the actual column values don't matter, only whether any row is returned.
+
+## Examples
+
+### Example 1 — Customers who have placed at least one order
+
+```sql
+SELECT
+    c.customer_id,
+    c.name
+FROM customers c
+WHERE EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+);
+```
+
+**Result:**
+
+| customer_id | name          |
+|-------------|---------------|
+| 1           | Alice Johnson |
+| 2           | Bob Smith     |
+| 3           | Carol White   |
+| 4           | Dave Brown    |
+| 5           | Eve Davis     |
+
+All five customers have at least one order, so all are returned.
+
+### Example 2 — Customers with NO completed orders
+
+```sql
+SELECT
+    c.customer_id,
+    c.name
+FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+      AND o.status = 'completed'
+);
+```
+
+**Result:**
+
+| customer_id | name       |
+|-------------|------------|
+| 4           | Dave Brown |
+
+Dave's two orders are both `pending` — he has no completed orders.
+
+### Example 3 — Products that have never been ordered
+
+```sql
+SELECT
+    p.product_id,
+    p.name
+FROM products p
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.product_id = p.product_id
+);
+```
+
+With our dataset, every product appears in at least one order, so this returns no rows — but this pattern is invaluable for data quality checks in real systems.
+
+## EXISTS vs IN — when to use which
+
+| | `IN` | `EXISTS` |
+|---|---|---|
+| Best when | The list is small and known | The subquery is large or correlated |
+| NULL safety | `NOT IN` breaks with NULLs | `NOT EXISTS` is NULL-safe |
+| Short-circuits | No | Yes — stops at first match |
+
+```sql
+-- These are logically equivalent when no NULLs are involved:
+WHERE customer_id IN (SELECT customer_id FROM orders)
+WHERE EXISTS (SELECT 1 FROM orders WHERE customer_id = c.customer_id)
+
+-- NOT EXISTS is always safer than NOT IN:
+WHERE NOT EXISTS (SELECT 1 FROM orders WHERE customer_id = c.customer_id)
+-- vs NOT IN which silently returns nothing if any customer_id in the subquery is NULL
+```
+
+## Common Mistake
+
+:::warning NOT IN silently fails when the subquery contains NULLs
+This is one of the most dangerous SQL gotchas. If a `NOT IN` subquery returns even one `NULL`, the entire `WHERE` clause evaluates to `UNKNOWN` and returns no rows.
+
+`NOT EXISTS` does not have this problem — always prefer it for negative existence checks.
+
+```sql
+-- Dangerous: if any customer_id in orders is NULL, returns zero rows
+WHERE customer_id NOT IN (SELECT customer_id FROM orders)
+
+-- Safe:
+WHERE NOT EXISTS (SELECT 1 FROM orders WHERE customer_id = c.customer_id)
+```
+:::
+
+## Practice
+
+Write a query that returns all customers who have placed at least one `pending` order. Use `EXISTS`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    c.customer_id,
+    c.name
+FROM customers c
+WHERE EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+      AND o.status = 'pending'
+);
+```
+
+**Expected result:**
+
+| customer_id | name        |
+|-------------|-------------|
+| 3           | Carol White |
+| 4           | Dave Brown  |
+
+</details>

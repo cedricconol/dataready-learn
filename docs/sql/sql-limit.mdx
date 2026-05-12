@@ -1,0 +1,143 @@
+---
+id: sql-limit
+title: "LIMIT / TOP — Restricting Row Count"
+sidebar_label: "LIMIT / TOP"
+sidebar_position: 12
+youtube_url: ""
+---
+
+# `LIMIT` / `TOP` — Restricting Row Count
+
+`LIMIT` (and its SQL Server equivalent `TOP`) caps the number of rows returned by a query. This is useful for previewing data, implementing pagination, and fetching top-N results.
+
+:::tip Prior lesson
+The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## Syntax
+
+```sql
+-- PostgreSQL, MySQL, SQLite
+SELECT columns
+FROM table_name
+ORDER BY column DESC
+LIMIT n;
+
+-- SQL Server
+SELECT TOP n columns
+FROM table_name
+ORDER BY column DESC;
+
+-- Oracle (12c+)
+SELECT columns
+FROM table_name
+ORDER BY column DESC
+FETCH FIRST n ROWS ONLY;
+```
+
+## Examples
+
+### Example 1 — Top 3 orders by value
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    total_amount
+FROM orders
+ORDER BY total_amount DESC
+LIMIT 3;
+```
+
+**Result:**
+
+| order_id | customer_id | total_amount |
+|----------|-------------|--------------|
+| 1        | 1           | 999.00       |
+| 7        | 2           | 999.00       |
+| 9        | 3           | 999.00       |
+
+### Example 2 — Most recent 5 orders
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    total_amount,
+    status
+FROM orders
+ORDER BY order_date DESC
+LIMIT 5;
+```
+
+**Result:**
+
+| order_id | order_date | total_amount | status  |
+|----------|------------|--------------|---------|
+| 10       | 2024-05-01 | 24.95        | pending |
+| 9        | 2024-04-10 | 999.00       | pending |
+| 8        | 2024-04-01 | 89.97        | completed |
+| 7        | 2024-03-15 | 999.00       | completed |
+| 6        | 2024-03-01 | 349.00       | cancelled |
+
+### Example 3 — Pagination with LIMIT and OFFSET
+
+`OFFSET` skips a number of rows before starting to return results. Together, `LIMIT` and `OFFSET` implement pagination.
+
+```sql
+-- Page 1: rows 1–3
+SELECT order_id, total_amount
+FROM orders
+ORDER BY order_id
+LIMIT 3 OFFSET 0;
+
+-- Page 2: rows 4–6
+SELECT order_id, total_amount
+FROM orders
+ORDER BY order_id
+LIMIT 3 OFFSET 3;
+```
+
+:::note OFFSET is not supported in all databases
+`OFFSET` works in PostgreSQL, MySQL, and SQLite. SQL Server uses `OFFSET … FETCH NEXT` syntax instead.
+:::
+
+## Common Mistake
+
+:::warning LIMIT without ORDER BY is non-deterministic
+Without `ORDER BY`, the database can return any rows — and the selection may differ between runs.
+
+```sql
+-- Don't do this: which 3 rows you get is undefined
+SELECT * FROM orders LIMIT 3;
+
+-- Do this: always pair LIMIT with ORDER BY
+SELECT * FROM orders ORDER BY order_id LIMIT 3;
+```
+:::
+
+## Practice
+
+Write a query that returns the 3 cheapest products (by `price`), showing `name` and `price`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    name,
+    price
+FROM products
+ORDER BY price ASC
+LIMIT 3;
+```
+
+**Expected result:**
+
+| name     | price |
+|----------|-------|
+| Notebook | 4.99  |
+| Mouse    | 29.99 |
+| Chair    | 199.00 |
+
+</details>

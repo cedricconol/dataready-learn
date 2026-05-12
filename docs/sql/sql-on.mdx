@@ -1,0 +1,129 @@
+---
+id: sql-on
+title: "ON — Defining the Join Condition"
+sidebar_label: "ON"
+sidebar_position: 8
+youtube_url: ""
+---
+
+# `ON` — Defining the Join Condition
+
+`ON` specifies the condition used to match rows between two tables in a `JOIN`. It almost always links a foreign key in one table to a primary key in another.
+
+:::tip Prior lesson
+`ON` always appears with a `JOIN`. See the [JOIN lesson](./sql-join) first. The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## Syntax
+
+```sql
+SELECT columns
+FROM table_a a
+JOIN table_b b ON a.foreign_key = b.primary_key;
+
+-- Multiple conditions in ON
+SELECT columns
+FROM table_a a
+JOIN table_b b ON a.key1 = b.key1
+              AND a.key2 = b.key2;
+```
+
+## Examples
+
+### Example 1 — Standard foreign key join
+
+Link each order to its customer using the shared `customer_id` column.
+
+```sql
+SELECT
+    o.order_id,
+    o.total_amount,
+    c.name AS customer_name,
+    c.country
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id;
+```
+
+**Result:**
+
+| order_id | total_amount | customer_name | country   |
+|----------|--------------|---------------|-----------|
+| 1        | 999.00       | Alice Johnson | USA       |
+| 2        | 59.98        | Alice Johnson | USA       |
+| 3        | 349.00       | Bob Smith     | UK        |
+| 4        | 796.00       | Carol White   | Australia |
+| 5        | 49.90        | Dave Brown    | Canada    |
+| 6        | 349.00       | Alice Johnson | USA       |
+| 7        | 999.00       | Bob Smith     | UK        |
+| 8        | 89.97        | Eve Davis     | USA       |
+| 9        | 999.00       | Carol White   | Australia |
+| 10       | 24.95        | Dave Brown    | Canada    |
+
+### Example 2 — Multiple conditions in ON
+
+Sometimes you need to match on more than one column. For example, if a table were partitioned by both `customer_id` and `country`, you'd join on both.
+
+```sql
+SELECT
+    o.order_id,
+    c.name AS customer_name
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+                AND c.country = 'USA';
+```
+
+This only joins orders to customers who are in the USA. Non-USA customer orders are dropped.
+
+**Result:**
+
+| order_id | customer_name |
+|----------|---------------|
+| 1        | Alice Johnson |
+| 2        | Alice Johnson |
+| 6        | Alice Johnson |
+| 8        | Eve Davis     |
+
+:::note ON vs WHERE for filtering
+Adding a filter condition to `ON` vs `WHERE` has different behavior for `LEFT JOIN`. For `INNER JOIN` the result is the same, but for `LEFT JOIN` it changes which rows are kept. This distinction is covered in the [LEFT JOIN](./sql-left-join) lesson.
+:::
+
+## Common Mistake
+
+:::warning Joining on the wrong column produces unexpected results
+If you accidentally join on a column that doesn't represent the actual relationship, you'll get a result that looks plausible but is factually wrong — or a massive row explosion if many values happen to match.
+
+Always double-check:
+1. Which column is the foreign key in the left table?
+2. Which column is the primary key in the right table?
+3. Do they store the same type of data?
+:::
+
+## Practice
+
+Write a query that joins `orders` to `products` and returns `order_id`, `product name`, `category`, and `total_amount`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    o.order_id,
+    p.name AS product_name,
+    p.category,
+    o.total_amount
+FROM orders o
+JOIN products p ON o.product_id = p.product_id;
+```
+
+**Expected result (first few rows):**
+
+| order_id | product_name | category    | total_amount |
+|----------|--------------|-------------|--------------|
+| 1        | Laptop       | Electronics | 999.00       |
+| 2        | Mouse        | Electronics | 59.98        |
+| 3        | Desk         | Furniture   | 349.00       |
+| 4        | Chair        | Furniture   | 796.00       |
+| 5        | Notebook     | Stationery  | 49.90        |
+| ...      | ...          | ...         | ...          |
+
+</details>

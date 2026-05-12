@@ -1,0 +1,170 @@
+---
+id: sql-in
+title: "IN — Matching a List of Values"
+sidebar_label: "IN"
+sidebar_position: 16
+youtube_url: ""
+---
+
+# `IN` — Matching a List of Values
+
+`IN` checks whether a column's value matches any value in a provided list. It's a concise alternative to writing multiple `OR` conditions.
+
+:::tip Prior lesson
+The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## Syntax
+
+```sql
+-- With a literal list
+SELECT columns
+FROM table_name
+WHERE column IN (value1, value2, value3);
+
+-- With a subquery
+SELECT columns
+FROM table_name
+WHERE column IN (SELECT column FROM other_table WHERE condition);
+
+-- Negation
+SELECT columns
+FROM table_name
+WHERE column NOT IN (value1, value2, value3);
+```
+
+## Examples
+
+### Example 1 — Filter by a list of statuses
+
+```sql
+SELECT
+    order_id,
+    status,
+    total_amount
+FROM orders
+WHERE status IN ('pending', 'cancelled');
+```
+
+This is equivalent to:
+```sql
+WHERE status = 'pending' OR status = 'cancelled'
+```
+
+**Result:**
+
+| order_id | status    | total_amount |
+|----------|-----------|--------------|
+| 5        | pending   | 49.90        |
+| 6        | cancelled | 349.00       |
+| 9        | pending   | 999.00       |
+| 10       | pending   | 24.95        |
+
+### Example 2 — IN with a subquery
+
+Find all orders placed by customers who are located in the USA.
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    total_amount
+FROM orders
+WHERE customer_id IN (
+    SELECT customer_id
+    FROM customers
+    WHERE country = 'USA'
+);
+```
+
+USA customers are Alice (1) and Eve (5).
+
+**Result:**
+
+| order_id | customer_id | total_amount |
+|----------|-------------|--------------|
+| 1        | 1           | 999.00       |
+| 2        | 1           | 59.98        |
+| 6        | 1           | 349.00       |
+| 8        | 5           | 89.97        |
+
+### Example 3 — NOT IN
+
+Return orders placed by customers who are NOT from the USA.
+
+```sql
+SELECT
+    order_id,
+    customer_id,
+    total_amount
+FROM orders
+WHERE customer_id NOT IN (
+    SELECT customer_id
+    FROM customers
+    WHERE country = 'USA'
+);
+```
+
+**Result:**
+
+| order_id | customer_id | total_amount |
+|----------|-------------|--------------|
+| 3        | 2           | 349.00       |
+| 4        | 3           | 796.00       |
+| 5        | 4           | 49.90        |
+| 7        | 2           | 999.00       |
+| 9        | 3           | 999.00       |
+| 10       | 4           | 24.95        |
+
+## Common Mistake
+
+:::danger NOT IN with NULL values always returns no rows
+If the list in `NOT IN` contains even one `NULL`, the entire result set is empty. This is a subtle SQL trap.
+
+```sql
+-- If any customer_id in the subquery is NULL, this returns nothing:
+WHERE customer_id NOT IN (SELECT customer_id FROM customers WHERE ...)
+```
+
+This happens because SQL evaluates `x NOT IN (1, 2, NULL)` as:
+`x <> 1 AND x <> 2 AND x <> NULL` — and any comparison with `NULL` returns `UNKNOWN`, not `TRUE`.
+
+**Safe alternative:** use `NOT EXISTS` or filter out NULLs from the subquery.
+
+```sql
+WHERE customer_id NOT IN (
+    SELECT customer_id
+    FROM customers
+    WHERE country = 'USA'
+      AND customer_id IS NOT NULL   -- safe
+)
+```
+:::
+
+## Practice
+
+Write a query that returns all products in the `Electronics` or `Furniture` categories.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    name,
+    category,
+    price
+FROM products
+WHERE category IN ('Electronics', 'Furniture')
+ORDER BY category, price DESC;
+```
+
+**Expected result:**
+
+| name   | category    | price  |
+|--------|-------------|--------|
+| Laptop | Electronics | 999.00 |
+| Mouse  | Electronics | 29.99  |
+| Desk   | Furniture   | 349.00 |
+| Chair  | Furniture   | 199.00 |
+
+</details>

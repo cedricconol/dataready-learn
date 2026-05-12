@@ -1,0 +1,151 @@
+---
+id: sql-having
+title: "HAVING — Filtering Groups After Aggregation"
+sidebar_label: "HAVING"
+sidebar_position: 15
+youtube_url: ""
+---
+
+# `HAVING` — Filtering Groups After Aggregation
+
+`HAVING` filters the results of a `GROUP BY` query. It works like `WHERE`, but it runs **after** aggregation — so you can filter on the aggregated values themselves (e.g., only show groups where `COUNT(*) > 2`).
+
+:::tip Prior lessons
+This lesson builds on [GROUP BY](./sql-group-by) and [Aggregate Functions](./sql-aggregate-functions).
+The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## Syntax
+
+```sql
+SELECT column, AGGREGATE_FUNCTION(other_column)
+FROM table_name
+GROUP BY column
+HAVING AGGREGATE_FUNCTION(other_column) condition;
+```
+
+## Query execution order
+
+1. `FROM`
+2. `WHERE` — filter individual rows
+3. `GROUP BY` — collapse rows into groups
+4. `HAVING` — filter groups
+5. `SELECT`
+6. `ORDER BY`
+
+## Examples
+
+### Example 1 — Customers with more than one order
+
+```sql
+SELECT
+    customer_id,
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY customer_id
+HAVING COUNT(*) > 1;
+```
+
+**Result:**
+
+| customer_id | order_count |
+|-------------|-------------|
+| 1           | 3           |
+| 2           | 2           |
+| 3           | 2           |
+| 4           | 2           |
+
+Customer 5 (Eve) has only 1 order and is excluded.
+
+### Example 2 — Product categories with total revenue above a threshold
+
+```sql
+SELECT
+    p.category,
+    SUM(o.total_amount) AS total_revenue
+FROM orders o
+JOIN products p ON o.product_id = p.product_id
+GROUP BY p.category
+HAVING SUM(o.total_amount) > 500
+ORDER BY total_revenue DESC;
+```
+
+**Result:**
+
+| category    | total_revenue |
+|-------------|---------------|
+| Electronics | 3236.93       |
+| Furniture   | 1047.00       |
+
+Stationery (`74.85`) is below the threshold and is excluded.
+
+### Example 3 — Combining WHERE and HAVING
+
+`WHERE` filters rows before grouping; `HAVING` filters after. They can be used in the same query.
+
+```sql
+SELECT
+    customer_id,
+    COUNT(*) AS completed_orders,
+    SUM(total_amount) AS total_spent
+FROM orders
+WHERE status = 'completed'        -- applied before grouping
+GROUP BY customer_id
+HAVING SUM(total_amount) > 100    -- applied after grouping
+ORDER BY total_spent DESC;
+```
+
+**Result:**
+
+| customer_id | completed_orders | total_spent |
+|-------------|-----------------|-------------|
+| 1           | 2               | 1058.98     |
+| 3           | 1               | 796.00      |
+| 2           | 2               | 1348.00     |
+
+## Common Mistake
+
+:::warning Use WHERE for row filters, HAVING for group filters
+It's technically valid to put some conditions in `HAVING` that could go in `WHERE`, but it's slower — the database groups all rows first and then filters, rather than filtering before grouping.
+
+```sql
+-- Slow: filtering on a non-aggregated column in HAVING
+SELECT customer_id, COUNT(*)
+FROM orders
+GROUP BY customer_id
+HAVING status = 'completed';   -- works but inefficient
+
+-- Fast: move non-aggregate filters to WHERE
+SELECT customer_id, COUNT(*)
+FROM orders
+WHERE status = 'completed'
+GROUP BY customer_id;
+```
+:::
+
+## Practice
+
+Write a query that finds all customers who have spent more than $500 in total across all their orders. Return `customer_id` and `total_spent`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    customer_id,
+    SUM(total_amount) AS total_spent
+FROM orders
+GROUP BY customer_id
+HAVING SUM(total_amount) > 500
+ORDER BY total_spent DESC;
+```
+
+**Expected result:**
+
+| customer_id | total_spent |
+|-------------|-------------|
+| 3           | 1795.00     |
+| 1           | 1407.98     |
+| 2           | 1348.00     |
+
+</details>

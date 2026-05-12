@@ -1,0 +1,154 @@
+---
+id: sql-union
+title: "UNION, INTERSECT, EXCEPT — Combining Result Sets"
+sidebar_label: "UNION / INTERSECT / EXCEPT"
+sidebar_position: 35
+youtube_url: ""
+---
+
+# `UNION`, `INTERSECT`, `EXCEPT` — Combining Result Sets
+
+These **set operators** combine the results of two or more `SELECT` statements vertically (row-wise), unlike `JOIN` which combines them horizontally (column-wise).
+
+| Operator | Returns |
+|---|---|
+| `UNION` | All rows from both queries, duplicates removed |
+| `UNION ALL` | All rows from both queries, duplicates kept |
+| `INTERSECT` | Only rows that appear in **both** queries |
+| `EXCEPT` | Rows in the first query that do **not** appear in the second |
+
+:::tip Prior lesson
+The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## Rules
+
+1. Both queries must return the **same number of columns**
+2. Corresponding columns must have **compatible data types**
+3. Column names in the result come from the **first** query
+
+## Examples
+
+### Example 1 — UNION ALL: combine two filtered sets
+
+Get a combined list of all completed and all cancelled orders as a single result.
+
+```sql
+SELECT order_id, customer_id, total_amount, status
+FROM orders
+WHERE status = 'completed'
+
+UNION ALL
+
+SELECT order_id, customer_id, total_amount, status
+FROM orders
+WHERE status = 'cancelled';
+```
+
+This is equivalent to `WHERE status IN ('completed', 'cancelled')` — but `UNION ALL` shines when the two sets come from different tables or have different structures.
+
+### Example 2 — UNION (deduplicated)
+
+Find all `customer_id` values that appear in either high-value orders (>$500) or orders placed in Q1 2024 — each customer listed once.
+
+```sql
+SELECT customer_id FROM orders WHERE total_amount > 500
+
+UNION
+
+SELECT customer_id FROM orders WHERE order_date < '2024-04-01';
+```
+
+**Result:**
+
+| customer_id |
+|-------------|
+| 1           |
+| 2           |
+| 3           |
+| 4           |
+
+`UNION` deduplicates — a customer appearing in both sets is listed once.
+
+### Example 3 — INTERSECT: customers in both sets
+
+Which customers placed both a high-value order AND an order in Q1?
+
+```sql
+SELECT customer_id FROM orders WHERE total_amount > 500
+
+INTERSECT
+
+SELECT customer_id FROM orders WHERE order_date < '2024-04-01';
+```
+
+**Result:**
+
+| customer_id |
+|-------------|
+| 1           |
+| 2           |
+| 3           |
+
+### Example 4 — EXCEPT: in first but not second
+
+Which customers placed a high-value order but did NOT place any Q1 order?
+
+```sql
+SELECT customer_id FROM orders WHERE total_amount > 500
+
+EXCEPT
+
+SELECT customer_id FROM orders WHERE order_date < '2024-04-01';
+```
+
+With our dataset this returns no rows — all high-value customers also placed Q1 orders.
+
+### Example 5 — Combining different tables with UNION ALL
+
+A common use case is building a unified log from multiple source tables.
+
+```sql
+SELECT 'order'    AS event_type, order_id AS id, order_date AS event_date FROM orders
+UNION ALL
+SELECT 'customer' AS event_type, customer_id, NULL                        FROM customers;
+```
+
+## Common Mistake
+
+:::warning UNION is slower than UNION ALL — only use it when you need deduplication
+`UNION` sorts the full result to remove duplicates. `UNION ALL` just appends rows. If you know duplicates can't exist (e.g., the two queries draw from non-overlapping date ranges), always use `UNION ALL`.
+
+Also note: `EXCEPT` is called `MINUS` in Oracle.
+:::
+
+## Practice
+
+Write a query using `UNION ALL` that returns the `name` and `'customer'` as a `type` column from `customers`, combined with `name` and `'product'` as a `type` column from `products`. Order by `type`, then `name`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT name, 'customer' AS type FROM customers
+UNION ALL
+SELECT name, 'product'  AS type FROM products
+ORDER BY type, name;
+```
+
+**Expected result:**
+
+| name          | type     |
+|---------------|----------|
+| Alice Johnson | customer |
+| Bob Smith     | customer |
+| Carol White   | customer |
+| Dave Brown    | customer |
+| Eve Davis     | customer |
+| Chair         | product  |
+| Desk          | product  |
+| Laptop        | product  |
+| Mouse         | product  |
+| Notebook      | product  |
+
+</details>

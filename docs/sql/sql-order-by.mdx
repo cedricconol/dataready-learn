@@ -1,0 +1,127 @@
+---
+id: sql-order-by
+title: "ORDER BY — Sorting Results"
+sidebar_label: "ORDER BY"
+sidebar_position: 10
+youtube_url: ""
+---
+
+# `ORDER BY` — Sorting Results
+
+`ORDER BY` sorts the rows in the result set. Without it, the database is free to return rows in any order — and that order can change between runs.
+
+:::tip Prior lesson
+The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## Syntax
+
+```sql
+SELECT columns
+FROM table_name
+ORDER BY column1 [ASC | DESC], column2 [ASC | DESC];
+```
+
+- `ASC` — ascending order (A → Z, 0 → 9). This is the **default**.
+- `DESC` — descending order (Z → A, 9 → 0).
+
+## Examples
+
+### Example 1 — Sort by a single column
+
+```sql
+SELECT
+    order_id,
+    total_amount,
+    order_date
+FROM orders
+ORDER BY total_amount DESC;
+```
+
+**Result:**
+
+| order_id | total_amount | order_date |
+|----------|--------------|------------|
+| 1        | 999.00       | 2024-01-05 |
+| 7        | 999.00       | 2024-03-15 |
+| 9        | 999.00       | 2024-04-10 |
+| 4        | 796.00       | 2024-02-01 |
+| 3        | 349.00       | 2024-01-15 |
+| 6        | 349.00       | 2024-03-01 |
+| 8        | 89.97        | 2024-04-01 |
+| 2        | 59.98        | 2024-01-10 |
+| 5        | 49.90        | 2024-02-10 |
+| 10       | 24.95        | 2024-05-01 |
+
+### Example 2 — Sort by multiple columns
+
+When the first sort column has ties, the second column breaks them.
+
+```sql
+SELECT
+    name,
+    country,
+    city
+FROM customers
+ORDER BY country ASC, name ASC;
+```
+
+**Result:**
+
+| name          | country   | city     |
+|---------------|-----------|----------|
+| Carol White   | Australia | Sydney   |
+| Dave Brown    | Canada    | Toronto  |
+| Bob Smith     | UK        | London   |
+| Alice Johnson | USA       | New York |
+| Eve Davis     | USA       | New York |
+
+Countries are sorted A→Z first; within USA, names are sorted A→Z.
+
+### Example 3 — Order by a column alias
+
+Unlike `WHERE`, `ORDER BY` can reference column aliases defined in `SELECT`.
+
+```sql
+SELECT
+    order_id,
+    total_amount * 0.9 AS discounted_price
+FROM orders
+ORDER BY discounted_price DESC;
+```
+
+## Common Mistake
+
+:::warning Without ORDER BY, row order is non-deterministic
+The database is not required to return rows in any particular order unless you ask. Relying on implicit ordering (e.g., "the database always returns them in insert order") will eventually burn you — especially on large tables or after a vacuum/reindex.
+
+Always add `ORDER BY` when the order of results matters.
+:::
+
+## Practice
+
+Write a query that returns all products sorted by `category` ascending, then by `price` descending within each category.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    name,
+    category,
+    price
+FROM products
+ORDER BY category ASC, price DESC;
+```
+
+**Expected result:**
+
+| name   | category    | price  |
+|--------|-------------|--------|
+| Laptop | Electronics | 999.00 |
+| Mouse  | Electronics | 29.99  |
+| Desk   | Furniture   | 349.00 |
+| Chair  | Furniture   | 199.00 |
+| Notebook | Stationery | 4.99  |
+
+</details>

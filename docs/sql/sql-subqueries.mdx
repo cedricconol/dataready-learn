@@ -1,0 +1,167 @@
+---
+id: sql-subqueries
+title: "Subqueries — Queries Inside Queries"
+sidebar_label: "Subqueries"
+sidebar_position: 34
+youtube_url: ""
+---
+
+# Subqueries — Queries Inside Queries
+
+A **subquery** is a `SELECT` statement nested inside another query. It lets you use the result of one query as input to another — without creating a temporary table.
+
+:::tip Prior lesson
+Subqueries are closely related to [WITH (CTEs)](./sql-with-cte), which are often a more readable alternative. The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## Types of subqueries
+
+| Type | Returns | Used in |
+|---|---|---|
+| Scalar | One value (1 row, 1 col) | `SELECT`, `WHERE`, `HAVING` |
+| Row | One row, multiple columns | `WHERE` (with row comparison) |
+| Table | Multiple rows and columns | `FROM`, `JOIN`, `WHERE ... IN` |
+| Correlated | Depends on the outer query | `WHERE`, `SELECT` |
+
+## Examples
+
+### Example 1 — Scalar subquery: orders above average
+
+```sql
+SELECT
+    order_id,
+    total_amount
+FROM orders
+WHERE total_amount > (
+    SELECT AVG(total_amount) FROM orders
+)
+ORDER BY total_amount DESC;
+```
+
+The inner query runs once and returns a single value (`471.58`). The outer `WHERE` then uses it as a threshold.
+
+**Result:**
+
+| order_id | total_amount |
+|----------|--------------|
+| 1        | 999.00       |
+| 7        | 999.00       |
+| 9        | 999.00       |
+| 4        | 796.00       |
+
+### Example 2 — Table subquery in FROM
+
+A subquery in `FROM` acts as an inline view. You must give it an alias.
+
+```sql
+SELECT
+    customer_id,
+    order_count,
+    total_spent
+FROM (
+    SELECT
+        customer_id,
+        COUNT(*)          AS order_count,
+        SUM(total_amount) AS total_spent
+    FROM orders
+    GROUP BY customer_id
+) AS customer_summary
+WHERE order_count > 1
+ORDER BY total_spent DESC;
+```
+
+**Result:**
+
+| customer_id | order_count | total_spent |
+|-------------|-------------|-------------|
+| 3           | 2           | 1795.00     |
+| 1           | 3           | 1407.98     |
+| 2           | 2           | 1348.00     |
+| 4           | 2           | 74.85       |
+
+### Example 3 — Correlated subquery
+
+A **correlated subquery** references a column from the outer query, so it re-runs for every row. Use with caution on large tables.
+
+This query finds each customer's most expensive order:
+
+```sql
+SELECT
+    o.order_id,
+    o.customer_id,
+    o.total_amount,
+    o.order_date
+FROM orders o
+WHERE o.total_amount = (
+    SELECT MAX(total_amount)
+    FROM orders
+    WHERE customer_id = o.customer_id   -- references outer query
+)
+ORDER BY o.customer_id;
+```
+
+**Result:**
+
+| order_id | customer_id | total_amount | order_date |
+|----------|-------------|--------------|------------|
+| 1        | 1           | 999.00       | 2024-01-05 |
+| 7        | 2           | 999.00       | 2024-03-15 |
+| 9        | 3           | 999.00       | 2024-04-10 |
+| 5        | 4           | 49.90        | 2024-02-10 |
+| 8        | 5           | 89.97        | 2024-04-01 |
+
+## Subqueries vs CTEs
+
+Both solve the same problem. CTEs are usually preferred for readability when the subquery is complex or reused.
+
+```sql
+-- Subquery (harder to read when nested deeply)
+SELECT * FROM (SELECT ...) AS sub WHERE ...
+
+-- CTE (same logic, easier to follow)
+WITH sub AS (SELECT ...)
+SELECT * FROM sub WHERE ...
+```
+
+## Common Mistake
+
+:::warning Correlated subqueries can be very slow
+A correlated subquery re-executes for every row in the outer query. On a table with a million rows, it runs a million times. The same result can often be expressed more efficiently with a window function or a JOIN.
+
+```sql
+-- Slow (correlated subquery — runs once per order row)
+WHERE o.total_amount = (
+    SELECT MAX(total_amount) FROM orders WHERE customer_id = o.customer_id
+)
+
+-- Fast (window function — single pass)
+WITH ranked AS (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY total_amount DESC) AS rn
+    FROM orders
+)
+SELECT * FROM ranked WHERE rn = 1;
+```
+:::
+
+## Practice
+
+Write a query that returns all orders where `total_amount` is greater than the average `total_amount` for that customer's orders (not the overall average). Return `order_id`, `customer_id`, and `total_amount`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    o.order_id,
+    o.customer_id,
+    o.total_amount
+FROM orders o
+WHERE o.total_amount > (
+    SELECT AVG(total_amount)
+    FROM orders
+    WHERE customer_id = o.customer_id
+)
+ORDER BY o.customer_id, o.total_amount DESC;
+```
+
+</details>

@@ -1,0 +1,156 @@
+---
+id: sql-coalesce
+title: "COALESCE and NULLIF — Handling NULLs Gracefully"
+sidebar_label: "COALESCE / NULLIF"
+sidebar_position: 37
+youtube_url: ""
+---
+
+# `COALESCE` and `NULLIF` — Handling NULLs Gracefully
+
+Two functions that make working with `NULL` values clean and safe:
+
+- **`COALESCE(a, b, c, ...)`** — returns the first non-NULL value in the list
+- **`NULLIF(a, b)`** — returns `NULL` if `a = b`, otherwise returns `a`
+
+:::tip Prior lesson
+This builds on [IS NULL / IS NOT NULL](./sql-is-null). The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## COALESCE
+
+### Syntax
+
+```sql
+COALESCE(value1, value2, value3, ...)
+```
+
+Returns the first argument that is not `NULL`. If all arguments are `NULL`, it returns `NULL`.
+
+### Example 1 — Replace NULL with a default
+
+Imagine some orders have no `customer_id` (guest checkouts). Use `COALESCE` to display a label instead of `NULL`.
+
+```sql
+SELECT
+    order_id,
+    COALESCE(CAST(customer_id AS VARCHAR), 'Guest') AS customer_label,
+    total_amount
+FROM orders
+ORDER BY order_id;
+```
+
+### Example 2 — Fallback chain
+
+Check multiple columns for a value, taking the first non-NULL.
+
+```sql
+-- Hypothetical: use phone if email is missing
+SELECT
+    customer_id,
+    COALESCE(email, phone, 'No contact info') AS contact
+FROM customers;
+```
+
+### Example 3 — COALESCE in aggregation
+
+When a LEFT JOIN produces NULLs, wrap the aggregate column with `COALESCE` to treat missing rows as zero.
+
+```sql
+SELECT
+    c.customer_id,
+    c.name,
+    COALESCE(SUM(o.total_amount), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.name
+ORDER BY total_spent DESC;
+```
+
+Without `COALESCE`, customers with no orders would show `NULL` for `total_spent`. With it, they show `0`.
+
+## NULLIF
+
+### Syntax
+
+```sql
+NULLIF(value, comparison_value)
+```
+
+Returns `NULL` if `value = comparison_value`, otherwise returns `value`. Most commonly used to prevent division-by-zero errors.
+
+### Example 4 — Safe division
+
+```sql
+SELECT
+    product_id,
+    total_revenue,
+    order_count,
+    total_revenue / NULLIF(order_count, 0) AS avg_revenue_per_order
+FROM (
+    SELECT
+        product_id,
+        SUM(total_amount) AS total_revenue,
+        COUNT(*)          AS order_count
+    FROM orders
+    GROUP BY product_id
+) AS product_stats;
+```
+
+If `order_count` were ever `0`, dividing would raise an error. `NULLIF(order_count, 0)` converts it to `NULL` first, making the division return `NULL` instead of crashing.
+
+### Example 5 — Turn empty strings into NULL
+
+Some data sources store missing values as empty strings instead of `NULL`.
+
+```sql
+SELECT
+    customer_id,
+    NULLIF(email, '') AS email   -- treats '' the same as NULL
+FROM customers;
+```
+
+## COALESCE vs CASE WHEN
+
+`COALESCE(a, b)` is shorthand for:
+
+```sql
+CASE WHEN a IS NOT NULL THEN a ELSE b END
+```
+
+Use `COALESCE` when the logic is simply "first non-NULL value." Use `CASE WHEN` for more complex conditional logic.
+
+## Common Mistake
+
+:::warning COALESCE short-circuits — but not all databases guarantee it
+`COALESCE` evaluates arguments left to right and stops at the first non-NULL. This means expensive expressions later in the list may not execute. However, SQL does not guarantee expression evaluation order in all contexts — don't rely on side effects inside `COALESCE` arguments.
+:::
+
+## Practice
+
+Write a query that returns each customer's `name` and their `total_spent`. Customers with no orders should show `0` instead of `NULL`. Use a `LEFT JOIN` and `COALESCE`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    c.name,
+    COALESCE(SUM(o.total_amount), 0) AS total_spent
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.name
+ORDER BY total_spent DESC;
+```
+
+**Expected result:**
+
+| name          | total_spent |
+|---------------|-------------|
+| Carol White   | 1795.00     |
+| Alice Johnson | 1407.98     |
+| Bob Smith     | 1348.00     |
+| Eve Davis     | 89.97       |
+| Dave Brown    | 74.85       |
+
+</details>

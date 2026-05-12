@@ -1,0 +1,123 @@
+---
+id: sql-from
+title: "FROM — Specifying the Source Table"
+sidebar_label: "FROM"
+sidebar_position: 4
+youtube_url: ""
+---
+
+# `FROM` — Specifying the Source Table
+
+`FROM` tells SQL where to get the data. It always pairs with `SELECT` and names the table, view, subquery, or CTE you want to query.
+
+:::tip Prior lesson
+This lesson builds on [SELECT](./sql-select). The sample dataset (`customers`, `products`, `orders`) is defined there.
+:::
+
+## Syntax
+
+```sql
+SELECT column1, column2
+FROM table_name;
+
+-- With a table alias
+SELECT column1, column2
+FROM table_name alias;
+```
+
+## Examples
+
+### Example 1 — Basic FROM
+
+```sql
+SELECT
+    product_id,
+    name,
+    price
+FROM products;
+```
+
+**Result:**
+
+| product_id | name     | price  |
+|------------|----------|--------|
+| 1          | Laptop   | 999.00 |
+| 2          | Mouse    | 29.99  |
+| 3          | Desk     | 349.00 |
+| 4          | Chair    | 199.00 |
+| 5          | Notebook | 4.99   |
+
+### Example 2 — Table alias
+
+A table alias shortens the table name within the query. This is especially useful when joining multiple tables (covered in the [JOIN lesson](./sql-join)).
+
+```sql
+SELECT
+    o.order_id,
+    o.order_date,
+    o.total_amount
+FROM orders o;
+```
+
+The alias `o` is now a shorthand for `orders` throughout this query. You can use either `orders.column` or `o.column` — but once you define an alias, most databases require you to use it consistently.
+
+**Result:**
+
+| order_id | order_date | total_amount |
+|----------|------------|--------------|
+| 1        | 2024-01-05 | 999.00       |
+| 2        | 2024-01-10 | 59.98        |
+| 3        | 2024-01-15 | 349.00       |
+| ...      | ...        | ...          |
+
+### Example 3 — FROM a subquery
+
+`FROM` can also reference an inline query (a subquery) as if it were a table. This is a preview of a concept covered more fully in the [WITH (CTE)](./sql-with-cte) lesson.
+
+```sql
+SELECT
+    sub.status,
+    sub.total_amount
+FROM (
+    SELECT status, total_amount
+    FROM orders
+    WHERE total_amount > 100
+) AS sub;
+```
+
+The subquery is given its own alias (`sub`) and treated like a regular table.
+
+## Common Mistake
+
+:::warning Alias scope is query-local
+A table alias only exists within the query that defines it. You cannot reference it in another query or a subsequent statement.
+
+Also note: `FROM orders o` is shorthand for `FROM orders AS o`. Both are valid. Using `AS` is more explicit.
+:::
+
+## Practice
+
+Write a query that selects `customer_id`, `name`, and `country` from the `customers` table using the alias `c`.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    c.customer_id,
+    c.name,
+    c.country
+FROM customers c;
+```
+
+**Expected result:**
+
+| customer_id | name          | country   |
+|-------------|---------------|-----------|
+| 1           | Alice Johnson | USA       |
+| 2           | Bob Smith     | UK        |
+| 3           | Carol White   | Australia |
+| 4           | Dave Brown    | Canada    |
+| 5           | Eve Davis     | USA       |
+
+</details>

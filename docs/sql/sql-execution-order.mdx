@@ -1,0 +1,146 @@
+---
+id: sql-execution-order
+title: "How SQL Executes a Query"
+sidebar_label: "SQL Execution Order"
+sidebar_position: 23
+youtube_url: ""
+---
+
+# How SQL Executes a Query
+
+When you write a SQL query, you write it in this order:
+
+```sql
+SELECT   ...
+FROM     ...
+JOIN     ...  ON  ...
+WHERE    ...
+GROUP BY ...
+HAVING   ...
+ORDER BY ...
+LIMIT    ...
+```
+
+But SQL does **not** execute it in that order. The database processes the clauses in a different sequence — called the **logical query processing order** — and understanding this explains many common errors.
+
+## Execution order
+
+```
+1. FROM / JOIN      → identify the source rows
+2. WHERE            → filter individual rows
+3. GROUP BY         → group the filtered rows
+4. HAVING           → filter the groups
+5. SELECT           → compute the output columns
+6. DISTINCT         → remove duplicates
+7. ORDER BY         → sort the results
+8. LIMIT / TOP      → trim to N rows
+```
+
+Think of each step as feeding its output into the next step. By the time `SELECT` runs, the rows have already been filtered, joined, and grouped.
+
+## Why this matters
+
+### 1. You can't use a `SELECT` alias in `WHERE`
+
+`WHERE` runs at step 2; `SELECT` runs at step 5. The alias doesn't exist yet when `WHERE` is evaluated.
+
+```sql
+-- Fails: "discounted" is not yet defined at WHERE time
+SELECT total_amount * 0.9 AS discounted
+FROM orders
+WHERE discounted < 100;
+
+-- Works: repeat the expression
+SELECT total_amount * 0.9 AS discounted
+FROM orders
+WHERE total_amount * 0.9 < 100;
+```
+
+### 2. `WHERE` cannot filter on aggregate results
+
+`WHERE` runs before `GROUP BY`, so the groups haven't been formed yet. Use `HAVING` instead.
+
+```sql
+-- Fails: COUNT(*) doesn't exist at WHERE time
+SELECT customer_id, COUNT(*) AS order_count
+FROM orders
+WHERE COUNT(*) > 1
+GROUP BY customer_id;
+
+-- Works
+SELECT customer_id, COUNT(*) AS order_count
+FROM orders
+GROUP BY customer_id
+HAVING COUNT(*) > 1;
+```
+
+### 3. `ORDER BY` can use `SELECT` aliases
+
+`ORDER BY` runs after `SELECT` (step 7 vs step 5), so aliases are available.
+
+```sql
+-- This works fine
+SELECT total_amount * 0.9 AS discounted
+FROM orders
+ORDER BY discounted DESC;
+```
+
+### 4. `HAVING` runs after grouping, not before
+
+`HAVING` filters groups, not individual rows. Pre-grouping filters belong in `WHERE` for performance.
+
+```sql
+-- Slow: filters after grouping all rows
+SELECT status, COUNT(*)
+FROM orders
+GROUP BY status
+HAVING status = 'completed';
+
+-- Fast: filters before grouping
+SELECT status, COUNT(*)
+FROM orders
+WHERE status = 'completed'
+GROUP BY status;
+```
+
+## Full example with annotations
+
+```sql
+SELECT                          -- 5. compute output
+    c.name,
+    COUNT(o.order_id) AS orders,
+    SUM(o.total_amount) AS revenue
+FROM customers c                -- 1. start with customers
+JOIN orders o                   -- 1. join to orders
+    ON c.customer_id = o.customer_id
+WHERE o.status = 'completed'    -- 2. keep only completed orders
+GROUP BY c.name                 -- 3. one row per customer
+HAVING SUM(o.total_amount) > 500 -- 4. only high-value customers
+ORDER BY revenue DESC           -- 7. sort by revenue
+LIMIT 3;                        -- 8. top 3 only
+```
+
+**Result:**
+
+| name          | orders | revenue |
+|---------------|--------|---------|
+| Bob Smith     | 2      | 1348.00 |
+| Alice Johnson | 2      | 1058.98 |
+| Carol White   | 1      | 796.00  |
+
+## Quick reference
+
+| Step | Clause         | What it does                        | Can reference         |
+|------|----------------|-------------------------------------|-----------------------|
+| 1    | FROM / JOIN    | Loads and combines source tables    | Table names           |
+| 2    | WHERE          | Filters rows                        | Column names          |
+| 3    | GROUP BY       | Groups rows                         | Column names          |
+| 4    | HAVING         | Filters groups                      | Aggregate functions   |
+| 5    | SELECT         | Computes output columns             | Aliases defined here  |
+| 6    | DISTINCT       | Removes duplicate rows              | SELECT output         |
+| 7    | ORDER BY       | Sorts the result                    | SELECT aliases ✓      |
+| 8    | LIMIT / TOP    | Caps the number of rows             | —                     |
+
+:::tip The mental model
+Write your query in SQL's written order (`SELECT … FROM … WHERE …`) but mentally execute it from the bottom up: **start with your data source, filter it, group it, filter the groups, then decide what to show and how to sort it.**
+:::

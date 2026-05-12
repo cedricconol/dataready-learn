@@ -21,9 +21,91 @@ Structured Query Language (SQL) is the foundational skill for every data analyst
 
 ## Lessons
 
-| Lesson | Description |
-|--------|-------------|
+### Getting Started
+
+| Lesson | Concept |
+|--------|---------|
 | [Introduction to SQL](/sql/intro-to-sql) | What SQL is, how databases work, and your first queries |
+
+### Your First Query
+
+| Lesson | Concept |
+|--------|---------|
+| [SELECT](/sql/sql-select) | Retrieve columns from a table |
+| [FROM](/sql/sql-from) | Specify the source table and use aliases |
+| [WHERE](/sql/sql-where) | Filter rows by a condition |
+| [AND / OR](/sql/sql-and-or) | Combine multiple filter conditions |
+
+### Filtering Techniques
+
+| Lesson | Concept |
+|--------|---------|
+| [IN](/sql/sql-in) | Match against a list of values |
+| [BETWEEN](/sql/sql-between) | Filter by an inclusive range |
+| [LIKE](/sql/sql-like) | Pattern matching on strings |
+| [IS NULL / IS NOT NULL](/sql/sql-is-null) | Check for missing values |
+
+### Shaping Results
+
+| Lesson | Concept |
+|--------|---------|
+| [AS](/sql/sql-as) | Alias columns and tables for readability |
+| [DISTINCT](/sql/sql-distinct) | Remove duplicate rows |
+| [ORDER BY](/sql/sql-order-by) | Sort the result set |
+| [LIMIT / TOP](/sql/sql-limit) | Restrict the number of rows returned |
+
+### Joining Tables
+
+| Lesson | Concept |
+|--------|---------|
+| [JOIN](/sql/sql-join) | Combine matching rows from two tables |
+| [ON](/sql/sql-on) | Define the join condition |
+| [LEFT JOIN](/sql/sql-left-join) | Keep all left-side rows, NULL-fill the right |
+
+### Aggregating Data
+
+| Lesson | Concept |
+|--------|---------|
+| [Aggregate Functions](/sql/sql-aggregate-functions) | COUNT, SUM, AVG, MIN, MAX |
+| [GROUP BY](/sql/sql-group-by) | Group rows for aggregation |
+| [HAVING](/sql/sql-having) | Filter groups after aggregation |
+
+### How SQL Thinks
+
+| Lesson | Concept |
+|--------|---------|
+| [SQL Execution Order](/sql/sql-execution-order) | The order SQL actually processes your query |
+
+### Writing Cleaner Queries
+
+| Lesson | Concept |
+|--------|---------|
+| [CASE WHEN](/sql/sql-case-when) | Conditional logic in queries |
+| [WITH (CTEs)](/sql/sql-with-cte) | Named temporary result sets |
+
+### Window Functions
+
+| Lesson | Concept |
+|--------|---------|
+| [Window Functions](/sql/sql-window-functions) | OVER, PARTITION BY — compute across rows without collapsing them |
+| [ROW_NUMBER / RANK / DENSE_RANK](/sql/sql-rank) | Ranking rows within a partition |
+| [LAG / LEAD](/sql/sql-lag-lead) | Access values from adjacent rows |
+| [Running Totals & Moving Averages](/sql/sql-running-totals) | Cumulative sums, sliding windows, and frame specs |
+
+### Set Operations & Subqueries
+
+| Lesson | Concept |
+|--------|---------|
+| [Subqueries](/sql/sql-subqueries) | Scalar, table, and correlated subqueries |
+| [UNION / INTERSECT / EXCEPT](/sql/sql-union) | Combine result sets vertically |
+| [EXISTS / NOT EXISTS](/sql/sql-exists) | Test for row presence safely |
+
+### Useful Functions
+
+| Lesson | Concept |
+|--------|---------|
+| [COALESCE / NULLIF](/sql/sql-coalesce) | Handle NULLs gracefully |
+| [Date & Time Functions](/sql/sql-date-functions) | Truncate, extract, and compute with dates |
 
 :::tip Prerequisites
 No prior experience required. A basic understanding of spreadsheets is helpful but not necessary.

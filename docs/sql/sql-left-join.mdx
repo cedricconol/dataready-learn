@@ -1,0 +1,158 @@
+---
+id: sql-left-join
+title: "LEFT JOIN — Keeping All Left-Side Rows"
+sidebar_label: "LEFT JOIN"
+sidebar_position: 11
+youtube_url: ""
+---
+
+# `LEFT JOIN` — Keeping All Left-Side Rows
+
+`LEFT JOIN` returns **all rows from the left table**, plus matching rows from the right table. When there's no match in the right table, the right-side columns are filled with `NULL`.
+
+This contrasts with [INNER JOIN](./sql-join), which drops any row that doesn't have a match on both sides.
+
+:::tip Prior lesson
+The sample dataset is defined in the [SELECT](./sql-select) lesson.
+:::
+
+## Syntax
+
+```sql
+SELECT columns
+FROM left_table l
+LEFT JOIN right_table r ON l.key = r.key;
+```
+
+## Venn diagram view
+
+| Join type  | Keeps rows from left with no match | Keeps rows from right with no match |
+|------------|------------------------------------|-------------------------------------|
+| INNER JOIN | No                                 | No                                  |
+| LEFT JOIN  | **Yes** (NULLs on right side)      | No                                  |
+
+## Examples
+
+### Example 1 — All customers, including those with no orders
+
+Add a new customer who hasn't placed any orders yet: imagine customer 6 (`Frank`) exists in `customers` but has no rows in `orders`. A LEFT JOIN would still include Frank.
+
+With our current dataset, all customers have at least one order, so let's show the shape of the query and what NULLs would look like.
+
+```sql
+SELECT
+    c.customer_id,
+    c.name,
+    o.order_id,
+    o.total_amount
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id;
+```
+
+**Result (all orders per customer, NULLs if none):**
+
+| customer_id | name          | order_id | total_amount |
+|-------------|---------------|----------|--------------|
+| 1           | Alice Johnson | 1        | 999.00       |
+| 1           | Alice Johnson | 2        | 59.98        |
+| 1           | Alice Johnson | 6        | 349.00       |
+| 2           | Bob Smith     | 3        | 349.00       |
+| 2           | Bob Smith     | 7        | 999.00       |
+| 3           | Carol White   | 4        | 796.00       |
+| 3           | Carol White   | 9        | 999.00       |
+| 4           | Dave Brown    | 5        | 49.90        |
+| 4           | Dave Brown    | 10       | 24.95        |
+| 5           | Eve Davis     | 8        | 89.97        |
+
+If there were a customer with no orders, their row would appear with `NULL` in `order_id` and `total_amount`.
+
+### Example 2 — Find customers with NO orders
+
+Use `IS NULL` on the right side to identify unmatched rows — a classic anti-join pattern.
+
+```sql
+SELECT
+    c.customer_id,
+    c.name
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.order_id IS NULL;
+```
+
+With our dataset, all customers have at least one order, so this returns an empty result. But this pattern is extremely common in real-world data quality checks.
+
+### Example 3 — Aggregate with LEFT JOIN
+
+Count orders per customer, including customers with zero orders.
+
+```sql
+SELECT
+    c.customer_id,
+    c.name,
+    COUNT(o.order_id) AS order_count
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.name
+ORDER BY order_count DESC;
+```
+
+**Result:**
+
+| customer_id | name          | order_count |
+|-------------|---------------|-------------|
+| 1           | Alice Johnson | 3           |
+| 2           | Bob Smith     | 2           |
+| 3           | Carol White   | 2           |
+| 4           | Dave Brown    | 2           |
+| 5           | Eve Davis     | 1           |
+
+Note: `COUNT(o.order_id)` counts non-NULL values, so a customer with no orders would show `0`.
+
+## Common Mistake
+
+:::warning Filtering on the right-side table in WHERE turns LEFT JOIN into INNER JOIN
+Once you add a `WHERE` condition on the right-side table, rows that were NULL (unmatched) fail the condition and get dropped — effectively converting your LEFT JOIN into an INNER JOIN.
+
+```sql
+-- This looks like a LEFT JOIN but behaves like INNER JOIN:
+SELECT c.name, o.total_amount
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.status = 'completed';  -- drops NULLs!
+
+-- To filter on the right side while preserving NULLs, put the condition in ON:
+SELECT c.name, o.total_amount
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+                  AND o.status = 'completed';
+```
+:::
+
+## Practice
+
+Write a query that returns each customer's name and their total number of orders. Include customers with zero orders (use `COUNT(o.order_id)` so that NULL rows count as 0).
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    c.name,
+    COUNT(o.order_id) AS order_count
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.name
+ORDER BY c.name;
+```
+
+**Expected result:**
+
+| name          | order_count |
+|---------------|-------------|
+| Alice Johnson | 3           |
+| Bob Smith     | 2           |
+| Carol White   | 2           |
+| Dave Brown    | 2           |
+| Eve Davis     | 1           |
+
+</details>

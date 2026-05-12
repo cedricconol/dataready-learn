@@ -1,0 +1,142 @@
+---
+id: sql-select
+title: "SELECT — Retrieving Columns"
+sidebar_label: "SELECT"
+sidebar_position: 3
+youtube_url: ""
+---
+
+# `SELECT` — Retrieving Columns
+
+`SELECT` is the entry point of every read query in SQL. It tells the database which columns you want to see in the result.
+
+## Sample Dataset
+
+All lessons in this series use three tables. Expand the section below to see the full data.
+
+<details>
+<summary>View sample tables</summary>
+
+**customers**
+
+| customer_id | name          | email               | city      | country   |
+|-------------|---------------|---------------------|-----------|-----------|
+| 1           | Alice Johnson | alice@example.com   | New York  | USA       |
+| 2           | Bob Smith     | bob@example.com     | London    | UK        |
+| 3           | Carol White   | carol@example.com   | Sydney    | Australia |
+| 4           | Dave Brown    | dave@example.com    | Toronto   | Canada    |
+| 5           | Eve Davis     | eve@example.com     | New York  | USA       |
+
+**products**
+
+| product_id | name     | category    | price  |
+|------------|----------|-------------|--------|
+| 1          | Laptop   | Electronics | 999.00 |
+| 2          | Mouse    | Electronics | 29.99  |
+| 3          | Desk     | Furniture   | 349.00 |
+| 4          | Chair    | Furniture   | 199.00 |
+| 5          | Notebook | Stationery  | 4.99   |
+
+**orders**
+
+| order_id | customer_id | product_id | order_date | quantity | total_amount | status    |
+|----------|-------------|------------|------------|----------|--------------|-----------|
+| 1        | 1           | 1          | 2024-01-05 | 1        | 999.00       | completed |
+| 2        | 1           | 2          | 2024-01-10 | 2        | 59.98        | completed |
+| 3        | 2           | 3          | 2024-01-15 | 1        | 349.00       | completed |
+| 4        | 3           | 4          | 2024-02-01 | 4        | 796.00       | completed |
+| 5        | 4           | 5          | 2024-02-10 | 10       | 49.90        | pending   |
+| 6        | 1           | 3          | 2024-03-01 | 1        | 349.00       | cancelled |
+| 7        | 2           | 1          | 2024-03-15 | 1        | 999.00       | completed |
+| 8        | 5           | 2          | 2024-04-01 | 3        | 89.97        | completed |
+| 9        | 3           | 1          | 2024-04-10 | 1        | 999.00       | pending   |
+| 10       | 4           | 5          | 2024-05-01 | 5        | 24.95        | pending   |
+
+</details>
+
+## Syntax
+
+```sql
+-- Select specific columns
+SELECT column1, column2, column3
+FROM table_name;
+
+-- Select all columns
+SELECT *
+FROM table_name;
+```
+
+## Examples
+
+### Example 1 — Select all columns
+
+```sql
+SELECT *
+FROM customers;
+```
+
+**Result:**
+
+| customer_id | name          | email               | city      | country   |
+|-------------|---------------|---------------------|-----------|-----------|
+| 1           | Alice Johnson | alice@example.com   | New York  | USA       |
+| 2           | Bob Smith     | bob@example.com     | London    | UK        |
+| 3           | Carol White   | carol@example.com   | Sydney    | Australia |
+| 4           | Dave Brown    | dave@example.com    | Toronto   | Canada    |
+| 5           | Eve Davis     | eve@example.com     | New York  | USA       |
+
+### Example 2 — Select specific columns
+
+Naming only the columns you need is the standard practice in real-world queries.
+
+```sql
+SELECT
+    order_id,
+    order_date,
+    total_amount
+FROM orders;
+```
+
+**Result:**
+
+| order_id | order_date | total_amount |
+|----------|------------|--------------|
+| 1        | 2024-01-05 | 999.00       |
+| 2        | 2024-01-10 | 59.98        |
+| 3        | 2024-01-15 | 349.00       |
+| 4        | 2024-02-01 | 796.00       |
+| 5        | 2024-02-10 | 49.90        |
+| ...      | ...        | ...          |
+
+## Common Mistake
+
+:::warning Avoid `SELECT *` in production
+`SELECT *` is useful for quick exploration but is risky in production code. If someone adds or renames a column, your query silently returns different data. Always list the columns you actually need.
+:::
+
+## Practice
+
+Write a query that returns the `name`, `category`, and `price` of every product.
+
+<details>
+<summary>Show answer</summary>
+
+```sql
+SELECT
+    name,
+    category,
+    price
+FROM products;
+```
+
+**Expected result:**
+
+| name     | category    | price  |
+|----------|-------------|--------|
+| Laptop   | Electronics | 999.00 |
+| Mouse    | Electronics | 29.99  |
+| Desk     | Furniture   | 349.00 |
+| Chair    | Furniture   | 199.00 |
+| Notebook | Stationery  | 4.99   |
+
+</details>
