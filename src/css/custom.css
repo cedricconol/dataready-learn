@@ -4,6 +4,8 @@
  * Infima colour shades generated via https://docusaurus.io/docs/styling-layout#styling-your-site-with-infima
  */
 
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
+
 :root {
   --ifm-color-primary: #3b82f6;
   --ifm-color-primary-dark: #2172f5;
@@ -13,7 +15,8 @@
   --ifm-color-primary-lighter: #629bf7;
   --ifm-color-primary-lightest: #89b5f9;
 
-  --ifm-font-family-base: "Inter", system-ui, -apple-system, sans-serif;
+  --ifm-font-family-base: "Geist", system-ui, -apple-system, sans-serif;
+  --ifm-font-family-monospace: "Geist Mono", monospace;
   --ifm-heading-font-weight: 600;
   --ifm-code-font-size: 94%;
   --docusaurus-highlighted-code-line-bg: rgba(59, 130, 246, 0.1);
