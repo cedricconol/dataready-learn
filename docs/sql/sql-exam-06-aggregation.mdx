@@ -1,0 +1,99 @@
+---
+id: sql-exam-06-aggregation
+title: "Exam 6: Aggregating Data"
+sidebar_label: "Exam 6: Aggregation"
+sidebar_position: 105
+youtube_url: ""
+---
+
+import SqlExercise from '@site/src/components/SqlExercise';
+
+# Exam 6: Aggregating Data
+
+**Difficulty:** Intermediate
+
+**Topics covered:** `COUNT`, `SUM`, `AVG`, `GROUP BY`, `HAVING`
+
+Each question shows the target output. Write a SQL query that produces exactly those columns and rows.
+
+---
+
+## Question 1
+
+Count the total number of orders. Return a single column named `total_orders`.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["total_orders"],
+    rows: [[10]]
+  }}
+/>
+
+---
+
+## Question 2
+
+Find the total revenue from all completed orders. Return a single column named `total_revenue`.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["total_revenue"],
+    rows: [[3292.95]]
+  }}
+/>
+
+---
+
+## Question 3
+
+For each product category, calculate the average price. Return `category` and `avg_price`.
+
+<SqlExercise
+  tables={["products"]}
+  expected={{
+    columns: ["category", "avg_price"],
+    rows: [
+      ["Electronics", 514.495],
+      ["Furniture", 274],
+      ["Stationery", 4.99],
+    ]
+  }}
+/>
+
+---
+
+## Question 4
+
+For each customer, count how many orders they have placed. Return `customer_id` and `order_count`. Only include customers with more than 1 order.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["customer_id", "order_count"],
+    rows: [
+      [1, 3],
+      [2, 2],
+      [3, 2],
+      [4, 2],
+    ]
+  }}
+/>
+
+---
+
+## Question 5
+
+For each product, calculate the total quantity ordered and the total revenue. Join with `products` to include the product `name` aliased as `product_name`. Only include products where the total quantity is 5 or more. Return `product_name`, `total_qty`, and `total_revenue`.
+
+<SqlExercise
+  tables={["orders", "products"]}
+  expected={{
+    columns: ["product_name", "total_qty", "total_revenue"],
+    rows: [
+      ["Mouse", 5, 149.95],
+      ["Notebook", 15, 74.85],
+    ]
+  }}
+/>

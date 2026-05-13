@@ -1,0 +1,109 @@
+---
+id: sql-exam-04-shaping
+title: "Exam 4: Shaping Results"
+sidebar_label: "Exam 4: Shaping Results"
+sidebar_position: 103
+youtube_url: ""
+---
+
+import SqlExercise from '@site/src/components/SqlExercise';
+
+# Exam 4: Shaping Results
+
+**Difficulty:** Beginner+
+
+**Topics covered:** `DISTINCT`, `ORDER BY`, `LIMIT`, `AS`, computed columns
+
+Each question shows the target output. Write a SQL query that produces exactly those columns and rows.
+
+---
+
+## Question 1
+
+Retrieve a unique list of countries from the `customers` table. Return just the `country` column.
+
+<SqlExercise
+  tables={["customers"]}
+  expected={{
+    columns: ["country"],
+    rows: [
+      ["USA"],
+      ["UK"],
+      ["Australia"],
+      ["Canada"],
+    ]
+  }}
+/>
+
+---
+
+## Question 2
+
+Get the 3 most expensive products by price (highest first). Return all columns.
+
+<SqlExercise
+  tables={["products"]}
+  expected={{
+    columns: ["product_id", "name", "category", "price"],
+    rows: [
+      [1, "Laptop", "Electronics", 999],
+      [3, "Desk", "Furniture", 349],
+      [4, "Chair", "Furniture", 199],
+    ]
+  }}
+/>
+
+---
+
+## Question 3
+
+Get the 3 most recent orders by `order_date`. Return all columns.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["order_id", "customer_id", "product_id", "order_date", "quantity", "total_amount", "status"],
+    rows: [
+      [10, 4, 5, "2024-05-01", 5, 24.95, "pending"],
+      [9, 3, 1, "2024-04-10", 1, 999, "pending"],
+      [8, 5, 2, "2024-04-01", 3, 89.97, "completed"],
+    ]
+  }}
+/>
+
+---
+
+## Question 4
+
+Retrieve the `product_id`, `name`, and `price` of products in the `'Furniture'` category. Return only those two columns plus `product_id`.
+
+<SqlExercise
+  tables={["products"]}
+  expected={{
+    columns: ["product_id", "name", "price"],
+    rows: [
+      [3, "Desk", 349],
+      [4, "Chair", 199],
+    ]
+  }}
+/>
+
+---
+
+## Question 5
+
+List all unique `product_id` values that appear in the `orders` table. Return just the `product_id` column.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["product_id"],
+    rows: [
+      [1],
+      [2],
+      [3],
+      [4],
+      [5],
+    ]
+  }}
+/>

@@ -1,0 +1,115 @@
+---
+id: sql-exam-08-case-cte
+title: "Exam 8: CASE, CTEs & COALESCE"
+sidebar_label: "Exam 8: CASE & CTEs"
+sidebar_position: 107
+youtube_url: ""
+---
+
+import SqlExercise from '@site/src/components/SqlExercise';
+
+# Exam 8: CASE, CTEs & COALESCE
+
+**Difficulty:** Advanced
+
+**Topics covered:** `CASE WHEN`, `WITH` (CTEs), combining multiple techniques
+
+Each question shows the target output. Write a SQL query that produces exactly those columns and rows.
+
+---
+
+## Question 1
+
+Add a `price_tier` column to every product using `CASE WHEN`: `'Budget'` if price &lt; 50, `'Mid-range'` if price is between 50 and 500, `'Premium'` if price &gt; 500. Return `name`, `price`, and `price_tier`.
+
+<SqlExercise
+  tables={["products"]}
+  expected={{
+    columns: ["name", "price", "price_tier"],
+    rows: [
+      ["Laptop", 999, "Premium"],
+      ["Mouse", 29.99, "Budget"],
+      ["Desk", 349, "Mid-range"],
+      ["Chair", 199, "Mid-range"],
+      ["Notebook", 4.99, "Budget"],
+    ]
+  }}
+/>
+
+---
+
+## Question 2
+
+Using `CASE WHEN` and `SUM`, pivot the order status counts into three columns in a single row: `completed_count`, `pending_count`, `cancelled_count`.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["completed_count", "pending_count", "cancelled_count"],
+    rows: [[6, 3, 1]]
+  }}
+/>
+
+---
+
+## Question 3
+
+Add a `value_label` column to each order: `'High'` if `total_amount > 500`, `'Low'` otherwise. Return `order_id`, `total_amount`, and `value_label`.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["order_id", "total_amount", "value_label"],
+    rows: [
+      [1, 999, "High"],
+      [2, 59.98, "Low"],
+      [3, 349, "Low"],
+      [4, 796, "High"],
+      [5, 49.9, "Low"],
+      [6, 349, "Low"],
+      [7, 999, "High"],
+      [8, 89.97, "Low"],
+      [9, 999, "High"],
+      [10, 24.95, "Low"],
+    ]
+  }}
+/>
+
+---
+
+## Question 4
+
+Write a CTE called `high_value_orders` that contains all orders with `total_amount > 500`. Then join it with `customers` to return `customer_name`, `order_id`, `total_amount`, and `status`.
+
+<SqlExercise
+  tables={["orders", "customers"]}
+  expected={{
+    columns: ["customer_name", "order_id", "total_amount", "status"],
+    rows: [
+      ["Alice Johnson", 1, 999, "completed"],
+      ["Bob Smith", 7, 999, "completed"],
+      ["Carol White", 9, 999, "pending"],
+      ["Carol White", 4, 796, "completed"],
+    ]
+  }}
+/>
+
+---
+
+## Question 5
+
+Write a CTE called `order_stats` that computes `customer_id`, `order_count` (number of orders), and `total_qty` (sum of quantity) per customer. Join it with `customers` to return `customer_name`, `order_count`, and `total_qty`.
+
+<SqlExercise
+  tables={["orders", "customers"]}
+  expected={{
+    columns: ["customer_name", "order_count", "total_qty"],
+    rows: [
+      ["Alice Johnson", 3, 4],
+      ["Bob Smith", 2, 2],
+      ["Carol White", 2, 5],
+      ["Dave Brown", 2, 15],
+      ["Eve Davis", 1, 3],
+    ]
+  }}
+/>

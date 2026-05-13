@@ -1,0 +1,76 @@
+.card {
+  margin: 1rem 0 0.5rem;
+  border: 1px solid #1e2d45;
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: var(--ifm-font-family-base);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0.45rem 0.9rem;
+  background: #0f1623;
+  border-bottom: 1px solid #1e2d45;
+}
+
+.tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #60a5fa;
+}
+
+.body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: #07090f;
+}
+
+.table {
+  min-width: 140px;
+}
+
+.tableName {
+  font-family: var(--ifm-font-family-monospace, monospace);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid #1e2d45;
+}
+
+.columns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.column {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--ifm-font-family-monospace, monospace);
+  font-size: 0.74rem;
+}
+
+.colName {
+  color: #cbd5e1;
+}
+
+.colType {
+  color: #475569;
+}
+
+.colNote {
+  font-size: 0.63rem;
+  background: #1e2d45;
+  padding: 0.02rem 0.28rem;
+  border-radius: 3px;
+  color: #60a5fa;
+  opacity: 0.75;
+}
