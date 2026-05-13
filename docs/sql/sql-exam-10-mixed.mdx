@@ -1,0 +1,118 @@
+---
+id: sql-exam-10-mixed
+title: "Exam 10: Mixed Challenge"
+sidebar_label: "Exam 10: Mixed Challenge"
+sidebar_position: 109
+youtube_url: ""
+---
+
+import SqlExercise from '@site/src/components/SqlExercise';
+
+# Exam 10: Mixed Challenge
+
+**Difficulty:** Expert
+
+**Topics covered:** CTEs, window functions, multi-table JOINs, `CASE WHEN`, aggregation, subqueries
+
+Each question shows the target output. Write a SQL query that produces exactly those columns and rows. There is often more than one valid approach.
+
+---
+
+## Question 1
+
+For each customer, compute their total number of orders (`order_count`), total amount spent (`total_spent`), and a `segment` label: `'High Value'` if total spent &ge; 1000, `'Mid Value'` if between 100 and 999, `'Low Value'` if below 100. Return `name`, `order_count`, `total_spent`, and `segment`.
+
+<SqlExercise
+  tables={["customers", "orders"]}
+  expected={{
+    columns: ["name", "order_count", "total_spent", "segment"],
+    rows: [
+      ["Alice Johnson", 3, 1407.98, "High Value"],
+      ["Bob Smith", 2, 1348, "High Value"],
+      ["Carol White", 2, 1795, "High Value"],
+      ["Dave Brown", 2, 74.85, "Low Value"],
+      ["Eve Davis", 1, 89.97, "Low Value"],
+    ]
+  }}
+/>
+
+---
+
+## Question 2
+
+For each product category, find the total number of orders (`order_count`) and total revenue (`total_revenue`). Join `orders` with `products` to get the category. Return `category`, `order_count`, and `total_revenue`.
+
+<SqlExercise
+  tables={["orders", "products"]}
+  expected={{
+    columns: ["category", "order_count", "total_revenue"],
+    rows: [
+      ["Electronics", 5, 3146.95],
+      ["Furniture", 3, 1494],
+      ["Stationery", 2, 74.85],
+    ]
+  }}
+/>
+
+---
+
+## Question 3
+
+Using `ROW_NUMBER()`, find each customer's most recent order. Then filter to only customers whose most recent order was `'cancelled'` or `'pending'`. Return `customer_name`, `last_order_date`, and `last_order_status`.
+
+<SqlExercise
+  tables={["customers", "orders"]}
+  expected={{
+    columns: ["customer_name", "last_order_date", "last_order_status"],
+    rows: [
+      ["Alice Johnson", "2024-03-01", "cancelled"],
+      ["Carol White", "2024-04-10", "pending"],
+      ["Dave Brown", "2024-05-01", "pending"],
+    ]
+  }}
+/>
+
+---
+
+## Question 4
+
+For each order, show the customer's total lifetime spend using `SUM() OVER (PARTITION BY customer_id)` with no ORDER BY. Return `order_id`, `customer_id`, `total_amount`, and `lifetime_spend`.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["order_id", "customer_id", "total_amount", "lifetime_spend"],
+    rows: [
+      [1, 1, 999, 1407.98],
+      [2, 1, 59.98, 1407.98],
+      [3, 2, 349, 1348],
+      [4, 3, 796, 1795],
+      [5, 4, 49.9, 74.85],
+      [6, 1, 349, 1407.98],
+      [7, 2, 999, 1348],
+      [8, 5, 89.97, 89.97],
+      [9, 3, 999, 1795],
+      [10, 4, 24.95, 74.85],
+    ]
+  }}
+/>
+
+---
+
+## Question 5
+
+Using a CTE and window functions, produce a monthly revenue summary. Group orders by `strftime('%Y-%m', order_date)` aliased as `month`. Return `month`, `order_count`, `total_revenue`, and `running_total` (cumulative revenue through that month).
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["month", "order_count", "total_revenue", "running_total"],
+    rows: [
+      ["2024-01", 3, 1407.98, 1407.98],
+      ["2024-02", 2, 845.9, 2253.88],
+      ["2024-03", 2, 1348, 3601.88],
+      ["2024-04", 2, 1088.97, 4690.85],
+      ["2024-05", 1, 24.95, 4715.8],
+    ]
+  }}
+/>

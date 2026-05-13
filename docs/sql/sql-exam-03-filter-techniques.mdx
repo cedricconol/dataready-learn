@@ -1,0 +1,108 @@
+---
+id: sql-exam-03-filter-techniques
+title: "Exam 3: Filtering Techniques"
+sidebar_label: "Exam 3: Filter Techniques"
+sidebar_position: 102
+youtube_url: ""
+---
+
+import SqlExercise from '@site/src/components/SqlExercise';
+
+# Exam 3: Filtering Techniques
+
+**Difficulty:** Beginner+
+
+**Topics covered:** `IN`, `NOT IN`, `BETWEEN`, `LIKE`, `IS NULL`
+
+Each question shows the target output. Write a SQL query that produces exactly those columns and rows.
+
+---
+
+## Question 1
+
+Retrieve all columns from `products` in the `'Electronics'` or `'Furniture'` category. Use `IN`.
+
+<SqlExercise
+  tables={["products"]}
+  expected={{
+    columns: ["product_id", "name", "category", "price"],
+    rows: [
+      [1, "Laptop", "Electronics", 999],
+      [2, "Mouse", "Electronics", 29.99],
+      [3, "Desk", "Furniture", 349],
+      [4, "Chair", "Furniture", 199],
+    ]
+  }}
+/>
+
+---
+
+## Question 2
+
+Retrieve all columns from `orders` where `total_amount` is between 50 and 400 (inclusive).
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["order_id", "customer_id", "product_id", "order_date", "quantity", "total_amount", "status"],
+    rows: [
+      [2, 1, 2, "2024-01-10", 2, 59.98, "completed"],
+      [3, 2, 3, "2024-01-15", 1, 349, "completed"],
+      [6, 1, 3, "2024-03-01", 1, 349, "cancelled"],
+      [8, 5, 2, "2024-04-01", 3, 89.97, "completed"],
+    ]
+  }}
+/>
+
+---
+
+## Question 3
+
+Retrieve all columns from `customers` whose `name` starts with the letter `'C'`.
+
+<SqlExercise
+  tables={["customers"]}
+  expected={{
+    columns: ["customer_id", "name", "email", "city", "country"],
+    rows: [
+      [3, "Carol White", "carol@example.com", "Sydney", "Australia"],
+    ]
+  }}
+/>
+
+---
+
+## Question 4
+
+Retrieve the `name` and `city` of customers whose `city` starts with `'N'`.
+
+<SqlExercise
+  tables={["customers"]}
+  expected={{
+    columns: ["name", "city"],
+    rows: [
+      ["Alice Johnson", "New York"],
+      ["Eve Davis", "New York"],
+    ]
+  }}
+/>
+
+---
+
+## Question 5
+
+Retrieve the `order_id`, `customer_id`, and `status` of orders **not** placed by customers 1 or 2. Use `NOT IN`.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["order_id", "customer_id", "status"],
+    rows: [
+      [4, 3, "completed"],
+      [5, 4, "pending"],
+      [8, 5, "completed"],
+      [9, 3, "pending"],
+      [10, 4, "pending"],
+    ]
+  }}
+/>

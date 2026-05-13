@@ -1,0 +1,122 @@
+---
+id: sql-exam-01-basic-select
+title: "Exam 1: Basic SELECT"
+sidebar_label: "Exam 1: Basic SELECT"
+sidebar_position: 100
+youtube_url: ""
+---
+
+import SqlExercise from '@site/src/components/SqlExercise';
+
+# Exam 1: Basic SELECT
+
+**Difficulty:** Beginner
+
+**Topics covered:** `SELECT`, `FROM`, `SELECT *`, column aliases
+
+Write a SQL query that satisfies each prompt, then click **Submit** to check your answer.
+
+---
+
+## Question 1
+
+Retrieve all columns from the `customers` table.
+
+<SqlExercise
+  tables={["customers"]}
+  expected={{
+    columns: ["customer_id", "name", "email", "city", "country"],
+    rows: [
+      [1, "Alice Johnson", "alice@example.com", "New York", "USA"],
+      [2, "Bob Smith", "bob@example.com", "London", "UK"],
+      [3, "Carol White", "carol@example.com", "Sydney", "Australia"],
+      [4, "Dave Brown", "dave@example.com", "Toronto", "Canada"],
+      [5, "Eve Davis", "eve@example.com", "New York", "USA"],
+    ]
+  }}
+/>
+
+---
+
+## Question 2
+
+Retrieve only the `name` and `email` columns from the `customers` table.
+
+<SqlExercise
+  tables={["customers"]}
+  expected={{
+    columns: ["name", "email"],
+    rows: [
+      ["Alice Johnson", "alice@example.com"],
+      ["Bob Smith", "bob@example.com"],
+      ["Carol White", "carol@example.com"],
+      ["Dave Brown", "dave@example.com"],
+      ["Eve Davis", "eve@example.com"],
+    ]
+  }}
+/>
+
+---
+
+## Question 3
+
+Retrieve the `name`, `category`, and `price` columns from the `products` table.
+
+<SqlExercise
+  tables={["products"]}
+  expected={{
+    columns: ["name", "category", "price"],
+    rows: [
+      ["Laptop", "Electronics", 999],
+      ["Mouse", "Electronics", 29.99],
+      ["Desk", "Furniture", 349],
+      ["Chair", "Furniture", 199],
+      ["Notebook", "Stationery", 4.99],
+    ]
+  }}
+/>
+
+---
+
+## Question 4
+
+Retrieve the `order_id`, `order_date`, and `total_amount` columns from the `orders` table.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["order_id", "order_date", "total_amount"],
+    rows: [
+      [1, "2024-01-05", 999],
+      [2, "2024-01-10", 59.98],
+      [3, "2024-01-15", 349],
+      [4, "2024-02-01", 796],
+      [5, "2024-02-10", 49.9],
+      [6, "2024-03-01", 349],
+      [7, "2024-03-15", 999],
+      [8, "2024-04-01", 89.97],
+      [9, "2024-04-10", 999],
+      [10, "2024-05-01", 24.95],
+    ]
+  }}
+/>
+
+---
+
+## Question 5
+
+Retrieve all columns from the `products` table, but alias `name` as `product_name` and `price` as `unit_price`.
+
+<SqlExercise
+  tables={["products"]}
+  expected={{
+    columns: ["product_id", "product_name", "category", "unit_price"],
+    rows: [
+      [1, "Laptop", "Electronics", 999],
+      [2, "Mouse", "Electronics", 29.99],
+      [3, "Desk", "Furniture", 349],
+      [4, "Chair", "Furniture", 199],
+      [5, "Notebook", "Stationery", 4.99],
+    ]
+  }}
+/>

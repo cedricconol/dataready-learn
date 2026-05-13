@@ -17,7 +17,9 @@ export default function DocItemPaginator(props: Props): JSX.Element {
   const { metadata } = useDoc();
 
   const isSqlLesson =
-    metadata.id.startsWith("sql/") && metadata.id !== "sql/sql";
+    metadata.id.startsWith("sql/") &&
+    metadata.id !== "sql/sql" &&
+    !metadata.id.includes("exam");
 
   return (
     <>

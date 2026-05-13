@@ -1,0 +1,129 @@
+---
+id: sql-exam-05-joins
+title: "Exam 5: Joining Tables"
+sidebar_label: "Exam 5: JOINs"
+sidebar_position: 104
+youtube_url: ""
+---
+
+import SqlExercise from '@site/src/components/SqlExercise';
+
+# Exam 5: Joining Tables
+
+**Difficulty:** Intermediate
+
+**Topics covered:** `INNER JOIN`, `LEFT JOIN`, `ON`, multi-table joins
+
+Each question shows the target output. Write a SQL query that produces exactly those columns and rows.
+
+---
+
+## Question 1
+
+Join `orders` with `customers`. Return `order_id`, `order_date`, and the customer's `name` aliased as `customer_name`.
+
+<SqlExercise
+  tables={["orders", "customers"]}
+  expected={{
+    columns: ["order_id", "order_date", "customer_name"],
+    rows: [
+      [1, "2024-01-05", "Alice Johnson"],
+      [2, "2024-01-10", "Alice Johnson"],
+      [3, "2024-01-15", "Bob Smith"],
+      [4, "2024-02-01", "Carol White"],
+      [5, "2024-02-10", "Dave Brown"],
+      [6, "2024-03-01", "Alice Johnson"],
+      [7, "2024-03-15", "Bob Smith"],
+      [8, "2024-04-01", "Eve Davis"],
+      [9, "2024-04-10", "Carol White"],
+      [10, "2024-05-01", "Dave Brown"],
+    ]
+  }}
+/>
+
+---
+
+## Question 2
+
+Join `orders` with `products`. Return `order_id`, the product `name` aliased as `product_name`, and `total_amount`. Only include completed orders.
+
+<SqlExercise
+  tables={["orders", "products"]}
+  expected={{
+    columns: ["order_id", "product_name", "total_amount"],
+    rows: [
+      [1, "Laptop", 999],
+      [2, "Mouse", 59.98],
+      [3, "Desk", 349],
+      [4, "Chair", 796],
+      [7, "Laptop", 999],
+      [8, "Mouse", 89.97],
+    ]
+  }}
+/>
+
+---
+
+## Question 3
+
+Use a `LEFT JOIN` to show all customers and any orders they have placed. Return the customer `name` aliased as `customer_name`, `order_id`, and `order_date`.
+
+<SqlExercise
+  tables={["customers", "orders"]}
+  expected={{
+    columns: ["customer_name", "order_id", "order_date"],
+    rows: [
+      ["Alice Johnson", 1, "2024-01-05"],
+      ["Alice Johnson", 2, "2024-01-10"],
+      ["Alice Johnson", 6, "2024-03-01"],
+      ["Bob Smith", 3, "2024-01-15"],
+      ["Bob Smith", 7, "2024-03-15"],
+      ["Carol White", 4, "2024-02-01"],
+      ["Carol White", 9, "2024-04-10"],
+      ["Dave Brown", 5, "2024-02-10"],
+      ["Dave Brown", 10, "2024-05-01"],
+      ["Eve Davis", 8, "2024-04-01"],
+    ]
+  }}
+/>
+
+---
+
+## Question 4
+
+Join all three tables. Return `customer_name`, `product_name`, `quantity`, `total_amount`, and `status` for every order.
+
+<SqlExercise
+  tables={["customers", "orders", "products"]}
+  expected={{
+    columns: ["customer_name", "product_name", "quantity", "total_amount", "status"],
+    rows: [
+      ["Alice Johnson", "Laptop", 1, 999, "completed"],
+      ["Alice Johnson", "Mouse", 2, 59.98, "completed"],
+      ["Alice Johnson", "Desk", 1, 349, "cancelled"],
+      ["Bob Smith", "Desk", 1, 349, "completed"],
+      ["Bob Smith", "Laptop", 1, 999, "completed"],
+      ["Carol White", "Chair", 4, 796, "completed"],
+      ["Carol White", "Laptop", 1, 999, "pending"],
+      ["Dave Brown", "Notebook", 10, 49.9, "pending"],
+      ["Dave Brown", "Notebook", 5, 24.95, "pending"],
+      ["Eve Davis", "Mouse", 3, 89.97, "completed"],
+    ]
+  }}
+/>
+
+---
+
+## Question 5
+
+Find all customers who have **never** placed an order. Use a `LEFT JOIN` and filter on `NULL`. Return `customer_id` and `name`.
+
+*(All customers in this dataset have placed orders, so the result will be 0 rows — the query logic is what counts.)*
+
+<SqlExercise
+  tables={["customers", "orders"]}
+  expected={{
+    columns: ["customer_id", "name"],
+    rows: []
+  }}
+/>

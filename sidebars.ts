@@ -122,6 +122,23 @@ const sidebars: SidebarsConfig = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "Practice Exams",
+      collapsed: false,
+      items: [
+        "sql/sql-exam-01-basic-select",
+        "sql/sql-exam-02-where",
+        "sql/sql-exam-03-filter-techniques",
+        "sql/sql-exam-04-shaping",
+        "sql/sql-exam-05-joins",
+        "sql/sql-exam-06-aggregation",
+        "sql/sql-exam-07-subqueries",
+        "sql/sql-exam-08-case-cte",
+        "sql/sql-exam-09-window-functions",
+        "sql/sql-exam-10-mixed",
+      ],
+    },
   ],
 
   dbtSidebar: [

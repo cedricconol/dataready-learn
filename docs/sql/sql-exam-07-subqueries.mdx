@@ -1,0 +1,110 @@
+---
+id: sql-exam-07-subqueries
+title: "Exam 7: Subqueries & Set Operations"
+sidebar_label: "Exam 7: Subqueries"
+sidebar_position: 106
+youtube_url: ""
+---
+
+import SqlExercise from '@site/src/components/SqlExercise';
+
+# Exam 7: Subqueries & Set Operations
+
+**Difficulty:** Intermediate
+
+**Topics covered:** Subqueries in `WHERE`, `EXISTS`, `NOT EXISTS`, `UNION`
+
+Each question shows the target output. Write a SQL query that produces exactly those columns and rows.
+
+---
+
+## Question 1
+
+Find all customers who have placed at least one order. Use a subquery with `IN`. Return all columns from `customers`.
+
+<SqlExercise
+  tables={["customers", "orders"]}
+  expected={{
+    columns: ["customer_id", "name", "email", "city", "country"],
+    rows: [
+      [1, "Alice Johnson", "alice@example.com", "New York", "USA"],
+      [2, "Bob Smith", "bob@example.com", "London", "UK"],
+      [3, "Carol White", "carol@example.com", "Sydney", "Australia"],
+      [4, "Dave Brown", "dave@example.com", "Toronto", "Canada"],
+      [5, "Eve Davis", "eve@example.com", "New York", "USA"],
+    ]
+  }}
+/>
+
+---
+
+## Question 2
+
+Find all products that have **never** been ordered. Use `NOT IN`. Return all columns from `products`.
+
+*(All products in this dataset have been ordered, so the result is 0 rows.)*
+
+<SqlExercise
+  tables={["products", "orders"]}
+  expected={{
+    columns: ["product_id", "name", "category", "price"],
+    rows: []
+  }}
+/>
+
+---
+
+## Question 3
+
+Find all customers who have placed at least one **completed** order. Use `EXISTS`. Return `customer_id` and `name`.
+
+<SqlExercise
+  tables={["customers", "orders"]}
+  expected={{
+    columns: ["customer_id", "name"],
+    rows: [
+      [1, "Alice Johnson"],
+      [2, "Bob Smith"],
+      [3, "Carol White"],
+      [5, "Eve Davis"],
+    ]
+  }}
+/>
+
+---
+
+## Question 4
+
+Find all completed orders where `total_amount` is above the average `total_amount` of all completed orders. Return all columns from `orders`.
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["order_id", "customer_id", "product_id", "order_date", "quantity", "total_amount", "status"],
+    rows: [
+      [1, 1, 1, "2024-01-05", 1, 999, "completed"],
+      [4, 3, 4, "2024-02-01", 4, 796, "completed"],
+      [7, 2, 1, "2024-03-15", 1, 999, "completed"],
+    ]
+  }}
+/>
+
+---
+
+## Question 5
+
+Use `UNION` to produce a single list of all `customer_id` values from the `customers` table combined with the distinct `customer_id` values from the `orders` table. Return a single column named `customer_id`.
+
+<SqlExercise
+  tables={["customers", "orders"]}
+  expected={{
+    columns: ["customer_id"],
+    rows: [
+      [1],
+      [2],
+      [3],
+      [4],
+      [5],
+    ]
+  }}
+/>
