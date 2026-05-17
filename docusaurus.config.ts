@@ -73,24 +73,6 @@ const config: Config = {
           label: "SQL",
         },
         {
-          type: "docSidebar",
-          sidebarId: "dbtSidebar",
-          position: "left",
-          label: "dbt",
-        },
-        {
-          type: "docSidebar",
-          sidebarId: "warehouseSidebar",
-          position: "left",
-          label: "Data Warehouse",
-        },
-        {
-          type: "docSidebar",
-          sidebarId: "biSidebar",
-          position: "left",
-          label: "BI Tools",
-        },
-        {
           href: "https://github.com/cedricconol/dataready-learn",
           label: "GitHub",
           position: "right",
@@ -104,9 +86,6 @@ const config: Config = {
           title: "Curriculum",
           items: [
             { label: "SQL", to: "/sql" },
-            { label: "dbt", to: "/dbt" },
-            { label: "Data Warehouse", to: "/data-warehouse" },
-            { label: "BI Tools", to: "/bi-tools" },
           ],
         },
         {
