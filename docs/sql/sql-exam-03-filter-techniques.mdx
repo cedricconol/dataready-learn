@@ -99,10 +99,26 @@ Retrieve the `order_id`, `customer_id`, and `status` of orders **not** placed by
     columns: ["order_id", "customer_id", "status"],
     rows: [
       [4, 3, "completed"],
-      [5, 4, "pending"],
+      [5, 4, null],
       [8, 5, "completed"],
       [9, 3, "pending"],
       [10, 4, "pending"],
+    ]
+  }}
+/>
+
+---
+
+## Question 6
+
+Retrieve `customer_id`, `name`, and `city` for any customer whose city has not been recorded.
+
+<SqlExercise
+  tables={["customers"]}
+  expected={{
+    columns: ["customer_id", "name", "city"],
+    rows: [
+      [6, "Frank Lee", null],
     ]
   }}
 />

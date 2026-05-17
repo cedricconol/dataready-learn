@@ -194,3 +194,17 @@ html {
   color: #94a3b8;
   line-height: 1.5;
 }
+
+.null-value {
+  color: #475569;
+  font-style: italic;
+  font-size: 0.85em;
+  letter-spacing: 0.03em;
+}
+
+code,
+pre,
+pre code {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}

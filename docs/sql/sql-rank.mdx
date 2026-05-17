@@ -98,20 +98,6 @@ WHERE rn = 1;
 | 5        | 4           | 49.90        | 2024-02-10 |
 | 8        | 5           | 89.97        | 2024-04-01 |
 
-### Example 3: NTILE: divide into buckets
-
-`NTILE(n)` assigns each row to one of `n` equal-sized buckets.
-
-```sql
-SELECT
-    order_id,
-    total_amount,
-    NTILE(4) OVER (ORDER BY total_amount) AS quartile
-FROM orders;
-```
-
-This splits orders into 4 revenue quartiles (Q1 = lowest, Q4 = highest).
-
 ## Common Mistake
 
 :::warning ROW_NUMBER ties are broken arbitrarily

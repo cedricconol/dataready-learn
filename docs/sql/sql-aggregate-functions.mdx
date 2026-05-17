@@ -26,7 +26,6 @@ The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesso
 ## Syntax
 
 ```sql
--- Across the whole table (no grouping)
 SELECT
     COUNT(*) AS total_rows,
     SUM(column)  AS total,
@@ -34,14 +33,6 @@ SELECT
     MIN(column)  AS minimum,
     MAX(column)  AS maximum
 FROM table_name;
-
--- With grouping
-SELECT
-    group_column,
-    COUNT(*) AS total_rows,
-    SUM(column) AS total
-FROM table_name
-GROUP BY group_column;
 ```
 
 ## Examples
@@ -125,39 +116,38 @@ If all `customer_id` values are non-NULL, both return the same number. If some a
 :::warning AVG ignores NULLs - which can mislead
 `AVG` automatically skips `NULL` values. If 40% of a column is `NULL`, `AVG` computes the average over only the 60% that have values. This may not be what you want.
 
+Use `COUNT(*)` vs `COUNT(column)` to check before trusting an average:
+
 ```sql
--- What you might intend: treat NULLs as 0
-SELECT AVG(COALESCE(total_amount, 0)) AS avg_including_nulls_as_zero
+SELECT
+    COUNT(*)           AS total_rows,
+    COUNT(total_amount) AS non_null_rows
 FROM orders;
 ```
 
-Always verify how many NULLs exist before trusting an average.
+If the two numbers differ, `AVG(total_amount)` is computing over fewer rows than the table actually has.
 :::
 
 ## Practice
 
-Write a query that shows, for each order `status`, the number of orders, the total revenue, and the average order value. Sort by total revenue descending.
+Write a query that returns the total number of orders, total revenue, smallest order amount, and largest order amount across all orders.
 
 <details>
 <summary>Show answer</summary>
 
 ```sql
 SELECT
-    status,
-    COUNT(*)          AS order_count,
+    COUNT(*)          AS total_orders,
     SUM(total_amount) AS total_revenue,
-    AVG(total_amount) AS avg_order_value
-FROM orders
-GROUP BY status
-ORDER BY total_revenue DESC;
+    MIN(total_amount) AS smallest_order,
+    MAX(total_amount) AS largest_order
+FROM orders;
 ```
 
 **Expected result:**
 
-| status    | order_count | total_revenue | avg_order_value |
-|-----------|-------------|---------------|-----------------|
-| completed | 6           | 3292.93       | 548.82          |
-| pending   | 3           | 1073.85       | 357.95          |
-| cancelled | 1           | 349.00        | 349.00          |
+| total_orders | total_revenue | smallest_order | largest_order |
+|--------------|---------------|----------------|---------------|
+| 10           | 4715.78       | 24.95          | 999.00        |
 
 </details>

@@ -28,10 +28,11 @@ Supported comparison operators:
 |----------|------------------------|
 | `=`      | Equal to               |
 | `<>`     | Not equal to           |
+| `!=`     | Not equal to (same as `<>`, both are accepted) |
 | `>`      | Greater than           |
 | `<`      | Less than              |
-| `>=`     | Greater than or equal  |
-| `<=`     | Less than or equal     |
+| `>=`     | Greater than or equal to  |
+| `<=`     | Less than or equal to     |
 
 ## Examples
 
@@ -138,7 +139,6 @@ WHERE status = 'pending';
 
 | order_id | customer_id | product_id | order_date | quantity | total_amount | status  |
 |----------|-------------|------------|------------|----------|--------------|---------|
-| 5        | 4           | 5          | 2024-02-10 | 10       | 49.90        | pending |
 | 9        | 3           | 1          | 2024-04-10 | 1        | 999.00       | pending |
 | 10       | 4           | 5          | 2024-05-01 | 5        | 24.95        | pending |
 

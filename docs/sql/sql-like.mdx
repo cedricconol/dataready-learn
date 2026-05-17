@@ -68,9 +68,16 @@ WHERE email LIKE '%@example.com';
 
 **Result:**
 
-All five customers, since every email ends with `@example.com`.
+| name          | email                 |
+|---------------|-----------------------|
+| Alice Johnson | alice@example.com     |
+| Bob Smith     | bob@example.com       |
+| Carol White   | carol@example.com     |
+| Dave Brown    | dave@example.com      |
+| Eve Davis     | eve@example.com       |
+| Frank Lee     | frank@example.com     |
 
-### Example 3: Products containing a word
+### Example 3: Products whose names contain the letter "o"
 
 ```sql
 SELECT
@@ -88,8 +95,6 @@ WHERE name LIKE '%o%';
 | Laptop   | Electronics | 999.00 |
 | Mouse    | Electronics | 29.99  |
 | Notebook | Stationery  | 4.99   |
-
-(All three contain the letter "o".)
 
 ### Example 4: Single-character wildcard
 

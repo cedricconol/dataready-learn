@@ -68,6 +68,7 @@ Retrieve all columns from `customers` where the country is `'USA'`.
     rows: [
       [1, "Alice Johnson", "alice@example.com", "New York", "USA"],
       [5, "Eve Davis", "eve@example.com", "New York", "USA"],
+      [6, "Frank Lee", "frank@example.com", null, "USA"],
     ]
   }}
 />
@@ -101,7 +102,29 @@ Retrieve all columns from `orders` where the status is `'pending'` or `'cancelle
   expected={{
     columns: ["order_id", "customer_id", "product_id", "order_date", "quantity", "total_amount", "status"],
     rows: [
-      [5, 4, 5, "2024-02-10", 10, 49.9, "pending"],
+      [6, 1, 3, "2024-03-01", 1, 349, "cancelled"],
+      [9, 3, 1, "2024-04-10", 1, 999, "pending"],
+      [10, 4, 5, "2024-05-01", 5, 24.95, "pending"],
+    ]
+  }}
+/>
+
+---
+
+## Question 6
+
+Retrieve all columns from `orders` that have not been completed, including orders where no status has been recorded yet.
+
+:::tip
+A simple `<>` comparison silently skips rows where `status` is `NULL`. You will need an extra condition to catch those rows.
+:::
+
+<SqlExercise
+  tables={["orders"]}
+  expected={{
+    columns: ["order_id", "customer_id", "product_id", "order_date", "quantity", "total_amount", "status"],
+    rows: [
+      [5, 4, 5, "2024-02-10", 10, 49.9, null],
       [6, 1, 3, "2024-03-01", 1, 349, "cancelled"],
       [9, 3, 1, "2024-04-10", 1, 999, "pending"],
       [10, 4, 5, "2024-05-01", 5, 24.95, "pending"],
