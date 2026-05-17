@@ -12,27 +12,6 @@ const MODULES = [
       "Master the language of data. Learn to query, filter, aggregate, and join data in any relational database.",
     href: "/sql",
   },
-  {
-    icon: "⚙️",
-    title: "dbt",
-    description:
-      "Transform data with engineering best practices. Write modular SQL, run tests, and ship production pipelines.",
-    href: "/dbt",
-  },
-  {
-    icon: "🏛️",
-    title: "Data Warehouse",
-    description:
-      "Understand how cloud warehouses work. Design schemas, load data, and optimize analytical queries.",
-    href: "/data-warehouse",
-  },
-  {
-    icon: "📊",
-    title: "BI Tools",
-    description:
-      "Turn warehouse data into dashboards and decisions. Covers Metabase, Looker, Tableau, and more.",
-    href: "/bi-tools",
-  },
 ];
 
 function Hero() {
@@ -91,7 +70,7 @@ function CurriculumCards() {
   );
 }
 
-export default function Home(): JSX.Element {
+export default function Home(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
