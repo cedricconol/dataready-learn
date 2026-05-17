@@ -6,6 +6,7 @@ sidebar_position: 2
 youtube_url: ""
 ---
 
+
 # Introduction to SQL
 
 SQL (Structured Query Language) is the standard language for communicating with relational databases. Almost every data tool you'll encounter - data warehouses, BI platforms, dbt - speaks SQL under the hood.
@@ -18,11 +19,25 @@ This lesson is a work in progress. Content will be expanded with examples, exerc
 
 A relational database organizes data into **tables** (rows and columns), similar to a spreadsheet. Each table represents one type of entity - for example, `orders`, `customers`, or `products`. Tables are linked together through **keys**.
 
+## Key Concepts
+
+**Table:** a collection of rows and columns. Each row is one record; each column is one attribute.
+
+**Primary key (PK):** a column (or combination of columns) that uniquely identifies each row in a table. No two rows can share the same primary key value, and it can never be NULL.
+
+**Foreign key (FK):** a column that references the primary key of another table. This is how tables are linked. For example, `orders.customer_id` holds the `customer_id` of the customer who placed that order.
+
+**Schema:** the structure of a database: which tables exist, which columns each table has, and what data type each column holds (integer, text, date, etc.).
+
+**Query:** a SQL statement that reads or manipulates data. Most queries you write as an analyst are `SELECT` statements that retrieve rows from one or more tables.
+
+**NULL:** the absence of a value. Not zero, not an empty string, just nothing. NULL requires special handling in SQL and will come up throughout these lessons.
+
 ## Sample Dataset
 
 All lessons in this series use the same three tables from a fictional online store: `customers`, `products`, and `orders`. Every example and exercise is written against this data, so it's worth spending a minute getting familiar with it before diving into the lessons.
 
-The tables are linked through **foreign keys** — `orders.customer_id` references `customers.customer_id`, and `orders.product_id` references `products.product_id`. This is what makes it a relational dataset: you can combine information across tables by matching those keys.
+The tables are linked through **foreign keys**: `orders.customer_id` references `customers.customer_id`, and `orders.product_id` references `products.product_id`. This is what makes it a relational dataset: you can combine information across tables by matching those keys.
 
 ### `customers`
 
@@ -35,6 +50,7 @@ Stores one row per registered customer. `customer_id` is the primary key.
 | 3           | Carol White   | carol@example.com   | Sydney    | Australia |
 | 4           | Dave Brown    | dave@example.com    | Toronto   | Canada    |
 | 5           | Eve Davis     | eve@example.com     | New York  | USA       |
+| 6           | Frank Lee     | frank@example.com   | <span className="null-value">NULL</span> | USA       |
 
 ### `products`
 
@@ -50,7 +66,7 @@ Stores one row per product in the catalog. `product_id` is the primary key. Prod
 
 ### `orders`
 
-Stores one row per order line. Each order belongs to one customer and covers one product. `order_id` is the primary key. `customer_id` and `product_id` are foreign keys back to the other two tables. `status` can be `completed`, `pending`, or `cancelled`.
+Stores one row per order line. Each order belongs to one customer and covers one product. `order_id` is the primary key. `customer_id` and `product_id` are foreign keys back to the other two tables.
 
 | order_id | customer_id | product_id | order_date | quantity | total_amount | status    |
 |----------|-------------|------------|------------|----------|--------------|-----------|
@@ -58,10 +74,31 @@ Stores one row per order line. Each order belongs to one customer and covers one
 | 2        | 1           | 2          | 2024-01-10 | 2        | 59.98        | completed |
 | 3        | 2           | 3          | 2024-01-15 | 1        | 349.00       | completed |
 | 4        | 3           | 4          | 2024-02-01 | 4        | 796.00       | completed |
-| 5        | 4           | 5          | 2024-02-10 | 10       | 49.90        | pending   |
+| 5        | 4           | 5          | 2024-02-10 | 10       | 49.90        | <span className="null-value">NULL</span> |
 | 6        | 1           | 3          | 2024-03-01 | 1        | 349.00       | cancelled |
 | 7        | 2           | 1          | 2024-03-15 | 1        | 999.00       | completed |
 | 8        | 5           | 2          | 2024-04-01 | 3        | 89.97        | completed |
 | 9        | 3           | 1          | 2024-04-10 | 1        | 999.00       | pending   |
 | 10       | 4           | 5          | 2024-05-01 | 5        | 24.95        | pending   |
 
+## SQL Playground
+
+Throughout this course you will use two interactive tools.
+
+**Playground** (free-form): write and run any query against the dataset. There is no right or wrong answer. Use it to explore, experiment, and verify what you are learning. You will find a playground on most lesson pages.
+
+**Exercise** (graded): found on exam pages. Same editor, but with a Submit button. It checks whether your query returns the exact rows and columns expected and tells you if you passed.
+
+Both tools work fully in the browser with no setup required.
+
+### Parts of the playground
+
+**Schema toggle:** the "Schema" button at the top reveals the table names and column definitions. Open it whenever you need a reminder of what columns are available.
+
+**Editor:** the text area where you write SQL. You can write multi-line queries.
+
+**Run / Cmd+Enter:** executes the query and shows results below.
+
+**Output table:** displays the returned rows, the column headers, and a row count. NULL values appear styled differently from regular values.
+
+Try it now. Run the default query, then modify it to explore the data. The playground is at the bottom of this page.

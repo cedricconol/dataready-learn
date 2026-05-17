@@ -15,7 +15,8 @@ INSERT INTO customers VALUES
   (2,'Bob Smith','bob@example.com','London','UK'),
   (3,'Carol White','carol@example.com','Sydney','Australia'),
   (4,'Dave Brown','dave@example.com','Toronto','Canada'),
-  (5,'Eve Davis','eve@example.com','New York','USA');
+  (5,'Eve Davis','eve@example.com','New York','USA'),
+  (6,'Frank Lee','frank@example.com',NULL,'USA');
 
 CREATE TABLE products (
   product_id INTEGER PRIMARY KEY,
@@ -44,7 +45,7 @@ INSERT INTO orders VALUES
   (2,1,2,'2024-01-10',2,59.98,'completed'),
   (3,2,3,'2024-01-15',1,349.00,'completed'),
   (4,3,4,'2024-02-01',4,796.00,'completed'),
-  (5,4,5,'2024-02-10',10,49.90,'pending'),
+  (5,4,5,'2024-02-10',10,49.90,NULL),
   (6,1,3,'2024-03-01',1,349.00,'cancelled'),
   (7,2,1,'2024-03-15',1,999.00,'completed'),
   (8,5,2,'2024-04-01',3,89.97,'completed'),

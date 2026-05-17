@@ -61,7 +61,7 @@ ORDER BY month;
 
 | month      | revenue | prev_month_revenue | change   | pct_change |
 |------------|---------|--------------------|----------|------------|
-| 2024-01-01 | 1407.98 | NULL               | NULL     | NULL       |
+| 2024-01-01 | 1407.98 | <span className="null-value">NULL</span> | <span className="null-value">NULL</span> | <span className="null-value">NULL</span> |
 | 2024-02-01 | 845.90  | 1407.98            | -562.08  | -39.9      |
 | 2024-03-01 | 1348.00 | 845.90             | 502.10   | 59.4       |
 | 2024-04-01 | 1088.97 | 1348.00            | -259.03  | -19.2      |
@@ -96,7 +96,7 @@ ORDER BY customer_id, order_date;
 
 | order_id | customer_id | order_date | prev_order_date | days_since_last_order |
 |----------|-------------|------------|-----------------|----------------------|
-| 1        | 1           | 2024-01-05 | NULL            | NULL                 |
+| 1        | 1           | 2024-01-05 | <span className="null-value">NULL</span> | <span className="null-value">NULL</span> |
 | 2        | 1           | 2024-01-10 | 2024-01-05      | 5                    |
 | 6        | 1           | 2024-03-01 | 2024-01-10      | 51                   |
 

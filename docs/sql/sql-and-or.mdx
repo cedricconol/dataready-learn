@@ -54,9 +54,6 @@ WHERE status = 'completed'
 | 1        | 999.00       | completed |
 | 4        | 796.00       | completed |
 | 7        | 999.00       | completed |
-| 9        | 999.00       | completed |
-
-Wait - order 9 has status `pending`. Let's re-check: with `AND`, both conditions must pass. Order 9 (`pending`, `999.00`) does **not** pass the `status = 'completed'` check, so it is excluded.
 
 ### Example 2: OR
 
@@ -76,7 +73,6 @@ WHERE status = 'cancelled'
 
 | order_id | total_amount | status    |
 |----------|--------------|-----------|
-| 5        | 49.90        | pending   |
 | 6        | 349.00       | cancelled |
 | 9        | 999.00       | pending   |
 | 10       | 24.95        | pending   |

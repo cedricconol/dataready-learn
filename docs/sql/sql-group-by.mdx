@@ -83,8 +83,7 @@ SELECT
     COUNT(*) AS order_count
 FROM orders o
 JOIN products p ON o.product_id = p.product_id
-GROUP BY p.category, o.status
-ORDER BY p.category, o.status;
+GROUP BY p.category, o.status;
 ```
 
 **Result:**
@@ -96,6 +95,30 @@ ORDER BY p.category, o.status;
 | Furniture   | cancelled | 1           |
 | Furniture   | completed | 2           |
 | Stationery  | pending   | 2           |
+
+### Example 4: Using positional references in GROUP BY
+
+Instead of repeating column names, you can reference them by their position in the `SELECT` list. `1` means the first column, `2` means the second, and so on.
+
+```sql
+SELECT
+    category,
+    COUNT(*) AS product_count,
+    MIN(price) AS cheapest,
+    MAX(price) AS most_expensive
+FROM products
+GROUP BY 1;  -- 1 refers to category, the first column in SELECT
+```
+
+**Result:**
+
+| category    | product_count | cheapest | most_expensive |
+|-------------|---------------|----------|----------------|
+| Electronics | 2             | 29.99    | 999.00         |
+| Furniture   | 2             | 199.00   | 349.00         |
+| Stationery  | 1             | 4.99     | 4.99           |
+
+Positional references also work with multiple columns: `GROUP BY 1, 2` groups by the first and second columns. This shorthand is common in practice but can reduce readability when the query is long or shared with others.
 
 ## Common Mistake
 
@@ -133,8 +156,7 @@ SELECT
     COUNT(*) AS order_count,
     SUM(total_amount) AS total_revenue
 FROM orders
-GROUP BY product_id
-ORDER BY total_revenue DESC;
+GROUP BY product_id;
 ```
 
 **Expected result:**

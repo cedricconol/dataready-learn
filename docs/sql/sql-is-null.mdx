@@ -42,16 +42,9 @@ WHERE customer_id IS NULL
 
 ## Examples
 
-### Example 1: Extend the dataset with a NULL
+### Example 1: Find orders with no status recorded
 
-For these examples, imagine we've added order 11 with no associated customer (`customer_id` is `NULL`):
-
-```sql
--- Hypothetical order with no customer
-INSERT INTO orders VALUES (11, NULL, 2, '2024-06-01', 1, 29.99, 'pending');
-```
-
-### Example 2: Find orders with no customer
+Order 5 in our dataset has a `NULL` status — the order was placed but no status was assigned yet.
 
 ```sql
 SELECT
@@ -60,42 +53,47 @@ SELECT
     total_amount,
     status
 FROM orders
-WHERE customer_id IS NULL;
+WHERE status IS NULL;
 ```
 
 **Result:**
 
-| order_id | customer_id | total_amount | status  |
-|----------|-------------|--------------|---------|
-| 11       | NULL        | 29.99        | pending |
+| order_id | customer_id | total_amount | status |
+|----------|-------------|--------------|--------|
+| 5        | 4           | 49.90        | <span className="null-value">NULL</span> |
 
-### Example 3: Find orders that do have a customer
+### Example 2: Find orders that do have a status
 
 ```sql
 SELECT
     order_id,
     customer_id,
-    total_amount
+    total_amount,
+    status
 FROM orders
-WHERE customer_id IS NOT NULL
-ORDER BY order_id;
+WHERE status IS NOT NULL;
 ```
 
-This returns all 10 standard orders and excludes order 11.
+This returns all orders except order 5.
 
-### Example 4: NULL in LEFT JOIN results
+### Example 3: Find customers with no city recorded
 
-A common place NULLs appear naturally is in the results of a [LEFT JOIN](./sql-left-join). When the right table has no matching row, all its columns come back as `NULL`.
+Customer 6 (Frank Lee) registered without providing a city — his `city` column is `NULL`.
 
 ```sql
--- Find customers who have no orders
 SELECT
-    c.customer_id,
-    c.name
-FROM customers c
-LEFT JOIN orders o ON c.customer_id = o.customer_id
-WHERE o.order_id IS NULL;
+    customer_id,
+    name,
+    city
+FROM customers
+WHERE city IS NULL;
 ```
+
+**Result:**
+
+| customer_id | name      | city |
+|-------------|-----------|------|
+| 6           | Frank Lee | <span className="null-value">NULL</span> |
 
 ## Common Mistake
 
@@ -113,23 +111,9 @@ WHERE email IS NOT NULL
 Also remember that `NULL` in an `IN` list can silently break `NOT IN` (see the [IN lesson](./sql-in)).
 :::
 
-## NULLs and aggregate functions
-
-Most aggregate functions ignore `NULL` values automatically:
-
-```sql
-SELECT
-    COUNT(*)            AS total_rows,        -- counts ALL rows including NULLs
-    COUNT(customer_id)  AS rows_with_customer, -- counts only non-NULL customer_id
-    AVG(total_amount)   AS avg_order_value     -- ignores NULLs
-FROM orders;
-```
-
-This means `AVG` may not reflect what you expect if many values are `NULL`. Always check for NULLs before trusting aggregate results.
-
 ## Practice
 
-Write a query that returns all orders from `orders` where `customer_id` is not null, showing `order_id`, `customer_id`, and `status`.
+Write a query that returns all orders where `status` is not null, showing `order_id`, `customer_id`, and `status`.
 
 <details>
 <summary>Show answer</summary>
@@ -140,11 +124,10 @@ SELECT
     customer_id,
     status
 FROM orders
-WHERE customer_id IS NOT NULL
-ORDER BY order_id;
+WHERE status IS NOT NULL;
 ```
 
-**Expected result (with our standard 10-row dataset where all customer_ids are present):**
+**Expected result (order 5 is excluded because its `status` is `NULL`):**
 
 | order_id | customer_id | status    |
 |----------|-------------|-----------|
@@ -152,7 +135,6 @@ ORDER BY order_id;
 | 2        | 1           | completed |
 | 3        | 2           | completed |
 | 4        | 3           | completed |
-| 5        | 4           | pending   |
 | 6        | 1           | cancelled |
 | 7        | 2           | completed |
 | 8        | 5           | completed |

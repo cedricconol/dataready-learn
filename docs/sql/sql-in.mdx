@@ -55,7 +55,6 @@ WHERE status = 'pending' OR status = 'cancelled'
 
 | order_id | status    | total_amount |
 |----------|-----------|--------------|
-| 5        | pending   | 49.90        |
 | 6        | cancelled | 349.00       |
 | 9        | pending   | 999.00       |
 | 10       | pending   | 24.95        |
@@ -154,8 +153,7 @@ SELECT
     category,
     price
 FROM products
-WHERE category IN ('Electronics', 'Furniture')
-ORDER BY category, price DESC;
+WHERE category IN ('Electronics', 'Furniture');
 ```
 
 **Expected result:**

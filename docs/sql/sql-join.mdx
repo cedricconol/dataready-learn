@@ -8,26 +8,44 @@ youtube_url: ""
 
 # `JOIN`: Combining Rows from Two Tables
 
-`JOIN` (also written as `INNER JOIN`) combines rows from two tables where a matching condition is met. Rows that don't have a match in the other table are **excluded** from the result.
+A `JOIN` combines rows from two tables by matching a condition defined in the `ON` clause. The result pulls columns from both tables into a single row wherever the condition is true. Which unmatched rows are kept depends on the join type.
 
 :::tip Prior lesson
 This lesson builds on [FROM](./sql-from) and [WHERE](./sql-where). The sample dataset is defined in the [Introduction to SQL](./intro-to-sql) lesson.
 :::
 
-## Syntax
+## The four join types
+
+Think of each table as a circle. The overlapping area holds rows where the `ON` condition matches. Each join type decides which parts of the diagram to keep.
+
+![SQL join types — Venn diagrams](/img/sql-joins-venn.svg)
+
+**INNER JOIN** returns only rows that match in both tables. Rows without a match on either side are dropped entirely.
+
+**LEFT JOIN** returns all rows from the left table. Where there is no match in the right table, the right-side columns are `NULL`.
+
+**RIGHT JOIN** returns all rows from the right table. Where there is no match in the left table, the left-side columns are `NULL`.
+
+**FULL JOIN** returns all rows from both tables. Non-matching rows get `NULL` on the opposite side.
+
+This lesson covers **INNER JOIN**. [LEFT JOIN](./sql-left-join) is covered next.
+
+## INNER JOIN
+
+`JOIN` on its own means `INNER JOIN`. Both keywords produce the same result.
+
+### Syntax
 
 ```sql
 SELECT columns
-FROM table_a
-JOIN table_b ON table_a.key = table_b.key;
+FROM table_a AS a          -- left table
+JOIN table_b AS b ON a.foreign_key = b.primary_key;  -- right table
 
 -- INNER JOIN is identical:
 SELECT columns
-FROM table_a
-INNER JOIN table_b ON table_a.key = table_b.key;
+FROM table_a AS a          -- left table
+INNER JOIN table_b AS b ON a.foreign_key = b.primary_key;  -- right table
 ```
-
-## Examples
 
 ### Example 1: Join orders to customers
 
@@ -39,8 +57,8 @@ SELECT
     c.name AS customer_name,
     o.order_date,
     o.total_amount
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id;
+FROM orders AS o              -- left table
+JOIN customers AS c ON o.customer_id = c.customer_id;  -- right table
 ```
 
 **Result:**
@@ -57,7 +75,7 @@ JOIN customers c ON o.customer_id = c.customer_id;
 | 8        | Eve Davis     | 2024-04-01 | 89.97        |
 | 9        | Carol White   | 2024-04-10 | 999.00       |
 
-Note that order 10 (`customer_id = 4`) maps to Dave Brown - but if you look at the original data, order 10 has `customer_id = 4`. Dave Brown (customer 4) does appear here. Let's also note that if a row had no matching customer, it would be dropped entirely.
+Frank Lee (customer 6) has no orders and does not appear. INNER JOIN drops unmatched rows from both sides.
 
 ### Example 2: Join orders to products
 
@@ -70,8 +88,8 @@ SELECT
     p.category,
     o.quantity,
     o.total_amount
-FROM orders o
-JOIN products p ON o.product_id = p.product_id;
+FROM orders AS o              -- left table
+JOIN products AS p ON o.product_id = p.product_id;  -- right table
 ```
 
 **Result:**
@@ -99,9 +117,9 @@ SELECT
     c.name AS customer_name,
     p.name AS product_name,
     o.total_amount
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id
-JOIN products p ON o.product_id = p.product_id;
+FROM orders AS o                                              -- left table
+JOIN customers AS c ON o.customer_id = c.customer_id         -- right table
+JOIN products AS p ON o.product_id = p.product_id;           -- right table
 ```
 
 ## Common Mistake
@@ -127,9 +145,9 @@ SELECT
     c.name AS customer_name,
     p.name AS product_name,
     o.status
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id
-JOIN products p ON o.product_id = p.product_id;
+FROM orders AS o                                              -- left table
+JOIN customers AS c ON o.customer_id = c.customer_id         -- right table
+JOIN products AS p ON o.product_id = p.product_id;           -- right table
 ```
 
 **Expected result (first few rows):**

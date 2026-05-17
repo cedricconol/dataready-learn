@@ -39,21 +39,10 @@ SELECT
     total_amount,
     status
 FROM orders
-WHERE total_amount BETWEEN 50 AND 500
-ORDER BY total_amount;
+WHERE total_amount BETWEEN 50 AND 500;
 ```
 
 **Result:**
-
-| order_id | total_amount | status    |
-|----------|--------------|-----------|
-| 2        | 59.98        | completed |
-| 5        | 49.90        | pending   |
-| 8        | 89.97        | completed |
-| 3        | 349.00       | completed |
-| 6        | 349.00       | cancelled |
-
-Wait - order 5 has `49.90`, which is less than 50, so it's excluded. Let me re-check:
 
 | order_id | total_amount | status    |
 |----------|--------------|-----------|
@@ -72,8 +61,7 @@ SELECT
     order_date,
     total_amount
 FROM orders
-WHERE order_date BETWEEN '2024-01-01' AND '2024-03-31'
-ORDER BY order_date;
+WHERE order_date BETWEEN '2024-01-01' AND '2024-03-31';
 ```
 
 **Result:**
@@ -134,8 +122,7 @@ SELECT
     category,
     price
 FROM products
-WHERE price BETWEEN 20 AND 400
-ORDER BY price;
+WHERE price BETWEEN 20 AND 400;
 ```
 
 **Expected result:**
