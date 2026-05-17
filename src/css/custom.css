@@ -202,6 +202,72 @@ html {
   letter-spacing: 0.03em;
 }
 
+/* ── Course promo banner ─────────────────────────────────────── */
+.course-promo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border: 1px solid #063d29;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 2.5rem;
+  background: linear-gradient(135deg, #071a10 0%, #0c1e14 100%);
+}
+
+.course-promo__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #10b981;
+  margin-bottom: 0.35rem;
+}
+
+.course-promo__heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 0.25rem;
+}
+
+.course-promo__body {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.course-promo__cta {
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #10b981;
+  color: #fff !important;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.course-promo__cta:hover {
+  background: #059669;
+  color: #fff !important;
+}
+
+@media (max-width: 640px) {
+  .course-promo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .course-promo__cta {
+    width: 100%;
+    text-align: center;
+    display: block;
+  }
+}
+
 code,
 pre,
 pre code {
