@@ -1,0 +1,178 @@
+---
+id: git-conflict
+title: "Merge Conflicts"
+sidebar_label: "Merge Conflicts"
+sidebar_position: 11
+---
+
+# Merge Conflicts
+
+A merge conflict happens when two branches change the same part of the same file, and Git cannot decide which version to keep. Git stops the merge and asks you to resolve it manually.
+
+Conflicts look scary the first time. They are not — once you understand the markers, they are straightforward to resolve.
+
+---
+
+## Create a Conflict on Purpose
+
+The best way to understand conflicts is to make one deliberately.
+
+```bash
+# Start on main
+git switch main
+
+# Edit a line
+echo "Line from main branch" > conflict-demo.txt
+git add conflict-demo.txt
+git commit -m "Add conflict-demo from main"
+
+# Create a branch off the same commit
+git switch -c conflict-branch
+
+# Edit the same file differently
+echo "Line from conflict-branch" > conflict-demo.txt
+git add conflict-demo.txt
+git commit -m "Add conflict-demo from branch"
+
+# Switch back to main and try to merge
+git switch main
+git merge conflict-branch
+```
+
+Git will stop with:
+```
+Auto-merging conflict-demo.txt
+CONFLICT (content): Merge conflict in conflict-demo.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+---
+
+## Read the Conflict Markers
+
+Open `conflict-demo.txt`:
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '600px', display: 'block', margin: '0 auto'}}>
+  {/* File box */}
+  <rect x="10" y="10" width="580" height="175" rx="8" fill="#141d2e" stroke="#1e2d45" strokeWidth="1.5"/>
+  <text x="300" y="35" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="sans-serif">conflict-demo.txt</text>
+
+  {/* HEAD section */}
+  <rect x="30" y="45" width="540" height="35" rx="4" fill="#1e3a6e" stroke="none"/>
+  <text x="45" y="68" fill="#3b82f6" fontSize="13" fontFamily="monospace">{"<<<<<<< HEAD"}</text>
+  <text x="480" y="68" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">↑ your current branch (main)</text>
+
+  <rect x="30" y="82" width="540" height="28" rx="4" fill="#0d1b2a" stroke="none"/>
+  <text x="45" y="101" fill="#f1f5f9" fontSize="13" fontFamily="monospace">Line from main branch</text>
+
+  {/* Separator */}
+  <rect x="30" y="112" width="540" height="28" rx="4" fill="#141d2e" stroke="none"/>
+  <text x="45" y="131" fill="#94a3b8" fontSize="13" fontFamily="monospace">{"======="}</text>
+  <text x="480" y="131" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">↑ separator</text>
+
+  {/* Incoming section */}
+  <rect x="30" y="142" width="540" height="28" rx="4" fill="#0e3a4a" stroke="none"/>
+  <text x="45" y="161" fill="#f1f5f9" fontSize="13" fontFamily="monospace">Line from conflict-branch</text>
+
+  <text x="45" y="178" fill="#06b6d4" fontSize="13" fontFamily="monospace">{">>>>>>> conflict-branch"}</text>
+</svg>
+</div>
+
+Three zones separated by the markers:
+
+| Zone | Meaning |
+|------|---------|
+| Between `<<<<<<< HEAD` and `=======` | Your version (current branch) |
+| Between `=======` and `>>>>>>> <branch>` | Incoming version (the branch being merged) |
+
+---
+
+## Resolve the Conflict
+
+Edit the file to the version you want. You have three options:
+
+**Keep your version**
+```
+Line from main branch
+```
+
+**Keep the incoming version**
+```
+Line from conflict-branch
+```
+
+**Combine both**
+```
+Line from main branch and conflict-branch combined
+```
+
+Delete all three marker lines (`<<<<<<<`, `=======`, `>>>>>>>`). The file should contain only the final content you want, with no markers remaining.
+
+---
+
+## Finish the Merge
+
+```bash
+git add conflict-demo.txt
+git commit
+```
+
+Git opens your editor with a pre-filled merge commit message. Save and close the editor to complete the merge.
+
+Run `git log --oneline --graph` to see the merge commit:
+```
+*   e4f5a6b (HEAD -> main) Merge branch 'conflict-branch'
+|\
+| * 9c8d7e6 Add conflict-demo from branch
+* | 3b2a1f0 Add conflict-demo from main
+|/
+* a1b2c3d Initial commit
+```
+
+---
+
+## Run Status During a Conflict
+
+`git status` is especially useful during a merge conflict:
+
+```bash
+git status
+```
+```
+On branch main
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	both modified:   conflict-demo.txt
+```
+
+Files listed under **Unmerged paths** still have unresolved conflicts. You must `git add` each one after resolving to mark it as done.
+
+---
+
+## Abort a Merge
+
+If you started a merge and want to get back to the state before:
+```bash
+git merge --abort
+```
+This cancels the merge entirely and returns both branches to where they were.
+
+---
+
+## Summary
+
+| What | How |
+|------|-----|
+| Conflict markers | `<<<<<<<` / `=======` / `>>>>>>>` |
+| Resolve | Edit the file, remove all markers |
+| Mark resolved | `git add <file>` |
+| Complete merge | `git commit` |
+| Cancel merge | `git merge --abort` |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

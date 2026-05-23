@@ -203,6 +203,86 @@ const sidebars: SidebarsConfig = {
     },
   ],
 
+  gitSidebar: [
+    {
+      type: "doc",
+      id: "git/git",
+      label: "Overview",
+    },
+    {
+      type: "category",
+      label: "Lessons",
+      collapsed: false,
+      items: [
+        {
+          type: "category",
+          label: "Getting Started",
+          collapsed: false,
+          items: ["git/git-setup"],
+        },
+        {
+          type: "category",
+          label: "Your First Repo",
+          collapsed: false,
+          items: ["git/git-init", "git/git-add-commit"],
+        },
+        "git/git-checkpoint-1",
+        {
+          type: "category",
+          label: "Working with GitHub",
+          collapsed: false,
+          items: ["git/git-github"],
+        },
+        "git/git-checkpoint-2",
+        {
+          type: "category",
+          label: "The Everyday Loop",
+          collapsed: false,
+          items: ["git/git-diff", "git/git-amend"],
+        },
+        {
+          type: "category",
+          label: "Branches & Pull Requests",
+          collapsed: false,
+          items: ["git/git-branch", "git/git-pull-request"],
+        },
+        "git/git-checkpoint-3",
+        {
+          type: "category",
+          label: "Collaboration",
+          collapsed: false,
+          items: ["git/git-clone"],
+        },
+        {
+          type: "category",
+          label: "When Things Go Wrong",
+          collapsed: false,
+          items: ["git/git-conflict", "git/git-undo"],
+        },
+        "git/git-checkpoint-4",
+        {
+          type: "category",
+          label: "Rebasing & History",
+          collapsed: false,
+          items: ["git/git-rebase"],
+        },
+        {
+          type: "category",
+          label: "GitHub Workflows",
+          collapsed: false,
+          items: ["git/git-workflows"],
+        },
+        {
+          type: "category",
+          label: "Portfolio Polish",
+          collapsed: false,
+          items: ["git/git-portfolio"],
+        },
+        "git/git-checkpoint-final",
+      ],
+    },
+  ],
+
   dbtSidebar: [
     {
       type: "doc",

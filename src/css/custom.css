@@ -289,3 +289,10 @@ pre code {
   font-variant-ligatures: none;
   font-feature-settings: "liga" 0, "calt" 0;
 }
+
+/* Lift Docusaurus' back-to-top button above the floating donate button so the
+   two do not overlap in the bottom-right corner. */
+.theme-back-to-top-button {
+  bottom: 5.5rem !important;
+}
+

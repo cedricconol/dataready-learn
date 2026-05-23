@@ -1,0 +1,158 @@
+---
+id: git-pull-request
+title: "Pull Requests"
+sidebar_label: "Pull Requests"
+sidebar_position: 9
+---
+
+# Pull Requests
+
+A pull request (PR) is a GitHub feature that lets you propose merging one branch into another. It gives collaborators a chance to review your changes, leave comments, and approve or reject them before they land on `main`.
+
+## The PR Flow
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 660 140" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '660px', display: 'block', margin: '0 auto'}}>
+  {/* Steps */}
+  <rect x="10" y="40" width="100" height="60" rx="8" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="60" y="67" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="sans-serif">Branch</text>
+  <text x="60" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="monospace">feature-x</text>
+
+  <line x1="110" y1="70" x2="145" y2="70" stroke="#3b82f6" strokeWidth="1.5" markerEnd="url(#arrowPR)"/>
+
+  <rect x="150" y="40" width="100" height="60" rx="8" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="200" y="67" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="sans-serif">Commit</text>
+  <text x="200" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="monospace">git commit</text>
+
+  <line x1="250" y1="70" x2="285" y2="70" stroke="#3b82f6" strokeWidth="1.5" markerEnd="url(#arrowPR)"/>
+
+  <rect x="290" y="40" width="100" height="60" rx="8" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="340" y="67" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="sans-serif">Push</text>
+  <text x="340" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="monospace">git push</text>
+
+  <line x1="390" y1="70" x2="425" y2="70" stroke="#3b82f6" strokeWidth="1.5" markerEnd="url(#arrowPR)"/>
+
+  <rect x="430" y="40" width="100" height="60" rx="8" fill="#0e3a4a" stroke="#06b6d4" strokeWidth="1.5"/>
+  <text x="480" y="67" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="sans-serif">Open PR</text>
+  <text x="480" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="sans-serif">on GitHub</text>
+
+  <line x1="530" y1="70" x2="565" y2="70" stroke="#06b6d4" strokeWidth="1.5" markerEnd="url(#arrowPR2)"/>
+
+  <rect x="570" y="40" width="80" height="60" rx="8" fill="#14291a" stroke="#10b981" strokeWidth="1.5"/>
+  <text x="610" y="67" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="sans-serif">Merge</text>
+  <text x="610" y="83" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="sans-serif">into main</text>
+
+  <defs>
+    <marker id="arrowPR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowPR2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+---
+
+## Open a Pull Request
+
+Make sure you have pushed your `feature-greeting` branch from the [Branching](/git/git-branch) lesson.
+
+1. Go to your repo on GitHub.
+2. GitHub shows a banner: **"feature-greeting had recent pushes"** with a **"Compare & pull request"** button. Click it.
+3. Review the title (auto-filled from your last commit message) and description.
+4. Write a short description of what the branch does and why.
+5. Click **Create pull request**.
+
+---
+
+## Tour the PR Interface
+
+**Conversation tab** — the main thread. Reviewers leave comments here. You can reply and have a discussion. GitHub shows automatic events (commits pushed, reviews, merge).
+
+**Commits tab** — lists every commit included in the PR. If you push more commits while the PR is open, they appear here automatically.
+
+**Files changed tab** — the full diff. Green lines are additions, red lines are deletions. You can leave inline comments on any line by clicking the `+` icon that appears on hover.
+
+---
+
+## Self-Review Your Diff
+
+Before asking anyone to review, read **Files changed** yourself. Ask:
+- Did I include only the changes this PR is supposed to contain?
+- Are there debug lines, commented-out code, or personal notes I forgot to remove?
+- Does the commit history tell a clear story?
+
+This habit catches most mistakes before they become review feedback.
+
+---
+
+## Merge the PR
+
+Click **Merge pull request** → **Confirm merge**.
+
+GitHub offers three merge strategies:
+- **Create a merge commit** — preserves all branch commits and adds a merge commit. Use for features.
+- **Squash and merge** — combines all branch commits into one commit on main. Good for noisy branches.
+- **Rebase and merge** — replays branch commits on top of main with no merge commit. Keeps history linear.
+
+For personal projects, any strategy is fine. Teams usually settle on one standard. Use "Squash and merge" if your branch has lots of "WIP" commits you do not want cluttering main.
+
+---
+
+## Pull Merged Changes Locally
+
+After merging on GitHub, your local `main` is behind. Bring it up to date:
+
+```bash
+git switch main
+git pull
+```
+
+`git pull` downloads the new commits from GitHub and fast-forwards your local `main`.
+
+---
+
+## Delete the Merged Branch
+
+After merging, the branch is no longer needed.
+
+**On GitHub:** The PR page shows a **"Delete branch"** button after a merge. Click it.
+
+**Locally:**
+```bash
+git branch -d feature-greeting
+```
+`-d` (lowercase) is safe — it refuses to delete an unmerged branch. Use `-D` only if you are sure you want to discard unmerged work.
+
+---
+
+## Capstone: Full PR Flow
+
+Do the whole loop from scratch:
+
+1. `git switch -c feature-about`
+2. Create a file `about.txt` with one sentence.
+3. Commit and push.
+4. Open a PR on GitHub.
+5. Review the diff in "Files changed."
+6. Merge.
+7. `git switch main && git pull`
+8. `git branch -d feature-about`
+
+---
+
+## Summary
+
+| Action | Where |
+|--------|-------|
+| Open PR | GitHub → "Compare & pull request" |
+| Review diff | PR → "Files changed" tab |
+| Merge | PR → "Merge pull request" |
+| Pull merged commits locally | `git switch main && git pull` |
+| Delete merged branch locally | `git branch -d <name>` |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

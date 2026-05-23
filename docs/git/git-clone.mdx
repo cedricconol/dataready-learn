@@ -1,0 +1,189 @@
+---
+id: git-clone
+title: "Working Across Machines"
+sidebar_label: "Working Across Machines"
+sidebar_position: 10
+---
+
+# Working Across Machines
+
+Git repos are not tied to one computer. You can clone a repo to any machine, keep multiple clones in sync, and collaborate by forking public repos on GitHub.
+
+## Clone a Repo
+
+`git clone` downloads a complete copy of a remote repo — all history, all branches, all files:
+
+```bash
+git clone git@github.com:<username>/my-first-repo.git my-repo-copy
+```
+
+This creates a folder called `my-repo-copy` with the full repo inside. The remote is automatically configured as `origin`.
+
+---
+
+## Fetch vs. Pull
+
+Two ways to bring in remote changes:
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '660px', display: 'block', margin: '0 auto'}}>
+  {/* git fetch */}
+  <rect x="10" y="20" width="300" height="160" rx="10" fill="#0f1623" stroke="#1e2d45" strokeWidth="1.5"/>
+  <text x="160" y="48" textAnchor="middle" fill="#f1f5f9" fontSize="13" fontWeight="bold" fontFamily="monospace">git fetch</text>
+
+  <rect x="30" y="60" width="120" height="50" rx="6" fill="#141d2e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="90" y="82" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">GitHub</text>
+  <text x="90" y="98" textAnchor="middle" fill="#3b82f6" fontSize="11" fontFamily="monospace">origin/main</text>
+
+  <line x1="150" y1="85" x2="188" y2="85" stroke="#3b82f6" strokeWidth="1.5" markerEnd="url(#arrowClone1)"/>
+  <text x="169" y="79" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="monospace">download</text>
+
+  <rect x="190" y="60" width="100" height="50" rx="6" fill="#141d2e" stroke="#1e2d45" strokeWidth="1.5"/>
+  <text x="240" y="82" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">Local</text>
+  <text x="240" y="98" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="monospace">origin/main</text>
+
+  <text x="160" y="145" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">Downloads but does NOT</text>
+  <text x="160" y="162" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">change your working files</text>
+
+  {/* git pull */}
+  <rect x="350" y="20" width="300" height="160" rx="10" fill="#0f1623" stroke="#1e2d45" strokeWidth="1.5"/>
+  <text x="500" y="48" textAnchor="middle" fill="#f1f5f9" fontSize="13" fontWeight="bold" fontFamily="monospace">git pull</text>
+
+  <rect x="370" y="60" width="120" height="50" rx="6" fill="#141d2e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="430" y="82" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">GitHub</text>
+  <text x="430" y="98" textAnchor="middle" fill="#3b82f6" fontSize="11" fontFamily="monospace">origin/main</text>
+
+  <line x1="490" y1="85" x2="528" y2="85" stroke="#10b981" strokeWidth="1.5" markerEnd="url(#arrowClone2)"/>
+  <text x="509" y="79" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="monospace">fetch+merge</text>
+
+  <rect x="530" y="60" width="100" height="50" rx="6" fill="#141d2e" stroke="#10b981" strokeWidth="1.5"/>
+  <text x="580" y="82" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">Local</text>
+  <text x="580" y="98" textAnchor="middle" fill="#10b981" fontSize="11" fontFamily="monospace">main ✓</text>
+
+  <text x="500" y="145" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">Downloads AND updates</text>
+  <text x="500" y="162" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">your current branch</text>
+
+  <defs>
+    <marker id="arrowClone1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowClone2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+```bash
+git fetch          # downloads remote changes, doesn't touch your working files
+git pull           # fetch + merge: downloads and updates your current branch
+```
+
+Use `git fetch` when you want to inspect what is new before integrating it:
+```bash
+git fetch
+git log origin/main --oneline   # see what arrived
+git pull                         # bring it in when ready
+```
+
+---
+
+## Simulate Two Machines
+
+This exercise shows how sync works in practice:
+
+1. In `my-repo-copy` (your second clone), make a commit and push:
+   ```bash
+   cd my-repo-copy
+   echo "Change from clone 2" >> README.md
+   git add README.md
+   git commit -m "Edit from second clone"
+   git push
+   ```
+
+2. In your original `my-first-repo`, pull the change:
+   ```bash
+   cd my-first-repo
+   git pull
+   git log --oneline   # you will see the commit from the other clone
+   ```
+
+This is exactly what happens when you and a teammate both have clones of the same repo.
+
+---
+
+## Forking
+
+A **fork** is a full copy of someone else's GitHub repo under your own account. It is how open-source contribution works: you fork the repo, make changes on your fork, and then open a PR from your fork back to the original.
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '600px', display: 'block', margin: '0 auto'}}>
+  {/* Original repo */}
+  <rect x="10" y="30" width="170" height="100" rx="8" fill="#141d2e" stroke="#1e2d45" strokeWidth="1.5"/>
+  <text x="95" y="60" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">Original Repo</text>
+  <text x="95" y="80" textAnchor="middle" fill="#f1f5f9" fontSize="12" fontFamily="monospace">octocat/Hello-World</text>
+  <text x="95" y="100" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">read-only for you</text>
+
+  {/* Fork arrow */}
+  <line x1="180" y1="80" x2="220" y2="80" stroke="#f59e0b" strokeWidth="1.5" markerEnd="url(#arrowFork)"/>
+  <text x="200" y="72" textAnchor="middle" fill="#f59e0b" fontSize="11" fontFamily="sans-serif">Fork</text>
+
+  {/* Your fork */}
+  <rect x="225" y="30" width="170" height="100" rx="8" fill="#141d2e" stroke="#f59e0b" strokeWidth="1.5"/>
+  <text x="310" y="60" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">Your Fork</text>
+  <text x="310" y="80" textAnchor="middle" fill="#f1f5f9" fontSize="12" fontFamily="monospace">you/Hello-World</text>
+  <text x="310" y="100" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">you control this</text>
+
+  {/* Clone arrow */}
+  <line x1="395" y1="80" x2="435" y2="80" stroke="#3b82f6" strokeWidth="1.5" markerEnd="url(#arrowCloneF)"/>
+  <text x="415" y="72" textAnchor="middle" fill="#3b82f6" fontSize="11" fontFamily="sans-serif">Clone</text>
+
+  {/* Local */}
+  <rect x="440" y="30" width="150" height="100" rx="8" fill="#141d2e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="515" y="60" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">Your Machine</text>
+  <text x="515" y="80" textAnchor="middle" fill="#f1f5f9" fontSize="12" fontFamily="monospace">Hello-World/</text>
+  <text x="515" y="100" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="sans-serif">git push to fork</text>
+
+  {/* PR arrow back */}
+  <path d="M 515 130 Q 310 155 95 130" stroke="#10b981" strokeWidth="1.5" fill="none" strokeDasharray="4,3" markerEnd="url(#arrowPRF)"/>
+  <text x="310" y="155" textAnchor="middle" fill="#10b981" fontSize="11" fontFamily="sans-serif">open PR from fork → original</text>
+
+  <defs>
+    <marker id="arrowFork" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowCloneF" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowPRF" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+**Try it now**
+
+1. Go to [github.com/octocat/Hello-World](https://github.com/octocat/Hello-World).
+2. Click **Fork** (top-right) → **Create fork**.
+3. Clone your fork:
+   ```bash
+   git clone git@github.com:<username>/Hello-World.git
+   ```
+4. Make a small change, commit, push to your fork.
+5. You would normally open a PR from your fork back to the original — you can try it if you like.
+
+---
+
+## Summary
+
+| Command | What it does |
+|---------|-------------|
+| `git clone <url>` | Download a full copy of a remote repo |
+| `git fetch` | Download remote changes, do not merge |
+| `git pull` | Fetch and merge into current branch |
+| Fork (GitHub UI) | Copy someone else's repo to your account |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

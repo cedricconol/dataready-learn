@@ -79,6 +79,12 @@ const config: Config = {
           label: "Terminal",
         },
         {
+          type: "docSidebar",
+          sidebarId: "gitSidebar",
+          position: "left",
+          label: "Git",
+        },
+        {
           href: "https://github.com/cedricconol/dataready-learn",
           label: "GitHub",
           position: "right",
@@ -93,6 +99,7 @@ const config: Config = {
           items: [
             { label: "SQL", to: "/sql" },
             { label: "Terminal", to: "/terminal" },
+            { label: "Git", to: "/git" },
           ],
         },
         {

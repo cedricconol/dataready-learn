@@ -1,0 +1,136 @@
+---
+id: git-setup
+title: "Setup"
+sidebar_label: "Setup"
+sidebar_position: 2
+---
+
+# Setup
+
+Before you can use Git, you need it installed, configured, and connected to GitHub. This lesson is pure setup — do it once, and you are done.
+
+## Install Git
+
+**macOS**
+```bash
+brew install git
+```
+No Homebrew? Run `xcode-select --install` in your terminal — that installs the Xcode Command Line Tools, which include Git.
+
+**Linux (Debian/Ubuntu)**
+```bash
+sudo apt update && sudo apt install git
+```
+
+**Windows**
+Download and install [Git for Windows](https://git-scm.com/downloads). During setup, select "Git Bash" as your terminal. All Git commands in these lessons assume a Unix-style shell.
+
+**Verify the installation**
+```bash
+git --version
+```
+You should see something like `git version 2.44.0`. If you get `command not found`, installation did not complete — try again.
+
+---
+
+## Configure Your Identity
+
+Every Git commit is stamped with your name and email. Set them now:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+Use the same email you will use for your GitHub account. This links your commits to your profile on GitHub.
+
+**Set the default branch name to `main`**
+```bash
+git config --global init.defaultBranch main
+```
+Older versions of Git default to `master`. This matches GitHub's default.
+
+**Set your default editor**
+
+If you use VS Code:
+```bash
+git config --global core.editor "code --wait"
+```
+If you prefer the terminal:
+```bash
+git config --global core.editor "nano"
+```
+The editor opens when Git needs you to write a commit message or resolve a conflict.
+
+**Verify your config**
+```bash
+git config --global --list
+```
+You should see your name, email, and other settings you just set.
+
+---
+
+## Create a GitHub Account
+
+Go to [github.com](https://github.com) and sign up. A few tips:
+
+- Choose a username you would be comfortable putting on a resume. It will appear in every URL you share (`github.com/<username>/...`).
+- Use the same email you configured above.
+- Enable two-factor authentication after signup — it is required for some operations and good practice regardless.
+
+---
+
+## Generate an SSH Key
+
+SSH keys let you push to GitHub without typing a password on every command.
+
+**Generate the key**
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+- Accept the default file location (press Enter).
+- Set a passphrase or skip it (press Enter twice). A passphrase adds security; skipping it is fine for personal machines.
+
+This creates two files:
+- `~/.ssh/id_ed25519` — your **private** key. Never share this.
+- `~/.ssh/id_ed25519.pub` — your **public** key. This is what you give to GitHub.
+
+**Copy your public key**
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+Select and copy the entire output.
+
+**Add it to GitHub**
+1. Go to GitHub → Settings → SSH and GPG keys → New SSH key.
+2. Give it a descriptive title (e.g., "MacBook Pro 2024").
+3. Paste the key. Click "Add SSH key."
+
+**Test the connection**
+```bash
+ssh -T git@github.com
+```
+Expected output:
+```
+Hi <username>! You've successfully authenticated, but GitHub does not provide shell access.
+```
+If you see this, you are ready to use Git with GitHub. If you see a permission error, check that you copied the full public key including the `ssh-ed25519` prefix.
+
+---
+
+## Summary
+
+| What | Command |
+|------|---------|
+| Install (macOS) | `brew install git` |
+| Verify install | `git --version` |
+| Set name | `git config --global user.name "..."` |
+| Set email | `git config --global user.email "..."` |
+| Default branch | `git config --global init.defaultBranch main` |
+| Set editor | `git config --global core.editor "code --wait"` |
+| Generate SSH key | `ssh-keygen -t ed25519 -C "..."` |
+| Test SSH | `ssh -T git@github.com` |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

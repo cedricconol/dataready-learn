@@ -1,0 +1,189 @@
+---
+id: git-rebase
+title: "Rebasing & History"
+sidebar_label: "Rebasing & History"
+sidebar_position: 13
+---
+
+# Rebasing & History
+
+Rebasing is a way to integrate changes from one branch into another by replaying commits rather than creating a merge commit. The result is a cleaner, linear history.
+
+## Merge vs. Rebase
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '680px', display: 'block', margin: '0 auto'}}>
+  {/* Merge section */}
+  <text x="10" y="22" fill="#94a3b8" fontSize="12" fontFamily="sans-serif">git merge — preserves branch history with a merge commit</text>
+
+  {/* before */}
+  <circle cx="50" cy="60" r="18" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="50" y="65" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">A</text>
+  <circle cx="110" cy="60" r="18" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="110" y="65" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">B</text>
+  <circle cx="170" cy="60" r="18" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="170" y="65" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">C</text>
+  <rect x="148" y="14" width="44" height="20" rx="4" fill="#3b82f6"/>
+  <text x="170" y="28" textAnchor="middle" fill="#fff" fontSize="10" fontFamily="monospace">main</text>
+
+  <circle cx="230" cy="110" r="18" fill="#0e3a4a" stroke="#06b6d4" strokeWidth="1.5"/>
+  <text x="230" y="115" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">D</text>
+  <circle cx="290" cy="110" r="18" fill="#0e3a4a" stroke="#06b6d4" strokeWidth="1.5"/>
+  <text x="290" y="115" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">E</text>
+  <rect x="260" y="135" width="60" height="20" rx="4" fill="#06b6d4"/>
+  <text x="290" y="149" textAnchor="middle" fill="#07090f" fontSize="10" fontFamily="monospace">feature</text>
+
+  {/* merge commit */}
+  <circle cx="360" cy="60" r="18" fill="#14291a" stroke="#10b981" strokeWidth="1.5"/>
+  <text x="360" y="65" textAnchor="middle" fill="#10b981" fontSize="11" fontFamily="monospace">M</text>
+  <rect x="338" y="14" width="44" height="20" rx="4" fill="#10b981"/>
+  <text x="360" y="28" textAnchor="middle" fill="#07090f" fontSize="10" fontFamily="monospace">main</text>
+
+  <line x1="68" y1="60" x2="92" y2="60" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowRB1)"/>
+  <line x1="128" y1="60" x2="152" y2="60" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowRB1)"/>
+  <line x1="185" y1="68" x2="220" y2="102" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowRB1)"/>
+  <line x1="248" y1="110" x2="272" y2="110" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowRB1)"/>
+  <line x1="185" y1="60" x2="342" y2="60" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowRB1)"/>
+  <line x1="303" y1="102" x2="345" y2="68" stroke="#10b981" strokeWidth="1.5" markerEnd="url(#arrowRBG)"/>
+
+  {/* Divider */}
+  <line x1="10" y1="170" x2="670" y2="170" stroke="#1e2d45" strokeWidth="1" strokeDasharray="4,4"/>
+
+  {/* Rebase section */}
+  <text x="10" y="192" fill="#94a3b8" fontSize="12" fontFamily="sans-serif">git rebase — replays commits on top, no merge commit, linear history</text>
+
+  <circle cx="50" cy="230" r="18" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="50" y="235" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">A</text>
+  <circle cx="110" cy="230" r="18" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="110" y="235" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">B</text>
+  <circle cx="170" cy="230" r="18" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="170" y="235" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">C</text>
+  <rect x="148" y="205" width="44" height="20" rx="4" fill="#3b82f6"/>
+  <text x="170" y="219" textAnchor="middle" fill="#fff" fontSize="10" fontFamily="monospace">main</text>
+
+  <circle cx="240" cy="230" r="18" fill="#14291a" stroke="#10b981" strokeWidth="1.5"/>
+  <text x="240" y="235" textAnchor="middle" fill="#10b981" fontSize="11" fontFamily="monospace">D'</text>
+  <circle cx="310" cy="230" r="18" fill="#14291a" stroke="#10b981" strokeWidth="1.5"/>
+  <text x="310" y="235" textAnchor="middle" fill="#10b981" fontSize="11" fontFamily="monospace">E'</text>
+  <rect x="272" y="258" width="76" height="20" rx="4" fill="#06b6d4"/>
+  <text x="310" y="272" textAnchor="middle" fill="#07090f" fontSize="10" fontFamily="monospace">feature</text>
+
+  <line x1="68" y1="230" x2="92" y2="230" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowRB1)"/>
+  <line x1="128" y1="230" x2="152" y2="230" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowRB1)"/>
+  <line x1="188" y1="230" x2="222" y2="230" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowRB1)"/>
+  <line x1="258" y1="230" x2="292" y2="230" stroke="#10b981" strokeWidth="1.5" markerEnd="url(#arrowRBG)"/>
+
+  <defs>
+    <marker id="arrowRB1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowRBG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+With **merge**, the original commits (`D`, `E`) stay in history and a merge commit (`M`) ties the two lines together. You can always see which commits came from the feature branch.
+
+With **rebase**, commits `D` and `E` are replayed on top of `main` as new commits (`D'`, `E'`). They get new hashes because their parent has changed. The history appears linear — as if the feature was developed after `C`.
+
+---
+
+## Rebase a Branch onto Main
+
+```bash
+# Make sure main is up to date
+git switch main
+git pull
+
+# Rebase your feature branch
+git switch feature-x
+git rebase main
+```
+
+Git replays each commit on your branch on top of the latest `main`. If there are conflicts, it pauses at each one — just like a merge conflict.
+
+**Resolve a rebase conflict**
+```bash
+# After editing the conflicted file:
+git add <conflicted-file>
+git rebase --continue
+```
+
+**Abort the rebase**
+```bash
+git rebase --abort
+```
+Returns you to the state before `git rebase` started.
+
+---
+
+## Interactive Rebase
+
+Interactive rebase opens an editor where you can edit, reorder, squash, or drop commits. It is the most powerful history-editing tool in Git.
+
+```bash
+git rebase -i HEAD~3
+```
+
+This opens the last 3 commits in your editor:
+```
+pick 9f8e7c6 Add greeting file
+pick 3d2c1b0 Fix typo in greeting
+pick a1b2c3d Add second line to greeting
+```
+
+Change `pick` to:
+- `reword` — edit just the commit message
+- `squash` — combine this commit into the one above it
+- `fixup` — like squash but discard this commit's message
+- `drop` — delete the commit entirely
+
+---
+
+## Squash Commits
+
+A common workflow: you have a feature branch with many "WIP" and "fix typo" commits. Before opening a PR, squash them into clean, logical commits.
+
+```bash
+git rebase -i HEAD~4
+```
+Change:
+```
+pick a1b2c3d Add login form
+squash 9f8e7c6 WIP
+squash 3d2c1b0 fix typo
+squash e5d4c3b another WIP
+```
+Git combines all four into a single commit and opens the editor for you to write the final message.
+
+---
+
+## The Golden Rule
+
+:::danger Never rebase shared branches
+Rebasing rewrites commit hashes. If you rebase a branch that someone else has already pulled, their copy will be out of sync in a way that is confusing and painful to fix.
+
+**Only rebase local, unpushed commits** — or branches where you are the only person working on them.
+:::
+
+**Recommended workflow**
+1. Develop on a local feature branch.
+2. Before opening a PR, `git rebase main` to put your commits on top of the latest main.
+3. Let GitHub's merge button handle the final merge into main.
+
+---
+
+## Summary
+
+| Command | What it does |
+|---------|-------------|
+| `git rebase main` | Replay current branch's commits on top of main |
+| `git rebase --continue` | Continue after resolving a rebase conflict |
+| `git rebase --abort` | Cancel the rebase |
+| `git rebase -i HEAD~N` | Interactively edit the last N commits |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

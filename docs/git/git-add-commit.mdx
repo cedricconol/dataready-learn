@@ -1,0 +1,123 @@
+---
+id: git-add-commit
+title: "Stage and Commit"
+sidebar_label: "Stage and Commit"
+sidebar_position: 4
+---
+
+# Stage and Commit
+
+You have a file. Now you will move it through the three areas — staging it, then committing it — and build a real commit history.
+
+## Stage the File
+
+```bash
+git add README.md
+```
+
+Run `git status` again:
+
+```
+On branch main
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+	new file:   README.md
+```
+
+`README.md` moved from **Untracked files** to **Changes to be committed**. It is now in the Staging Area, ready to go into the next commit.
+
+---
+
+## Commit
+
+```bash
+git commit -m "Initial commit"
+```
+
+Output:
+```
+[main (root-commit) a1b2c3d] Initial commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md
+```
+
+Git saved a permanent snapshot. The hash `a1b2c3d` is a unique fingerprint for this commit — every commit gets one.
+
+A good commit message:
+- Uses the imperative mood: "Add README" not "Added README"
+- Describes the change, not the file: "Add project overview" not "Edit README.md"
+- Is short enough to read in a one-line log (50 chars or less)
+
+---
+
+## View Your History
+
+```bash
+git log
+```
+
+Output:
+```
+commit a1b2c3d4e5f6... (HEAD -> main)
+Author: Your Name <you@example.com>
+Date:   Fri Jan 10 10:00:00 2025
+
+    Initial commit
+```
+
+`HEAD -> main` tells you:
+- `main` is the current branch
+- `HEAD` is pointing at the latest commit on that branch
+
+---
+
+## Make a Second Commit
+
+Add some content to the README:
+
+```bash
+echo "A practice repository for learning Git." >> README.md
+```
+
+Now run through the full cycle:
+
+```bash
+git status        # see the modified file
+git add README.md # stage it
+git commit -m "Add project description to README"
+git log           # see both commits
+```
+
+Your log now shows two commits. The most recent is at the top.
+
+---
+
+## What Happens Inside `.git/`
+
+You do not need to understand the internals, but this mental model helps:
+
+Each commit stores:
+1. A **snapshot** of every tracked file at that moment
+2. A **pointer** to the parent commit (except the first)
+3. Your **name, email, and a timestamp**
+4. Your **commit message**
+
+Git does not store diffs — it stores full snapshots. The diff you see in `git diff` is computed on the fly by comparing two snapshots.
+
+---
+
+## Summary
+
+| Command | What it does |
+|---------|-------------|
+| `git add <file>` | Move changes from Working Directory to Staging Area |
+| `git add .` | Stage all changes in the current directory |
+| `git commit -m "..."` | Snapshot everything in Staging Area into the repo |
+| `git log` | Show the commit history |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

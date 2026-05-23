@@ -1,0 +1,106 @@
+---
+id: git-checkpoint-3
+title: "Checkpoint 3: Branch and Pull Request"
+sidebar_label: "🚩 Checkpoint 3: Branch + PR"
+sidebar_position: 9.5
+---
+
+# 🚩 Checkpoint 3: Branch and Pull Request
+
+This is the workflow real teams use every day: make a change on a branch, push it, open a pull request, review it, merge it. You will run the whole loop on your own repo while adding your first SQL file to the portfolio.
+
+:::note Before you start
+You need a pushed [Checkpoint 2](/git/git-checkpoint-2) (your repo on GitHub) and the [Branching](/git/git-branch) and [Pull Requests](/git/git-pull-request) lessons. Make sure you are on `main` and up to date: `git switch main && git pull`.
+:::
+
+## Step 1 — Create a branch
+
+```bash
+git switch -c add-sales-query
+```
+
+You are now on a separate branch. Anything you do here leaves `main` untouched until you merge.
+
+## Step 2 — Add a SQL query file
+
+Make a `queries` folder and create the file:
+
+```bash
+mkdir queries
+```
+
+Now create `queries/monthly_sales.sql`. Open it in your editor (`code queries/monthly_sales.sql` or `nano queries/monthly_sales.sql`) and paste:
+
+```sql
+-- Monthly revenue by product category
+SELECT
+    DATE_TRUNC('month', order_date) AS month,
+    category,
+    SUM(amount) AS revenue
+FROM sales
+GROUP BY 1, 2
+ORDER BY month, revenue DESC;
+```
+
+This is the kind of query you wrote in the SQL course. Save the file.
+
+## Step 3 — Commit and push the branch
+
+```bash
+git add queries/monthly_sales.sql
+git commit -m "Add monthly sales revenue query"
+git push -u origin add-sales-query
+```
+
+The push output includes a GitHub link to "create a pull request" — handy, but we will use the web UI.
+
+## Step 4 — Open the pull request
+
+1. Go to your repo on GitHub. A banner shows **"add-sales-query had recent pushes"** with a **Compare & pull request** button. Click it.
+2. The title is pre-filled from your commit. Add a short description, e.g. "Adds a query for monthly revenue by category."
+3. Click **Create pull request**.
+
+## Step 5 — Review your own diff
+
+Open the **Files changed** tab. You should see `queries/monthly_sales.sql` entirely in green (all new lines). Reviewing your own changes before merging is a habit worth building now.
+
+## Step 6 — Merge, then sync locally
+
+1. Click **Merge pull request** → **Confirm merge**.
+2. Click **Delete branch** on GitHub (it is merged, so it is safe).
+3. Back in your terminal, bring `main` up to date and clean up the local branch:
+
+```bash
+git switch main
+git pull
+git branch -d add-sales-query
+```
+
+## What you should see
+
+```bash
+git log --oneline
+```
+
+Your merged commit is now on `main`, and `queries/monthly_sales.sql` exists in your folder. On GitHub, the repo now shows a `queries/` folder.
+
+## If something goes wrong
+
+| Error / situation | Cause | Fix |
+|-------------------|-------|-----|
+| `fatal: The current branch has no upstream` | You ran `git push` without `-u` on a new branch | Run `git push -u origin add-sales-query` |
+| No "Compare & pull request" banner | It expired or you missed it | Go to the **Pull requests** tab → **New pull request**, pick your branch |
+| `git branch -d` says "not fully merged" | Your local main is behind | Run `git pull` first, then delete; or confirm the PR actually merged on GitHub |
+
+## ✅ Checkpoint complete
+
+- [ ] You created and pushed the `add-sales-query` branch
+- [ ] You opened, reviewed, and merged a pull request on GitHub
+- [ ] `queries/monthly_sales.sql` is on `main` both locally and on GitHub
+- [ ] The feature branch is deleted
+
+You just did the exact workflow professional analysts and engineers use to ship changes. Next, you will deliberately break things and learn to recover.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

@@ -1,0 +1,157 @@
+---
+id: git-branch
+title: "Branching"
+sidebar_label: "Branching"
+sidebar_position: 8
+---
+
+# Branching
+
+Branches let you work on a change in isolation without touching `main`. You can experiment, break things, and throw the branch away — `main` is never affected until you deliberately merge.
+
+## What a Branch Is
+
+A branch is a lightweight pointer to a commit. When you create a branch, Git just makes a new pointer. No files are copied. No history is duplicated.
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '620px', display: 'block', margin: '0 auto'}}>
+  {/* Commit circles - main line */}
+  <circle cx="60" cy="80" r="22" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="2"/>
+  <text x="60" y="85" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">A</text>
+
+  <circle cx="160" cy="80" r="22" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="2"/>
+  <text x="160" y="85" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">B</text>
+
+  <circle cx="260" cy="80" r="22" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="2"/>
+  <text x="260" y="85" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">C</text>
+
+  {/* main label */}
+  <rect x="230" y="22" width="62" height="24" rx="5" fill="#3b82f6"/>
+  <text x="261" y="39" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold" fontFamily="monospace">main</text>
+  <line x1="261" y1="46" x2="261" y2="58" stroke="#3b82f6" strokeWidth="1.5"/>
+
+  {/* feature branch commits */}
+  <circle cx="360" cy="150" r="22" fill="#0e3a4a" stroke="#06b6d4" strokeWidth="2"/>
+  <text x="360" y="155" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">D</text>
+
+  <circle cx="460" cy="150" r="22" fill="#0e3a4a" stroke="#06b6d4" strokeWidth="2"/>
+  <text x="460" y="155" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">E</text>
+
+  {/* feature label */}
+  <rect x="404" y="190" width="112" height="24" rx="5" fill="#06b6d4"/>
+  <text x="460" y="207" textAnchor="middle" fill="#07090f" fontSize="12" fontWeight="bold" fontFamily="monospace">feature-greeting</text>
+  <line x1="460" y1="190" x2="460" y2="172" stroke="#06b6d4" strokeWidth="1.5"/>
+
+  {/* HEAD label */}
+  <rect x="486" y="130" width="52" height="24" rx="5" fill="#f59e0b"/>
+  <text x="512" y="147" textAnchor="middle" fill="#07090f" fontSize="12" fontWeight="bold" fontFamily="monospace">HEAD</text>
+  <line x1="486" y1="142" x2="482" y2="155" stroke="#f59e0b" strokeWidth="1.5"/>
+
+  {/* Connecting lines */}
+  <line x1="82" y1="80" x2="138" y2="80" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowG)"/>
+  <line x1="182" y1="80" x2="238" y2="80" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowG)"/>
+  <line x1="278" y1="92" x2="340" y2="138" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowG)"/>
+  <line x1="382" y1="150" x2="438" y2="150" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowG)"/>
+
+  <defs>
+    <marker id="arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+In this diagram:
+- `main` points to commit `C` — the last commit on the main line.
+- `feature-greeting` branched from `C` and has two new commits (`D`, `E`).
+- `HEAD` is a special pointer that tracks *which branch you are currently on*. Here it points to `feature-greeting`.
+
+`main` is untouched. You can switch back to it any time and it will be exactly at `C`.
+
+---
+
+## See Your Branches
+
+```bash
+git branch
+```
+Output:
+```
+* main
+```
+The `*` marks your current branch.
+
+---
+
+## Create and Switch to a New Branch
+
+```bash
+git switch -c feature-greeting
+```
+
+`-c` means "create." This creates the branch and immediately switches to it.
+
+Confirm you switched:
+```bash
+git branch
+```
+Output:
+```
+* feature-greeting
+  main
+```
+
+The older syntax (`git checkout -b feature-greeting`) still works. `git switch` is the modern, more readable alternative.
+
+---
+
+## Make Commits on the Branch
+
+```bash
+echo "Hello from the feature branch!" > greeting.txt
+git add greeting.txt
+git commit -m "Add greeting file"
+```
+
+Your branch now has a commit that `main` does not.
+
+---
+
+## Switch Back to Main
+
+```bash
+git switch main
+```
+
+Notice `greeting.txt` disappears from your folder. It exists on `feature-greeting`, not on `main`. The files are not deleted — they are just not part of the `main` snapshot.
+
+Switch back to your feature branch:
+```bash
+git switch feature-greeting
+```
+`greeting.txt` reappears.
+
+---
+
+## Push the Branch to GitHub
+
+```bash
+git push -u origin feature-greeting
+```
+
+Go to your GitHub repo. In the branch dropdown you will see `feature-greeting` alongside `main`.
+
+---
+
+## Summary
+
+| Command | What it does |
+|---------|-------------|
+| `git branch` | List branches |
+| `git switch -c <name>` | Create and switch to a new branch |
+| `git switch <name>` | Switch to an existing branch |
+| `git push -u origin <name>` | Push branch to GitHub (first time) |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

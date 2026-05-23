@@ -1,0 +1,151 @@
+---
+id: git-github
+title: "Connecting to GitHub"
+sidebar_label: "Connecting to GitHub"
+sidebar_position: 5
+---
+
+# Connecting to GitHub
+
+Your repo currently exists only on your machine. This lesson publishes it to GitHub, making it accessible from any device and giving you a backup.
+
+## Local vs. Remote
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '680px', display: 'block', margin: '0 auto'}}>
+  {/* Your machine box */}
+  <rect x="10" y="20" width="290" height="200" rx="12" fill="#0f1623" stroke="#1e2d45" strokeWidth="1.5"/>
+  <text x="155" y="48" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="sans-serif">Your Machine</text>
+
+  {/* Local repo inside */}
+  <rect x="35" y="60" width="240" height="140" rx="8" fill="#141d2e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="155" y="90" textAnchor="middle" fill="#f1f5f9" fontSize="13" fontWeight="bold" fontFamily="sans-serif">Local Repository</text>
+  <text x="155" y="113" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">my-first-repo/</text>
+  <text x="155" y="133" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">.git/</text>
+  <text x="155" y="153" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">commits, branches,</text>
+  <text x="155" y="170" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">history</text>
+
+  {/* Arrows */}
+  <line x1="300" y1="100" x2="380" y2="100" stroke="#3b82f6" strokeWidth="2" markerEnd="url(#arrowR)"/>
+  <text x="340" y="93" textAnchor="middle" fill="#3b82f6" fontSize="11" fontFamily="monospace">git push</text>
+
+  <line x1="380" y1="130" x2="300" y2="130" stroke="#06b6d4" strokeWidth="2" markerEnd="url(#arrowL)"/>
+  <text x="340" y="150" textAnchor="middle" fill="#06b6d4" fontSize="11" fontFamily="monospace">git pull</text>
+
+  {/* GitHub box */}
+  <rect x="385" y="20" width="285" height="200" rx="12" fill="#0f1623" stroke="#1e2d45" strokeWidth="1.5"/>
+  <text x="527" y="48" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="sans-serif">GitHub (cloud)</text>
+
+  {/* Remote repo inside */}
+  <rect x="410" y="60" width="235" height="140" rx="8" fill="#141d2e" stroke="#10b981" strokeWidth="1.5"/>
+  <text x="527" y="90" textAnchor="middle" fill="#f1f5f9" fontSize="13" fontWeight="bold" fontFamily="sans-serif">Remote Repository</text>
+  <text x="527" y="113" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">origin</text>
+  <text x="527" y="133" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">github.com/you/</text>
+  <text x="527" y="153" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">my-first-repo</text>
+
+  <defs>
+    <marker id="arrowR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowL" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+Your **local** repo is the copy on your machine — the `.git/` folder you created with `git init`. The **remote** is a copy hosted on GitHub. The name `origin` is the conventional alias for the primary remote.
+
+---
+
+## Create a Repo on GitHub
+
+1. Log into [github.com](https://github.com).
+2. Click **+** (top-right) → **New repository**.
+3. Name it `my-first-repo`.
+4. Leave it **Public** (or Private if you prefer).
+5. **Do not** check "Add a README file" — you already have one locally.
+6. **Do not** add a `.gitignore` or license for now.
+7. Click **Create repository**.
+
+GitHub will show you setup instructions. You will use the SSH URL (starts with `git@github.com:`).
+
+---
+
+## Connect Local to Remote
+
+Copy the SSH URL from GitHub (looks like `git@github.com:yourname/my-first-repo.git`), then run:
+
+```bash
+git remote add origin git@github.com:<username>/my-first-repo.git
+```
+
+This tells Git: "the remote named `origin` lives at this URL."
+
+**Verify the connection**
+```bash
+git remote -v
+```
+Output:
+```
+origin  git@github.com:<username>/my-first-repo.git (fetch)
+origin  git@github.com:<username>/my-first-repo.git (push)
+```
+Two lines — one for fetching (downloading), one for pushing (uploading).
+
+---
+
+## Push Your Code
+
+```bash
+git push -u origin main
+```
+
+What each part means:
+- `git push` — upload commits to the remote
+- `-u` — set `origin main` as the upstream for this branch (so future `git push` with no arguments knows where to go)
+- `origin` — the remote name
+- `main` — the local branch to push
+
+Output:
+```
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 272 bytes | 272.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To github.com:<username>/my-first-repo.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+```
+
+Refresh your GitHub repo page. Your README is now online.
+
+---
+
+## Push Subsequent Changes
+
+After the first push, you never need `-u` again for the same branch:
+
+```bash
+echo "Added from lesson 2.6" >> README.md
+git add README.md
+git commit -m "Add note from lesson 2.6"
+git push
+```
+
+`git push` with no arguments pushes the current branch to its tracked upstream.
+
+---
+
+## Summary
+
+| Command | What it does |
+|---------|-------------|
+| `git remote add origin <url>` | Register a remote called `origin` |
+| `git remote -v` | List registered remotes |
+| `git push -u origin main` | Push and set upstream (first time) |
+| `git push` | Push to the already-set upstream |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

@@ -1,0 +1,106 @@
+---
+id: git-checkpoint-1
+title: "Checkpoint 1: Make Your Repo"
+sidebar_label: "🚩 Checkpoint 1: Make Your Repo"
+sidebar_position: 4.5
+---
+
+# 🚩 Checkpoint 1: Make Your Repo
+
+Time to do it for real. You have learned `init`, `status`, `add`, `commit`, and `log` — now you will use all of them to start the project you build throughout this course: a small data-analyst portfolio repo called **`my-data-portfolio`**.
+
+By the end of this checkpoint you will have a real Git repository on your machine with two commits in its history.
+
+:::note Before you start
+Finish [Initialize a Repo](/git/git-init) and [Stage and Commit](/git/git-add-commit) first. You also need Git installed with your name and email configured (from [Setup](/git/git-setup)). If `git --version` prints a version number, you are ready.
+:::
+
+## Step 1 — Create the project folder
+
+```bash
+mkdir my-data-portfolio
+cd my-data-portfolio
+```
+
+Use this exact name. You will type it many times across the course, and Checkpoint 2 expects it.
+
+## Step 2 — Initialize the repo
+
+```bash
+git init
+```
+
+You should see `Initialized empty Git repository in .../dataready-git-repo/.git/`.
+
+## Step 3 — Create a README
+
+Your portfolio needs a front page. Create it from the terminal:
+
+```bash
+echo "# My Data Portfolio" > README.md
+echo "" >> README.md
+echo "My hands-on project from the DataReady Git course." >> README.md
+```
+
+Check what Git sees:
+
+```bash
+git status
+```
+
+`README.md` shows up under **Untracked files**.
+
+## Step 4 — Make your first commit
+
+```bash
+git add README.md
+git commit -m "Add project README"
+```
+
+## Step 5 — Add a description and commit again
+
+```bash
+echo "" >> README.md
+echo "## Contents" >> README.md
+echo "- SQL queries I have written" >> README.md
+echo "- Notes on what I learned" >> README.md
+git add README.md
+git commit -m "Describe repo contents in README"
+```
+
+## What you should see
+
+```bash
+git log --oneline
+```
+
+Two commits, newest on top:
+
+```
+b2c3d4e Describe repo contents in README
+a1b2c3d Add project README
+```
+
+## If something goes wrong
+
+| Error | What it means | Fix |
+|-------|---------------|-----|
+| `git: command not found` | Git is not installed | Revisit [Setup](/git/git-setup) |
+| `Author identity unknown` | Name/email not configured | `git config --global user.name "..."` and `user.email "..."` |
+| `nothing to commit` after `git add` | You did not actually change the file | Re-run the `echo` line, then `git status` |
+
+:::tip Mistakes are the point
+If you commit the wrong thing, do not worry. Later checkpoints teach you how to fix and undo commits. For now, getting commits *at all* is the win.
+:::
+
+## ✅ Checkpoint complete
+
+- [ ] `my-data-portfolio` folder exists and `git status` runs inside it
+- [ ] `README.md` is committed
+- [ ] `git log --oneline` shows two commits
+
+Your repo lives only on your machine right now. In the next checkpoint you put it on GitHub and see it online.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />
