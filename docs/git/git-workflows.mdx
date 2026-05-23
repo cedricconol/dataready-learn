@@ -1,0 +1,193 @@
+---
+id: git-workflows
+title: "GitHub Workflows"
+sidebar_label: "GitHub Workflows"
+sidebar_position: 14
+---
+
+# GitHub Workflows
+
+GitHub is more than a place to store code. It has issue tracking, release management, and built-in automation. This lesson covers the platform features that turn a bare repo into a real project.
+
+---
+
+## Write a Real README
+
+A README is the front page of your repo — the first thing anyone sees. Every serious project needs one.
+
+Create or edit `README.md` with:
+
+```markdown
+# Project Name
+
+One sentence describing what this project does.
+
+## Why
+
+Why does this exist? What problem does it solve?
+
+## Installation
+
+```bash
+git clone https://github.com/you/project.git
+cd project
+npm install
+```
+
+## Usage
+
+```bash
+npm start
+```
+
+## License
+
+MIT
+```
+
+Commit and push. Your GitHub repo page now displays the README below the file listing.
+
+---
+
+## Add a .gitignore
+
+Some files should never be committed: compiled artifacts, secrets, editor configs, OS noise. A `.gitignore` file tells Git to silently ignore them.
+
+Create `.gitignore` in the root of your project:
+
+```
+# Node.js
+node_modules/
+.env
+npm-debug.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editor
+.DS_Store
+.idea/
+*.swp
+
+# Build output
+dist/
+build/
+```
+
+Files matching these patterns will not appear in `git status` and cannot accidentally be staged.
+
+:::tip
+[gitignore.io](https://www.toptal.com/developers/gitignore) generates a `.gitignore` for any stack. Just type your languages and tools.
+:::
+
+---
+
+## Tag a Release
+
+Tags mark specific commits as releases. They are permanent labels attached to a commit hash.
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+To tag an older commit:
+```bash
+git tag v1.0.0 <commit-hash>
+```
+
+List all tags:
+```bash
+git tag
+```
+
+---
+
+## Create a GitHub Release
+
+1. Go to your repo on GitHub.
+2. Click **Releases** (right sidebar) → **Draft a new release**.
+3. Choose your tag (`v1.0.0`).
+4. Write a title and release notes summarizing what changed.
+5. Click **Publish release**.
+
+GitHub creates a page for the release with a download link to a ZIP of the repo at that tag. This is what open-source projects use for versioned releases.
+
+---
+
+## Open an Issue
+
+Issues track bugs, feature requests, and questions. They give contributors a place to discuss work before starting it.
+
+1. Go to your repo → **Issues** → **New issue**.
+2. Write a clear title and description.
+3. Labels classify the issue: `bug`, `enhancement`, `good first issue`.
+4. Assignees are the person responsible for resolving it.
+
+---
+
+## Link a PR to an Issue
+
+If a PR closes an issue, add a keyword in the PR description:
+
+```
+Fixes #12
+Closes #7
+Resolves #3
+```
+
+When the PR is merged, GitHub automatically closes the linked issue. The issue and PR are linked in the UI so reviewers can see the full context.
+
+---
+
+## Your First GitHub Action
+
+GitHub Actions is a CI/CD system built into GitHub. Workflows are defined in YAML files and run automatically on events like pushes or pull requests.
+
+Create the file `.github/workflows/hello.yml`:
+
+```yaml
+name: Hello World
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print greeting
+        run: echo "Hello from GitHub Actions!"
+```
+
+Commit and push:
+```bash
+git add .github/workflows/hello.yml
+git commit -m "Add hello world GitHub Action"
+git push
+```
+
+Go to **Actions** tab on GitHub. You will see the workflow running. Click it to see the logs including the echo output.
+
+This is the foundation for automated testing, linting, and deployment. Any `run:` command you can run in your terminal can run in a workflow.
+
+---
+
+## Summary
+
+| Feature | Where |
+|---------|-------|
+| README | `README.md` in repo root |
+| Ignore files | `.gitignore` in repo root |
+| Tag a commit | `git tag v1.0.0 && git push origin v1.0.0` |
+| Create release | GitHub → Releases → Draft new release |
+| Track work | GitHub → Issues → New issue |
+| Link PR to issue | Write `Fixes #N` in PR description |
+| Automate tasks | `.github/workflows/<name>.yml` |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

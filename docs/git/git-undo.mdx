@@ -1,0 +1,215 @@
+---
+id: git-undo
+title: "Undo Mistakes"
+sidebar_label: "Undo Mistakes"
+sidebar_position: 12
+---
+
+# Undo Mistakes
+
+Git's safety net is larger than most people realize. Almost every "mistake" is recoverable. This lesson covers the full toolkit for undoing changes at every stage.
+
+---
+
+## Stash: Save Work in Progress
+
+You are mid-way through a change and need to switch branches urgently — but you are not ready to commit. `git stash` saves your uncommitted changes and restores a clean working directory.
+
+```bash
+# Save your WIP
+git stash
+
+# Your working directory is now clean
+git status   # nothing to commit
+
+# Do the urgent thing (switch branches, pull, etc.)
+git switch main
+git pull
+
+# Come back to your WIP
+git switch -
+git stash pop   # restore your stashed changes
+```
+
+**Stash with a description**
+```bash
+git stash push -m "half-finished refactor of login form"
+```
+
+**See all stashes**
+```bash
+git stash list
+```
+```
+stash@{0}: On feature-x: half-finished refactor of login form
+stash@{1}: WIP on main: fix typo
+```
+
+**Restore a specific stash**
+```bash
+git stash pop stash@{1}
+```
+
+---
+
+## Discard Unstaged Changes
+
+Changed a file and want to throw the changes away and go back to the last committed version:
+
+```bash
+git restore <file>
+```
+
+This is **destructive** — the unsaved changes are gone. There is no undo.
+
+**Discard all unstaged changes in the project**
+```bash
+git restore .
+```
+
+---
+
+## Unstage a File
+
+You ran `git add` but changed your mind about including a file in the next commit:
+
+```bash
+git restore --staged <file>
+```
+
+This moves the file back from the Staging Area to the Working Directory. Your changes are preserved — they are just no longer staged.
+
+---
+
+## Undo a Commit (Soft Reset)
+
+You just committed something and want to uncommit it, but keep the changes staged:
+
+```bash
+git reset --soft HEAD~1
+```
+
+`HEAD~1` means "one commit before HEAD." The commit is gone from history, but all the changes are still in the Staging Area, ready to be recommitted differently.
+
+Use this when you want to redo a commit with a different message or a different set of files.
+
+---
+
+## Undo a Commit (Hard Reset)
+
+:::danger Destructive
+`git reset --hard` permanently deletes commits and their changes. Only use this for local, unpushed work you are certain you want to discard.
+:::
+
+```bash
+git reset --hard HEAD~1
+```
+
+The last commit is removed from history and its changes are deleted from your working directory entirely.
+
+---
+
+## Safe Undo for Pushed Commits
+
+If a commit is already on GitHub and others may have pulled it, **do not use `git reset`**. Use `git revert` instead:
+
+```bash
+git revert <commit-hash>
+```
+
+`git revert` creates a **new commit** that reverses the changes of the specified commit. The original commit stays in history. This is safe because it does not rewrite history — it only adds to it.
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 620 160" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '620px', display: 'block', margin: '0 auto'}}>
+  {/* reset path */}
+  <text x="10" y="30" fill="#94a3b8" fontSize="12" fontFamily="monospace">git reset (rewrites history):</text>
+
+  <circle cx="60" cy="70" r="20" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="60" y="75" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">A</text>
+
+  <circle cx="130" cy="70" r="20" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="130" y="75" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">B</text>
+
+  <circle cx="200" cy="70" r="20" fill="#3a1a1a" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4,3"/>
+  <text x="200" y="75" textAnchor="middle" fill="#ef4444" fontSize="11" fontFamily="monospace">C</text>
+  <text x="200" y="110" textAnchor="middle" fill="#ef4444" fontSize="11" fontFamily="sans-serif">deleted</text>
+
+  <line x1="80" y1="70" x2="110" y2="70" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowU1)"/>
+  <line x1="150" y1="70" x2="180" y2="70" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4,3"/>
+
+  {/* revert path */}
+  <text x="320" y="30" fill="#94a3b8" fontSize="12" fontFamily="monospace">git revert (adds to history):</text>
+
+  <circle cx="360" cy="70" r="20" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="360" y="75" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">A</text>
+
+  <circle cx="430" cy="70" r="20" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="430" y="75" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">B</text>
+
+  <circle cx="500" cy="70" r="20" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="500" y="75" textAnchor="middle" fill="#f1f5f9" fontSize="11" fontFamily="monospace">C</text>
+
+  <circle cx="570" cy="70" r="20" fill="#14291a" stroke="#10b981" strokeWidth="1.5"/>
+  <text x="570" y="75" textAnchor="middle" fill="#10b981" fontSize="11" fontFamily="monospace">C'</text>
+  <text x="570" y="108" textAnchor="middle" fill="#10b981" fontSize="11" fontFamily="sans-serif">undoes C</text>
+
+  <line x1="380" y1="70" x2="410" y2="70" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowU2)"/>
+  <line x1="450" y1="70" x2="480" y2="70" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#arrowU3)"/>
+  <line x1="520" y1="70" x2="550" y2="70" stroke="#10b981" strokeWidth="1.5" markerEnd="url(#arrowU4)"/>
+
+  <defs>
+    <marker id="arrowU1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowU2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowU3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowU4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+---
+
+## The Ultimate Safety Net: Reflog
+
+`git reflog` records every state `HEAD` has been in, including commits you "deleted" with `git reset`.
+
+```bash
+git reflog
+```
+```
+a1b2c3d HEAD@{0}: reset: moving to HEAD~1
+9f8e7c6 HEAD@{1}: commit: The commit you "lost"
+3d2c1b0 HEAD@{2}: commit: Previous commit
+```
+
+To recover a "lost" commit, reset back to it:
+```bash
+git reset --hard 9f8e7c6
+```
+
+Reflog entries expire after 90 days by default. For practically all real-world accidents, your work is still there.
+
+---
+
+## Which Command to Use
+
+| Situation | Command |
+|-----------|---------|
+| Undo staged files (keep changes) | `git restore --staged <file>` |
+| Discard unstaged changes | `git restore <file>` |
+| Save WIP without committing | `git stash` / `git stash pop` |
+| Undo last commit (keep staged) | `git reset --soft HEAD~1` |
+| Undo last commit (discard changes) | `git reset --hard HEAD~1` |
+| Undo a pushed commit safely | `git revert <hash>` |
+| Recover "lost" work | `git reflog` then `git reset --hard <hash>` |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

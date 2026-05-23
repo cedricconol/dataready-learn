@@ -1,0 +1,148 @@
+---
+id: git-init
+title: "Initialize a Repo"
+sidebar_label: "Initialize a Repo"
+sidebar_position: 3
+---
+
+# Initialize a Repo
+
+A repository (repo) is just a folder that Git is watching. This lesson covers turning a plain folder into a Git repo and understanding how Git tracks changes.
+
+## The Three Areas of Git
+
+Before touching any commands, understand this mental model — it explains almost every Git command you will ever use.
+
+<div style={{overflowX: 'auto', margin: '1.5rem 0'}}>
+<svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', maxWidth: '700px', display: 'block', margin: '0 auto'}}>
+  {/* Working Directory */}
+  <rect x="10" y="30" width="190" height="130" rx="10" fill="#1e3a6e" stroke="#3b82f6" strokeWidth="1.5"/>
+  <text x="105" y="22" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="monospace">your filesystem</text>
+  <text x="105" y="65" textAnchor="middle" fill="#f1f5f9" fontSize="14" fontWeight="bold" fontFamily="sans-serif">Working</text>
+  <text x="105" y="85" textAnchor="middle" fill="#f1f5f9" fontSize="14" fontWeight="bold" fontFamily="sans-serif">Directory</text>
+  <text x="105" y="115" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">files you edit</text>
+  <text x="105" y="133" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">right now</text>
+
+  {/* Arrow 1 */}
+  <line x1="200" y1="95" x2="250" y2="95" stroke="#3b82f6" strokeWidth="2" markerEnd="url(#arrow)"/>
+  <text x="225" y="88" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="monospace">git add</text>
+
+  {/* Staging Area */}
+  <rect x="255" y="30" width="190" height="130" rx="10" fill="#0e3a4a" stroke="#06b6d4" strokeWidth="1.5"/>
+  <text x="350" y="22" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="monospace">the index</text>
+  <text x="350" y="65" textAnchor="middle" fill="#f1f5f9" fontSize="14" fontWeight="bold" fontFamily="sans-serif">Staging</text>
+  <text x="350" y="85" textAnchor="middle" fill="#f1f5f9" fontSize="14" fontWeight="bold" fontFamily="sans-serif">Area</text>
+  <text x="350" y="115" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">changes you've</text>
+  <text x="350" y="133" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">selected to commit</text>
+
+  {/* Arrow 2 */}
+  <line x1="445" y1="95" x2="495" y2="95" stroke="#06b6d4" strokeWidth="2" markerEnd="url(#arrow2)"/>
+  <text x="470" y="88" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="monospace">git commit</text>
+
+  {/* Repository */}
+  <rect x="500" y="30" width="190" height="130" rx="10" fill="#141d2e" stroke="#10b981" strokeWidth="1.5"/>
+  <text x="595" y="22" textAnchor="middle" fill="#94a3b8" fontSize="11" fontFamily="monospace">.git folder</text>
+  <text x="595" y="65" textAnchor="middle" fill="#f1f5f9" fontSize="14" fontWeight="bold" fontFamily="sans-serif">Repository</text>
+  <text x="595" y="95" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">permanent</text>
+  <text x="595" y="113" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="monospace">commit history</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+- **Working Directory** — the files you can see and edit. Changes here are "untracked" or "modified" until you stage them.
+- **Staging Area** — a preparation zone. You choose exactly which changes go into the next commit.
+- **Repository** — the permanent record. Once committed, a snapshot is saved forever in `.git/`.
+
+Every Git command moves changes between these three areas.
+
+---
+
+## Create a Project Folder
+
+```bash
+mkdir my-first-repo && cd my-first-repo
+```
+
+You now have an empty folder. Git knows nothing about it yet.
+
+---
+
+## Initialize the Repo
+
+```bash
+git init
+```
+
+Output:
+```
+Initialized empty Git repository in /path/to/my-first-repo/.git/
+```
+
+This creates a hidden `.git/` folder inside your project. That folder is the repository — it stores every snapshot, every branch, every commit. Do not manually edit anything inside `.git/`.
+
+---
+
+## Check Status
+
+```bash
+git status
+```
+
+Output:
+```
+On branch main
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)
+```
+
+`git status` is your compass. Run it constantly — before adding, before committing, when confused. It always tells you exactly where you are and what Git sees.
+
+---
+
+## Create Your First File
+
+```bash
+echo "# My First Repo" > README.md
+```
+
+Now run `git status` again:
+
+```
+On branch main
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	README.md
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+Git sees `README.md` but is not tracking it yet. It appears under **Untracked files** — meaning it exists in the Working Directory but has not entered Git's awareness.
+
+---
+
+## Summary
+
+| Concept | Meaning |
+|---------|---------|
+| Working Directory | Files you can see and edit |
+| Staging Area | Changes queued up for the next commit |
+| Repository | The permanent `.git/` history |
+| `git init` | Turn a folder into a Git repo |
+| `git status` | See what Git currently sees |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

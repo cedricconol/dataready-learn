@@ -1,0 +1,136 @@
+---
+id: git-diff
+title: "Inspect Changes"
+sidebar_label: "Inspect Changes"
+sidebar_position: 6
+---
+
+# Inspect Changes
+
+Edit. Status. Add. Commit. Push. That loop is 80% of daily Git work. Before committing, you should always know exactly what you are about to save.
+
+## See Unstaged Changes
+
+```bash
+git diff
+```
+
+`git diff` compares your **Working Directory** to the **Staging Area**. It shows changes you have made but not yet staged.
+
+Example — you added a line to README.md:
+```diff
+diff --git a/README.md b/README.md
+index 1234567..abcdefg 100644
+--- a/README.md
++++ b/README.md
+@@ -1,2 +1,3 @@
+ # My First Repo
+ A practice repository for learning Git.
++Added a new line.
+```
+
+Reading the diff:
+- Lines starting with `+` are additions (shown in green in most terminals)
+- Lines starting with `-` are deletions (shown in red)
+- Lines with no prefix are unchanged context lines
+
+---
+
+## See Staged Changes
+
+```bash
+git diff --staged
+```
+
+This compares the **Staging Area** to the last **commit** — it shows exactly what will be saved when you run `git commit`. Always review this before committing.
+
+---
+
+## Stage Everything vs. Selectively
+
+**Stage all changes in the current directory**
+```bash
+git add .
+```
+Convenient, but be careful. It stages every modified and untracked file, including things you may not want committed (secrets, large files, debug code).
+
+**Stage specific files**
+```bash
+git add README.md notes.txt
+```
+More deliberate. Each commit should represent one logical change, not "everything I happened to touch."
+
+A good habit: run `git status` after `git add .` to confirm nothing unexpected was staged.
+
+---
+
+## A Readable Log
+
+The default `git log` is verbose. For a quick overview:
+
+```bash
+git log --oneline
+```
+
+Output:
+```
+a1b2c3d (HEAD -> main, origin/main) Add note from lesson 2.6
+9f8e7c6 Add project description to README
+3d2c1b0 Initial commit
+```
+
+Each line: `<hash> <message>`. The parenthetical shows which branches and remotes point to each commit.
+
+**See a graph of branches**
+```bash
+git log --oneline --graph --all
+```
+This becomes useful once you have multiple branches.
+
+---
+
+## Practice: The Full Loop
+
+Run through this three times. Each time, make a small meaningful change:
+
+```bash
+# 1. Edit a file
+echo "Practice run 1" >> README.md
+
+# 2. Check what changed
+git status
+git diff
+
+# 3. Stage
+git add README.md
+
+# 4. Verify what is staged
+git diff --staged
+
+# 5. Commit
+git commit -m "Add practice run 1 note"
+
+# 6. Push
+git push
+
+# 7. Confirm on GitHub
+```
+
+After three rounds you will have the muscle memory. This loop is what you do dozens of times a day.
+
+---
+
+## Summary
+
+| Command | What it shows |
+|---------|--------------|
+| `git diff` | Working Directory vs. Staging Area |
+| `git diff --staged` | Staging Area vs. last commit |
+| `git add .` | Stage everything (use carefully) |
+| `git add <file>` | Stage a specific file |
+| `git log --oneline` | Compact one-line history |
+| `git log --oneline --graph --all` | History with branch graph |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

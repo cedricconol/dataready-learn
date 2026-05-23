@@ -1,0 +1,104 @@
+---
+id: git-checkpoint-final
+title: "Final Checkpoint: Polish Your Repo"
+sidebar_label: "🚩 Final: Polish Your Repo"
+sidebar_position: 15.5
+---
+
+# 🚩 Final Checkpoint: Polish Your Repo
+
+You have a working repo with real history, a SQL query, and notes. Now you turn it into something presentable — a small portfolio piece you would be happy to link on a resume.
+
+:::note Before you start
+You need everything from Checkpoints 1–4 and the [GitHub Workflows](/git/git-workflows) and [Portfolio Polish](/git/git-portfolio) lessons. Start clean: `git switch main && git pull`.
+:::
+
+## Step 1 — Add a .gitignore
+
+Real repos ignore generated files, secrets, and OS clutter. Create `.gitignore` in the repo root:
+
+```bash
+echo ".DS_Store" > .gitignore
+echo ".env" >> .gitignore
+echo "*.csv" >> .gitignore
+echo "__pycache__/" >> .gitignore
+```
+
+The `*.csv` line keeps raw data files out of your repo — a good habit for analysts.
+
+## Step 2 — Write a real README
+
+Replace your starter README with something that explains the project. Open `README.md` in your editor and make it look like this:
+
+```markdown
+# My Data Portfolio
+
+A hands-on portfolio I built while learning Git, version-controlled from day one.
+
+## Structure
+
+- `queries/` — SQL queries I have written
+- `notes/` — findings and things I learned
+
+## Highlights
+
+- [Monthly sales by category](queries/monthly_sales.sql)
+
+## About
+
+Built during the [DataReady](https://learndataready.byconol.com) Git course.
+```
+
+## Step 3 — Commit and push the polish
+
+```bash
+git add .gitignore README.md
+git commit -m "Add .gitignore and flesh out README"
+git push
+```
+
+## Step 4 — Tag a release
+
+Mark this milestone as version 1.0.0:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Optionally, on GitHub go to **Releases → Draft a new release**, pick the `v1.0.0` tag, and publish it with a short note like "First version of my data portfolio."
+
+## What your repo should look like
+
+```
+my-data-portfolio/
+├── README.md
+├── queries/
+│   └── monthly_sales.sql
+├── notes/
+│   └── findings.md
+└── .gitignore
+```
+
+Visit your repo on GitHub. The README renders as a clean front page, the folders are browsable, and the release shows under **Releases**. Every single file got there because *you* created, committed, and pushed it.
+
+## If something goes wrong
+
+| Situation | Fix |
+|-----------|-----|
+| A file you wanted ignored is still tracked | It was committed before `.gitignore`. Run `git rm --cached <file>`, then commit |
+| The README link to the query is broken | Check the path is exactly `queries/monthly_sales.sql` relative to the README |
+| `git push origin v1.0.0` rejected | The tag already exists. Use a new version like `v1.0.1` |
+
+## ✅ Course project complete
+
+- [ ] `.gitignore` is committed
+- [ ] README explains the project and links to the query
+- [ ] Repo structure matches the tree above
+- [ ] `v1.0.0` tag is pushed (and optionally released)
+
+You built a real, version-controlled project from an empty folder — through commits, a remote, a pull request, a conflict, a recovery, and a release. That is the full Git workflow, and it is now on your GitHub profile for anyone to see.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

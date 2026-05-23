@@ -8,19 +8,23 @@ slug: /terminal
 
 # Terminal
 
-The terminal is where data analysts do their most powerful work. SQL queries run in it. Python scripts run in it. dbt runs in it. Version control runs in it. Once you are comfortable with the terminal, every other tool becomes easier to use.
+## Why does the terminal exist?
+
+When you use a computer normally, you click things. Open a file. Drag it to a folder. Right-click and rename it. That works fine for everyday tasks.
+
+But clicking has limits. You can only do what someone built a button for. And some tasks — like "rename 400 files using this pattern" or "search for a word inside every file in this folder" — would take hours by clicking, but take one line in the terminal.
+
+The terminal lets you **skip the buttons and talk directly to your computer.**
+
+Instead of clicking File > New Folder, you type `mkdir projects`. Instead of opening every CSV to find the one that mentions a customer, you type `grep "CustomerName" *.csv` and get results across every file instantly.
+
+For data work specifically, this matters a lot. Every serious tool you will use — dbt, Python, Git — runs from the terminal. You cannot get far without it.
 
 ## What You'll Learn
 
 - Navigating the filesystem (`pwd`, `ls`, `cd`)
 - Creating, copying, moving, and deleting files
 - Reading file contents without opening a text editor
-- Searching for text inside files with `grep`
-- Combining commands with pipes to build one-liners
-- Manipulating text data directly on the command line
-- Understanding file permissions and ownership
-- Managing processes and environment variables
-- Writing your first shell scripts
 
 ## How This Works
 

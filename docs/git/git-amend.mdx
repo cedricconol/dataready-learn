@@ -1,0 +1,93 @@
+---
+id: git-amend
+title: "Amend and Practice"
+sidebar_label: "Amend and Practice"
+sidebar_position: 7
+---
+
+# Amend and Practice
+
+Sometimes you commit and immediately realize the message has a typo, or you forgot to include a file. `git commit --amend` lets you fix the most recent commit before anyone else has seen it.
+
+## Fix the Last Commit
+
+**Fix just the message**
+```bash
+git commit --amend -m "Correct commit message here"
+```
+
+**Add a forgotten file to the last commit**
+```bash
+git add forgotten-file.txt
+git commit --amend --no-edit
+```
+`--no-edit` keeps the existing commit message unchanged.
+
+:::warning Only amend unpushed commits
+`git commit --amend` rewrites the commit — it creates a new commit with a different hash. If you have already pushed the commit to a shared branch, amending it will cause problems for anyone who pulled the original. Only amend commits that exist only on your local machine.
+
+If you need to fix a pushed commit, use `git revert` instead (covered in [Undo Mistakes](/git/git-undo)).
+:::
+
+---
+
+## See What You Changed
+
+A few more inspection commands worth knowing:
+
+**Show a specific commit**
+```bash
+git show HEAD
+```
+Displays the full diff and metadata of the most recent commit. Replace `HEAD` with any commit hash to inspect an older one.
+
+**See who changed each line**
+```bash
+git blame README.md
+```
+Shows each line of a file annotated with the commit hash and author that last changed it. Useful for tracking down when and why a change was made.
+
+---
+
+## Practice: Three-Commit Loop
+
+Make three small, independent changes to your repo. For each one, run the full loop:
+
+```
+edit → git status → git diff → git add → git diff --staged → git commit -m "..." → git push
+```
+
+Suggestions:
+1. Add a `## Usage` section to README.md with a placeholder line.
+2. Create a new file `notes.txt` with today's date.
+3. Add a second line to `notes.txt`.
+
+After this exercise, your `git log --oneline` should show at least five commits. Verify all of them appear on your GitHub repo page.
+
+---
+
+## Common Mistakes at This Stage
+
+**Committing too much at once**
+Keep each commit to one logical change. Commits that change ten unrelated things are hard to review and impossible to revert cleanly.
+
+**Vague commit messages**
+"Update file" or "fix" tell the future reader nothing. Write messages you would want to read six months from now.
+
+**Forgetting to push**
+Git commits are local until you push. Make a habit of pushing at the end of every working session.
+
+---
+
+## Summary
+
+| Command | What it does |
+|---------|-------------|
+| `git commit --amend -m "..."` | Rewrite the last commit's message |
+| `git commit --amend --no-edit` | Add staged files to the last commit |
+| `git show HEAD` | Inspect the most recent commit |
+| `git blame <file>` | See who last changed each line |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

@@ -1,0 +1,79 @@
+---
+id: git-checkpoint-2
+title: "Checkpoint 2: Push It Live"
+sidebar_label: "🚩 Checkpoint 2: Push It Live"
+sidebar_position: 5.5
+---
+
+# 🚩 Checkpoint 2: Push It Live
+
+Your `my-data-portfolio` repo lives only on your laptop. Now you put it on GitHub — and for the first time, see your own work rendered online. This is the moment Git stops being abstract.
+
+:::note Before you start
+You need a finished [Checkpoint 1](/git/git-checkpoint-1) (a local repo with commits) and a working SSH connection to GitHub. Test it with `ssh -T git@github.com` — you should see `Hi <username>!`. If not, revisit [Setup](/git/git-setup).
+:::
+
+## Step 1 — Create the repo on GitHub
+
+1. Go to [github.com](https://github.com) → click **+** (top-right) → **New repository**.
+2. Repository name: **`my-data-portfolio`** (match your local folder exactly).
+3. Leave it **Public** so it shows on your profile.
+4. **Do NOT** check "Add a README file", and do not add a `.gitignore` or license. You already have files locally, and adding them here causes a conflict on your first push.
+5. Click **Create repository**.
+
+GitHub shows a setup page. Copy the **SSH** URL (it starts with `git@github.com:`).
+
+## Step 2 — Connect your local repo to GitHub
+
+From inside your `my-data-portfolio` folder:
+
+```bash
+git remote add origin git@github.com:<username>/my-data-portfolio.git
+```
+
+Replace `<username>` with your GitHub username. Confirm it worked:
+
+```bash
+git remote -v
+```
+
+You should see two lines pointing at your repo (fetch and push).
+
+## Step 3 — Push
+
+```bash
+git push -u origin main
+```
+
+The `-u` links your local `main` to GitHub so future pushes are just `git push`.
+
+## What you should see
+
+Refresh your repo page on GitHub. Your `README.md` is now rendered as a formatted page, with your "Contents" list showing as bullets. **That is your work, live on the internet.**
+
+## If something goes wrong
+
+This is the checkpoint where real errors show up. That is normal — here is how to read them:
+
+| Error message | Cause | Fix |
+|---------------|-------|-----|
+| `Permission denied (publickey)` | GitHub does not recognize your SSH key | Re-do the SSH steps in [Setup](/git/git-setup), then `ssh -T git@github.com` |
+| `remote origin already exists` | You ran `git remote add origin` twice | Run `git remote set-url origin <url>` instead, or `git remote remove origin` then re-add |
+| `Updates were rejected... fetch first` | You created the GitHub repo **with** a README | Run `git pull --rebase origin main`, then `git push` again |
+| `src refspec main does not match any` | No commits yet, or your branch is `master` | Run `git log` (need at least one commit) and `git branch` (rename with `git branch -M main`) |
+
+:::tip Read the whole error
+Git errors are wordy but usually tell you the fix in the last line. Slow down and read it before retrying — this is a skill in itself.
+:::
+
+## ✅ Checkpoint complete
+
+- [ ] `my-data-portfolio` exists on GitHub
+- [ ] `git remote -v` points at your GitHub repo
+- [ ] Your README is visible and formatted on the GitHub repo page
+
+From now on, every commit you make can be pushed to GitHub with a single `git push`. Next, you will add real content using a branch and a pull request.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

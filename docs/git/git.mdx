@@ -1,0 +1,99 @@
+---
+id: git
+title: Git & GitHub
+sidebar_label: Overview
+sidebar_position: 1
+slug: /git
+---
+
+# Git & GitHub
+
+## Why does Git exist?
+
+Imagine writing a long document with three teammates. Everyone edits the same file. One person accidentally deletes a section. Another person's version overwrites your work. By the end of the week, your folder looks like this:
+
+```
+report_v2_final_FINAL_cedric.docx
+report_v2_final_FINAL_cedric_REVISED.docx
+report_v2_final_FINAL_cedric_REVISED_2.docx
+```
+
+And nobody is sure which one is correct.
+
+Now imagine the opposite: every change is tracked. You can see exactly who changed what, and when. If something breaks, you can go back to any earlier version in seconds. When two people edit different parts at the same time, the changes merge automatically. And if you want to try a risky new idea, you do it on a separate "copy" so the working version is never touched.
+
+That is what Git does — except for code instead of documents.
+
+**GitHub** is where your Git history lives online: backed up, shareable, and visible to anyone you want to impress or collaborate with.
+
+For data analysts, this is not optional. Your SQL models, your dbt project, your analysis scripts — all of it belongs in Git. It is how teams share code without stepping on each other, and how you show your work to future employers.
+
+:::note Prerequisite
+Complete the [Terminal](/terminal) course first. You should be comfortable with `cd`, `ls`, `mkdir`, `cat`, and basic file editing before starting here.
+:::
+
+## How this works: you build a real repo
+
+The SQL and Terminal courses give you an in-browser playground. Git is deliberately different — the whole point of Git is doing it for real, against your own GitHub account, so a simulator would defeat the purpose.
+
+Instead, you build **one real project** as you go. At key milestones you hit a 🚩 **Checkpoint** page: a short, copy-along exercise that adds to a repo called `my-data-portfolio` and pushes it to your own GitHub. You will make real commits, hit real errors, and fix them — exactly like you will on the job.
+
+By the end, your repo looks like this, and every file is there because *you* created and pushed it:
+
+```
+my-data-portfolio/
+├── README.md
+├── queries/
+│   └── monthly_sales.sql
+├── notes/
+│   └── findings.md
+└── .gitignore
+```
+
+The five checkpoints, spread across the course:
+
+| Checkpoint | You will |
+|------------|----------|
+| [🚩 Make Your Repo](/git/git-checkpoint-1) | Create the repo locally and make your first commits |
+| [🚩 Push It Live](/git/git-checkpoint-2) | Put it on GitHub and see your README online |
+| [🚩 Branch + PR](/git/git-checkpoint-3) | Add a SQL file through a real pull request |
+| [🚩 Break & Recover](/git/git-checkpoint-4) | Cause a conflict on purpose, then recover from it |
+| [🚩 Polish Your Repo](/git/git-checkpoint-final) | Turn it into a portfolio piece with a tagged release |
+
+:::tip It is meant to be hands-on
+When you finish, this is a real repo on your GitHub profile that you can show people. Run every command — do not just read along.
+:::
+
+## What You'll Learn
+
+- Install and configure Git on your machine
+- Create repos, stage changes, and write commits
+- Publish your work to GitHub and keep it in sync
+- Work in branches and open pull requests
+- Resolve merge conflicts safely
+- Undo mistakes without losing work
+- Rebase for a clean commit history
+- Use GitHub features: Issues, Actions, Releases
+
+## Lessons
+
+| Lesson | What you do |
+|--------|-------------|
+| [Setup](/git/git-setup) | Install Git, configure identity, create GitHub account, set up SSH |
+| [Initialize a Repo](/git/git-init) | `git init`, `git status`, your first file |
+| [Stage and Commit](/git/git-add-commit) | `git add`, `git commit`, `git log` |
+| [Connecting to GitHub](/git/git-github) | Create a remote, push your first commit |
+| [Inspect Changes](/git/git-diff) | `git diff`, selective staging, readable log |
+| [Amend and Practice](/git/git-amend) | Fix the last commit, run the full loop |
+| [Branching](/git/git-branch) | Create branches, switch between them, push a branch |
+| [Pull Requests](/git/git-pull-request) | Open, review, merge, and clean up a PR |
+| [Working Across Machines](/git/git-clone) | Clone, pull, fetch, and fork |
+| [Merge Conflicts](/git/git-conflict) | Create, read, and resolve a conflict |
+| [Undo Mistakes](/git/git-undo) | Stash, restore, reset, revert, reflog |
+| [Rebasing](/git/git-rebase) | Rebase, interactive rebase, the golden rule |
+| [GitHub Workflows](/git/git-workflows) | README, `.gitignore`, tags, issues, Actions |
+| [Portfolio Polish](/git/git-portfolio) | Profile README, pinned repos, open-source contribution |
+
+:::tip How to read these lessons
+Each lesson lists the commands to run. Run every one. If you skip ahead without practicing, you will forget the muscle memory. Git rewards repetition.
+:::

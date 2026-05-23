@@ -1,0 +1,169 @@
+---
+id: git-portfolio
+title: "Portfolio Polish"
+sidebar_label: "Portfolio Polish"
+sidebar_position: 15
+---
+
+# Portfolio Polish
+
+Your GitHub profile is your public portfolio as a data analyst or engineer. Recruiters and hiring managers check it. This lesson covers turning your GitHub presence into something worth showing.
+
+---
+
+## Profile README
+
+GitHub has a special feature: if you create a public repo with the same name as your GitHub username, its `README.md` is displayed on your profile page.
+
+1. Go to GitHub → **+** → **New repository**.
+2. Name the repo exactly your GitHub username (e.g., if your username is `cedricconol`, name it `cedricconol`).
+3. Check "Add a README file."
+4. Clone it locally and edit `README.md`.
+
+A good profile README:
+```markdown
+# Hi, I'm [Your Name] 👋
+
+Data analyst focused on SQL, dbt, and business intelligence.
+
+## Currently working on
+- Building analytics pipelines with BigQuery and dbt
+
+## Skills
+SQL · Python · dbt · Looker Studio · Git
+
+## Connect
+[LinkedIn](https://linkedin.com/in/yourprofile) · [Email](mailto:you@example.com)
+```
+
+Commit and push. Visit your GitHub profile page — the README is now visible.
+
+---
+
+## Pin Repositories
+
+You can choose up to six repositories to feature on your profile. Pick your best, most complete projects.
+
+1. Go to your GitHub profile.
+2. Click **Customize your pins**.
+3. Select up to six repos.
+4. Click **Save pins**.
+
+Pinned repos appear prominently at the top of your profile. Choose projects that have:
+- A real README (not the auto-generated one)
+- Commits that show actual work (not just a first commit)
+- A clear purpose evident from the repo name and description
+
+---
+
+## Write a Great Project README
+
+For each pinned project, the README does the selling. Structure it like this:
+
+```markdown
+# Project Name
+
+Short description — one or two sentences.
+
+## What It Does
+
+Explain the problem it solves and who it is for.
+
+## Demo
+
+[Link to demo or screenshot here]
+
+## Tech Stack
+
+- dbt (data transformation)
+- BigQuery (data warehouse)
+- Looker Studio (dashboards)
+
+## Setup
+
+```bash
+git clone ...
+# steps to run locally
+```
+
+## Data Model
+
+Brief overview of the key models/tables and how they relate.
+
+## Contributing
+
+Issues and PRs welcome. See CONTRIBUTING.md.
+```
+
+Badges are optional but add visual polish:
+
+```markdown
+![dbt](https://img.shields.io/badge/dbt-FF694B?logo=dbt&logoColor=white)
+![BigQuery](https://img.shields.io/badge/BigQuery-4285F4?logo=google-cloud&logoColor=white)
+```
+
+---
+
+## Find a Good First Issue
+
+Open source projects label beginner-friendly issues as `good first issue`. These are maintained issues specifically kept open for newcomers.
+
+**Search on GitHub:**
+1. Go to [github.com/explore](https://github.com/explore) or just GitHub's search.
+2. Search for `label:"good first issue"` plus a topic you know: `label:"good first issue" dbt` or `label:"good first issue" SQL`.
+3. Filter by language if helpful.
+
+Look for issues with:
+- A clear description of what needs to be done
+- No one assigned yet
+- Recent activity in the comments (shows the project is maintained)
+- A small scope — one file, one function, a documentation fix
+
+---
+
+## Contribute to Open Source
+
+The full open-source contribution loop:
+
+```bash
+# 1. Fork the repo on GitHub (click Fork)
+
+# 2. Clone your fork
+git clone git@github.com:<you>/<project>.git
+cd <project>
+
+# 3. Create a branch
+git switch -c fix/correct-typo-in-readme
+
+# 4. Make your change
+# Edit the file(s)
+
+# 5. Commit
+git add .
+git commit -m "Fix typo in README introduction"
+
+# 6. Push to your fork
+git push -u origin fix/correct-typo-in-readme
+
+# 7. Open a PR from your fork to the original repo
+# Go to github.com/<you>/<project>
+# GitHub shows "Compare & pull request" — click it
+# Point it at the original repo's main branch
+```
+
+Your PR enters the project's review queue. The maintainer may request changes — respond by pushing new commits to the same branch. When approved, your code is merged and you are now an open-source contributor.
+
+---
+
+## Summary
+
+| Task | How |
+|------|-----|
+| Profile README | Create a repo named after your username |
+| Pin projects | GitHub profile → Customize your pins |
+| Find beginner issues | Search `label:"good first issue"` on GitHub |
+| Contribute | Fork → clone → branch → commit → push → PR |
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

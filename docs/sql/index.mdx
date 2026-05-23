@@ -8,7 +8,26 @@ slug: /sql
 
 # SQL
 
-Structured Query Language (SQL) is the foundational skill for every data analyst. This section teaches you how to query, transform, and analyze data stored in relational databases - from your first `SELECT` statement to advanced window functions.
+## Why does SQL exist?
+
+Imagine you work at a store and your boss asks: "How much did each product category earn last month?"
+
+Your data is in a spreadsheet. If you have a hundred rows, you can filter and scroll through it. But most real businesses have millions of rows — too many to scan by hand, too big for Excel to even open.
+
+A **database** is a system built to hold that much data and search it fast. SQL is the language you use to ask it questions.
+
+You write something like:
+
+```sql
+SELECT category, SUM(revenue)
+FROM sales
+WHERE month = 'January'
+GROUP BY category
+```
+
+And in under a second, the database hands you exactly the answer. No scrolling. No pivot tables. No "my Excel crashed."
+
+**Almost all company data lives in a database.** Sales records, user events, financial transactions, inventory — it is all there. SQL is the only language databases speak, which is why it is the first thing every data analyst learns.
 
 ## What You'll Learn
 
@@ -17,7 +36,6 @@ Structured Query Language (SQL) is the foundational skill for every data analyst
 - Joining multiple tables together
 - Using subqueries and CTEs for readable, modular SQL
 - Window functions for running totals, rankings, and comparisons
-- Performance basics: indexes and query planning
 
 ## Lessons
 

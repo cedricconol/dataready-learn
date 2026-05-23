@@ -1,0 +1,151 @@
+---
+id: git-checkpoint-4
+title: "Checkpoint 4: Break It and Recover"
+sidebar_label: "🚩 Checkpoint 4: Break & Recover"
+sidebar_position: 12.5
+---
+
+# 🚩 Checkpoint 4: Break It and Recover
+
+Everyone hits merge conflicts and bad commits. The difference between a beginner and a pro is that the pro is not scared of them. In this checkpoint you will *cause* a conflict on purpose in your own repo, fix it, then practice undoing a mistake safely.
+
+:::note Before you start
+You need your repo from [Checkpoint 3](/git/git-checkpoint-3), plus the [Merge Conflicts](/git/git-conflict) and [Undo Mistakes](/git/git-undo) lessons. Start on an up-to-date `main`: `git switch main && git pull`.
+:::
+
+## Part A — Create and resolve a conflict
+
+### Step 1 — Add a notes file on main
+
+```bash
+mkdir notes
+echo "# Findings" > notes/findings.md
+echo "" >> notes/findings.md
+echo "Top category: Electronics" >> notes/findings.md
+git add notes/findings.md
+git commit -m "Add findings notes"
+```
+
+### Step 2 — Change the same line on a branch
+
+```bash
+git switch -c update-findings
+echo "# Findings" > notes/findings.md
+echo "" >> notes/findings.md
+echo "Top category: Home & Garden" >> notes/findings.md
+git add notes/findings.md
+git commit -m "Update top category to Home & Garden"
+```
+
+### Step 3 — Change that line differently on main
+
+```bash
+git switch main
+echo "# Findings" > notes/findings.md
+echo "" >> notes/findings.md
+echo "Top category: Books" >> notes/findings.md
+git add notes/findings.md
+git commit -m "Update top category to Books"
+```
+
+Now `main` and `update-findings` disagree about the same line. That is a conflict waiting to happen.
+
+### Step 4 — Trigger the conflict
+
+```bash
+git merge update-findings
+```
+
+Git stops:
+
+```
+CONFLICT (content): Merge conflict in notes/findings.md
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+### Step 5 — Resolve it
+
+Open `notes/findings.md`. You will see the conflict markers:
+
+```
+# Findings
+
+<<<<<<< HEAD
+Top category: Books
+=======
+Top category: Home & Garden
+>>>>>>> update-findings
+```
+
+Edit the file to the version you want and delete all three marker lines. For example:
+
+```
+# Findings
+
+Top category: Books
+```
+
+Then complete the merge:
+
+```bash
+git add notes/findings.md
+git commit
+```
+
+Save the editor that opens, and the merge is done. You survived your first conflict.
+
+```bash
+git branch -d update-findings
+```
+
+## Part B — Undo a bad commit safely
+
+### Step 6 — Make a "mistake"
+
+```bash
+echo "DELETE FROM sales;  -- oops, do not run this" >> notes/findings.md
+git add notes/findings.md
+git commit -m "Add scary note"
+git push
+```
+
+You pushed it, so others might have it. The safe undo is `revert`, not `reset`.
+
+### Step 7 — Revert it
+
+```bash
+git revert HEAD
+```
+
+Save the editor. Git creates a **new** commit that undoes the bad one, keeping a clean, honest history. Push the fix:
+
+```bash
+git push
+```
+
+Look at `notes/findings.md` — the scary line is gone, and `git log --oneline` shows both the bad commit and the revert that cancelled it.
+
+## If something goes wrong
+
+| Situation | Fix |
+|-----------|-----|
+| Conflict feels overwhelming | Bail out with `git merge --abort` and try Step 4 again |
+| You deleted a marker line but left content wrong | Edit the file again; nothing is committed until you `git add` + `git commit` |
+| You used `git reset --hard` and lost a commit | Run `git reflog`, find the commit, `git reset --hard <hash>` to bring it back |
+
+:::tip This is the whole point of Git
+You just intentionally broke things and recovered every time. That safety net is *why* teams trust Git. Nothing you did here can be permanently lost.
+:::
+
+## ✅ Checkpoint complete
+
+- [ ] You created a merge conflict and resolved it
+- [ ] `notes/findings.md` exists with no conflict markers
+- [ ] You reverted a pushed commit with `git revert`
+- [ ] Your changes are pushed to GitHub
+
+One more checkpoint to go: polishing the repo into something you would actually show an employer.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />
