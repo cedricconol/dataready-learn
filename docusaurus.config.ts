@@ -73,6 +73,12 @@ const config: Config = {
           label: "SQL",
         },
         {
+          type: "docSidebar",
+          sidebarId: "terminalSidebar",
+          position: "left",
+          label: "Terminal",
+        },
+        {
           href: "https://github.com/cedricconol/dataready-learn",
           label: "GitHub",
           position: "right",
@@ -86,6 +92,7 @@ const config: Config = {
           title: "Curriculum",
           items: [
             { label: "SQL", to: "/sql" },
+            { label: "Terminal", to: "/terminal" },
           ],
         },
         {

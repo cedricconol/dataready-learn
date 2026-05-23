@@ -1,0 +1,73 @@
+---
+id: terminal-wc
+title: "wc: Counting Lines"
+sidebar_label: "wc"
+sidebar_position: 18
+terminal_lesson_id: "03-04"
+show_course_promo: true
+---
+
+# `wc`: Counting Lines
+
+`wc` (word count) counts lines, words, and characters in a file or stream. In data work, `wc -l` (lines only) is the most common form — it tells you how many records are in a file.
+
+## Basic usage
+
+```bash
+wc access.log
+```
+
+Output:
+```
+      20     120     820 access.log
+```
+
+From left to right: 20 lines, 120 words, 820 characters.
+
+## Counting only lines
+
+```bash
+wc -l access.log
+```
+
+Output:
+```
+      20 access.log
+```
+
+Clean and focused. This is the one you'll use most.
+
+## Flags
+
+| Flag | Counts |
+|------|--------|
+| `-l` | Lines |
+| `-w` | Words |
+| `-c` | Characters (bytes) |
+| (none) | All three |
+
+## Using `wc` in a pipeline
+
+This is where `wc` really shines. Combine it with `grep` to count matching lines:
+
+```bash
+grep "404" access.log | wc -l
+```
+
+Count how many requests returned a 404. You'll see this pattern constantly in Module 5 (Pipes).
+
+## Counting files in a directory
+
+```bash
+ls | wc -l
+```
+
+Counts how many items are in the current directory.
+
+## Practice
+
+Count the number of lines in `access.log` using `wc -l`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

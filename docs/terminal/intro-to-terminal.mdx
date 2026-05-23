@@ -1,0 +1,97 @@
+---
+id: intro-to-terminal
+title: Introduction to Terminal
+sidebar_label: Introduction to Terminal
+sidebar_position: 2
+terminal_lesson_id: "00-01"
+show_course_promo: false
+---
+
+# Introduction to Terminal
+
+The terminal is a text interface for your computer. Instead of clicking icons, you type commands. Instead of dragging files, you write instructions. It sounds slower — until it isn't.
+
+Once you are fluent, the terminal is faster than any graphical tool for the kinds of tasks analysts do repeatedly: exploring files, running scripts, transforming data, deploying code.
+
+## Why data analysts use the terminal
+
+Every tool in the modern data stack eventually meets the terminal:
+
+- **dbt** runs from the terminal (`dbt run`, `dbt test`)
+- **Git** is most reliably used from the terminal
+- **Python** scripts are executed from the terminal
+- **Data files** — CSVs, logs, JSON dumps — are easiest to inspect and filter from the terminal
+- **Cloud CLIs** (BigQuery, AWS, GCP) are terminal tools
+
+Avoiding the terminal is possible early in a data career. It becomes harder the more senior you get.
+
+## How the filesystem works
+
+Your computer organizes files into a tree of **directories** (folders). At the very top is the **root**, written as `/`. Every file and directory has a unique address called a **path**.
+
+```
+/                          ← root of the filesystem
+└── home/
+    └── user/              ← your home directory
+        ├── documents/
+        │   ├── notes.txt
+        │   └── projects/
+        │       └── readme.md
+        └── downloads/
+            └── photo.jpg
+```
+
+A path like `/home/user/documents/notes.txt` describes the full address of a file starting from root. You will always be "inside" one directory at a time — this is called your **working directory**.
+
+## The Terminal Playground
+
+Every lesson in this section includes an interactive terminal playground. It runs a real shell interpreter in your browser with no setup required.
+
+**Goal panel:** the left side shows what you need to accomplish in this lesson. When the playground detects you have done it, the lesson is marked complete and the next one unlocks.
+
+**Filesystem panel:** below the goal, the current state of the simulated filesystem updates live as you run commands. New files flash green, deleted files flash red.
+
+**Terminal:** the right side is an interactive terminal. Type commands and press Enter to run them.
+
+**Hints:** stuck? Click "Show hint" to reveal hints one at a time.
+
+**Reset:** restores the filesystem to its starting state and clears the terminal.
+
+### Available commands
+
+The playground understands a real subset of bash. Type `help` at any time to see the full list.
+
+| Category | Commands |
+|----------|----------|
+| Navigation | `pwd`, `ls`, `cd` |
+| Files | `touch`, `mkdir`, `cp`, `mv`, `rm` |
+| Reading | `cat`, `head`, `tail`, `wc` |
+| Searching | `grep`, `find` |
+| Text | `sort`, `uniq`, `cut`, `tr` |
+| System | `echo`, `env`, `export`, `chmod` |
+
+### Keyboard shortcuts
+
+| Key | Action |
+|-----|--------|
+| `Enter` | Run the command |
+| `↑` / `↓` | Navigate command history |
+| `Tab` | Autocomplete file and directory names |
+| `Ctrl+L` | Clear the screen |
+| `Ctrl+C` | Cancel the current input |
+
+### Try it now
+
+Run any command below to get started. A few good first commands:
+
+```bash
+ls          # list what's in the current directory
+pwd         # print your current location
+help        # show all available commands
+```
+
+The playground is below. Once you run your first command, the first lesson unlocks.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

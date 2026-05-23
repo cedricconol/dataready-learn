@@ -12,6 +12,13 @@ const MODULES = [
       "Master the language of data. Learn to query, filter, aggregate, and join data in any relational database.",
     href: "/sql",
   },
+  {
+    icon: "⬛",
+    title: "Terminal",
+    description:
+      "Get comfortable with the command line. Navigate the filesystem, manipulate files, and chain commands together.",
+    href: "/terminal",
+  },
 ];
 
 function Hero() {
@@ -26,9 +33,6 @@ function Hero() {
           engineers. Go from zero to production-ready, one lesson at a time.
         </p>
         <div className="hero-cta-row">
-          <Link className="button button--primary button--lg" to="/sql">
-            Start with SQL →
-          </Link>
           <Link
             className="button button--secondary button--lg"
             href="https://github.com/cedricconol/dataready-learn"
@@ -53,15 +57,14 @@ function CurriculumCards() {
               className="col col--6"
               style={{ marginBottom: "1.5rem" }}
             >
-              <Link
-                to={href}
-                className="curriculum-card"
-                style={{ display: "block", textDecoration: "none" }}
-              >
+              <div className="curriculum-card">
                 <div className="curriculum-card__icon">{icon}</div>
                 <div className="curriculum-card__title">{title}</div>
                 <div className="curriculum-card__desc">{description}</div>
-              </Link>
+                <Link to={href} className="curriculum-card__cta">
+                  Start now →
+                </Link>
+              </div>
             </div>
           ))}
         </div>

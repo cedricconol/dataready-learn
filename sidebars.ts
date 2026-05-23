@@ -141,6 +141,68 @@ const sidebars: SidebarsConfig = {
     },
   ],
 
+  terminalSidebar: [
+    {
+      type: "doc",
+      id: "terminal/terminal",
+      label: "Overview",
+    },
+    {
+      type: "category",
+      label: "Lessons",
+      collapsed: false,
+      items: [
+        {
+          type: "category",
+          label: "Getting Started",
+          collapsed: false,
+          items: [
+            "terminal/terminal-setup",
+            "terminal/intro-to-terminal",
+          ],
+        },
+        {
+          type: "category",
+          label: "Orientation",
+          collapsed: false,
+          items: [
+            "terminal/terminal-pwd",
+            "terminal/terminal-ls",
+            "terminal/terminal-ls-flags",
+            "terminal/terminal-cd",
+            "terminal/terminal-navigation",
+            "terminal/terminal-orientation-capstone",
+          ],
+        },
+        {
+          type: "category",
+          label: "Files & Directories",
+          collapsed: false,
+          items: [
+            "terminal/terminal-touch",
+            "terminal/terminal-mkdir",
+            "terminal/terminal-mkdir-p",
+            "terminal/terminal-cp",
+            "terminal/terminal-mv",
+            "terminal/terminal-rm",
+            "terminal/terminal-rm-rf",
+          ],
+        },
+        {
+          type: "category",
+          label: "Reading Files",
+          collapsed: false,
+          items: [
+            "terminal/terminal-cat",
+            "terminal/terminal-head",
+            "terminal/terminal-tail",
+            "terminal/terminal-wc",
+          ],
+        },
+      ],
+    },
+  ],
+
   dbtSidebar: [
     {
       type: "doc",

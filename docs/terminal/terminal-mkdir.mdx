@@ -1,0 +1,72 @@
+---
+id: terminal-mkdir
+title: "mkdir: Creating Directories"
+sidebar_label: "mkdir"
+sidebar_position: 9
+terminal_lesson_id: "02-02"
+show_course_promo: false
+---
+
+# `mkdir`: Creating Directories
+
+`mkdir` (make directory) creates a new folder. Use it to organize your files into logical groups.
+
+## Basic usage
+
+```bash
+mkdir archive
+```
+
+Verify it was created:
+
+```bash
+ls
+```
+
+Output:
+```
+archive  documents  downloads
+```
+
+Directories appear in blue in the terminal (in most themes).
+
+## What happens if it already exists?
+
+```bash
+mkdir archive
+# mkdir: cannot create directory 'archive': File exists
+```
+
+`mkdir` refuses to overwrite an existing directory. If you need to create a path including parents that may not exist, use `mkdir -p` (next lesson).
+
+## Creating directories at a specific path
+
+```bash
+mkdir /home/user/documents/2024-reports
+```
+
+Or relative to your current location:
+
+```bash
+mkdir documents/drafts
+```
+
+## Naming conventions
+
+| Pattern | Avoid |
+|---------|-------|
+| `my-project` | `my project` (spaces) |
+| `data_2024` | Names starting with `-` |
+| `reports` | Very long names |
+
+:::tip Keep directory names lowercase
+Linux and macOS are case-sensitive. `Reports` and `reports` are different directories. Lowercase avoids confusion.
+:::
+
+## Practice
+
+Create a directory called `archive` in your home directory.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

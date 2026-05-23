@@ -1,0 +1,61 @@
+---
+id: terminal-cd
+title: "cd: Moving In"
+sidebar_label: "cd"
+sidebar_position: 5
+terminal_lesson_id: "01-04"
+show_course_promo: false
+---
+
+# `cd`: Moving In
+
+`cd` (change directory) moves you from your current location into a different directory. It's the equivalent of double-clicking a folder in a graphical file manager.
+
+## Basic usage
+
+```bash
+cd documents
+```
+
+After running this, `pwd` would output `/home/user/documents`. You are now inside `documents`.
+
+## Absolute vs relative paths
+
+**Relative path** — relative to where you currently are:
+
+```bash
+cd documents          # move into 'documents' inside current dir
+cd documents/projects # move two levels in one step
+```
+
+**Absolute path** — always starts from the root `/`:
+
+```bash
+cd /home/user/documents   # works from anywhere
+cd /                       # go to the filesystem root
+```
+
+## What happens if you get it wrong
+
+```bash
+cd nonexistent
+```
+
+Output:
+```
+cd: nonexistent: No such file or directory
+```
+
+The terminal tells you immediately. Nothing bad happens — you stay where you were.
+
+:::tip After every `cd`, run `ls`
+Building the habit of `cd` then `ls` is how you orient yourself quickly in an unfamiliar directory.
+:::
+
+## Practice
+
+Navigate into the `documents` directory using `cd`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

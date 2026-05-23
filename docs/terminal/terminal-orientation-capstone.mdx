@@ -1,0 +1,61 @@
+---
+id: terminal-orientation-capstone
+title: "The Full Map: Orientation Capstone"
+sidebar_label: "Putting it together"
+sidebar_position: 7
+terminal_lesson_id: "01-06"
+show_course_promo: true
+---
+
+# The Full Map: Orientation Capstone
+
+You have all three foundational tools: `pwd` (where am I), `ls` (what's here), and `cd` (move somewhere). In this lesson you use them together.
+
+## The pattern
+
+Good terminal users follow a rhythm:
+
+```bash
+pwd          # confirm where you are
+ls           # see what's here
+cd somewhere # move in
+ls           # see what's in the new location
+```
+
+Repeat until you find what you're looking for.
+
+## Navigating to a nested path
+
+You can go one level at a time:
+
+```bash
+cd documents
+cd projects
+```
+
+Or in a single step:
+
+```bash
+cd documents/projects
+```
+
+Both get you to the same place. The single-step version is faster once you know the path.
+
+## Peeking without moving
+
+You don't have to `cd` to see inside a directory:
+
+```bash
+ls documents
+ls documents/projects
+```
+
+This shows the contents of those directories without changing your current location.
+
+## Practice
+
+Navigate to `documents/projects` and run `ls` to list its contents.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

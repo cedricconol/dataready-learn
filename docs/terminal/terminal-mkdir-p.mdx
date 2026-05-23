@@ -1,0 +1,73 @@
+---
+id: terminal-mkdir-p
+title: "mkdir -p: Nested Directories"
+sidebar_label: "mkdir -p"
+sidebar_position: 10
+terminal_lesson_id: "02-03"
+show_course_promo: false
+---
+
+# `mkdir -p`: Nested Directories
+
+Creating `a/b/c` without `-p` requires three separate `mkdir` commands:
+
+```bash
+mkdir a
+mkdir a/b
+mkdir a/b/c
+```
+
+The `-p` flag (parents) handles the whole thing in one shot.
+
+## Usage
+
+```bash
+mkdir -p data/raw/csv
+```
+
+This creates:
+- `data/` (if it doesn't exist)
+- `data/raw/` (if it doesn't exist)
+- `data/raw/csv/` (if it doesn't exist)
+
+If any of those directories already exist, `-p` skips them silently instead of throwing an error.
+
+## Verify the result
+
+```bash
+ls data
+# raw
+
+ls data/raw
+# csv
+```
+
+## Real-world patterns
+
+Setting up a data project directory structure in one command:
+
+```bash
+mkdir -p project/{data/{raw,processed},notebooks,reports}
+```
+
+This creates:
+```
+project/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── notebooks/
+└── reports/
+```
+
+:::note Brace expansion
+The `{raw,processed}` syntax is called brace expansion. It creates multiple directories at once. Your playground supports it — try it.
+:::
+
+## Practice
+
+Create the nested path `data/raw/csv` in one command using `mkdir -p`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

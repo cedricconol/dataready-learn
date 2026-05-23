@@ -1,0 +1,72 @@
+---
+id: terminal-cat
+title: "cat: Reading Files"
+sidebar_label: "cat"
+sidebar_position: 15
+terminal_lesson_id: "03-01"
+show_course_promo: false
+---
+
+# `cat`: Reading Files
+
+`cat` (concatenate) prints the full contents of a file to the terminal. It's the quickest way to read a short file without opening a text editor.
+
+## Basic usage
+
+```bash
+cat notes.txt
+```
+
+Output:
+```
+Remember to learn the terminal.
+Practice every day.
+```
+
+The file's entire contents are printed and you're back at the prompt immediately.
+
+## Reading multiple files
+
+`cat` can read multiple files in sequence:
+
+```bash
+cat file1.txt file2.txt
+```
+
+The output is both files concatenated together — which is where the name comes from.
+
+## Combining `cat` with pipes
+
+`cat` is frequently the first command in a pipeline:
+
+```bash
+cat access.log | grep 404 | wc -l
+```
+
+This reads the log, filters for 404 errors, and counts the results. Pipelines are covered in detail in Module 5.
+
+## When NOT to use `cat`
+
+- **Large files:** `cat` prints everything. For a 1 GB log file, that's a lot of scrolling. Use `head` or `tail` instead.
+- **Binary files:** `cat` will print raw binary, garbling your terminal. Use `file` to check the type first.
+- **Editing:** `cat` is read-only. To edit a file, use a text editor like `nano` or `vim`.
+
+## Writing to a file with redirection
+
+```bash
+cat > newfile.txt
+```
+
+This lets you type content and saves it to `newfile.txt` when you press `Ctrl+D`. But using `echo` with redirection is usually cleaner:
+
+```bash
+echo "hello world" > newfile.txt
+```
+
+## Practice
+
+Use `cat` to print the contents of `notes.txt`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

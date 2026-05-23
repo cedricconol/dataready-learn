@@ -1,0 +1,65 @@
+---
+id: terminal-rm
+title: "rm: Deleting Files"
+sidebar_label: "rm"
+sidebar_position: 13
+terminal_lesson_id: "02-06"
+show_course_promo: false
+---
+
+# `rm`: Deleting Files
+
+`rm` (remove) permanently deletes files. Unlike a graphical trash can, there is no undo.
+
+## Deleting a file
+
+```bash
+rm photo.jpg
+```
+
+Gone. There is no confirmation prompt by default.
+
+## Deleting multiple files
+
+```bash
+rm file1.txt file2.txt file3.txt
+```
+
+## Targeting a file in another directory
+
+```bash
+rm downloads/photo.jpg
+```
+
+You don't have to `cd` into the directory first.
+
+## What `rm` cannot do by default
+
+```bash
+rm documents/
+# rm: cannot remove 'documents/': Is a directory
+```
+
+`rm` refuses to delete directories unless you explicitly say so with `-r`. This is a safety feature — the next lesson covers recursive deletion.
+
+## The `-f` flag (force)
+
+`-f` suppresses "no such file" errors and skips confirmation prompts:
+
+```bash
+rm -f maybe-exists.txt
+```
+
+Useful in scripts where you want to delete a file only if it exists without the script failing.
+
+:::danger Always double-check before pressing Enter
+`rm` is permanent. On a real machine, mistyping a filename can delete important data. In this playground the filesystem resets when you click Reset. On your computer it doesn't.
+:::
+
+## Practice
+
+Delete `downloads/photo.jpg`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

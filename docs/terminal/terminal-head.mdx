@@ -1,0 +1,75 @@
+---
+id: terminal-head
+title: "head: Top of File"
+sidebar_label: "head"
+sidebar_position: 16
+terminal_lesson_id: "03-02"
+show_course_promo: false
+---
+
+# `head`: Top of File
+
+`head` prints the first N lines of a file. The default is 10. It's essential for peeking at a large file without loading everything into the terminal.
+
+## Basic usage
+
+```bash
+head access.log
+```
+
+Shows the first 10 lines.
+
+## Specifying a line count
+
+```bash
+head -n 5 access.log
+```
+
+Shows the first 5 lines. The `-n` flag sets the number of lines.
+
+You can also use the shorthand:
+
+```bash
+head -5 access.log
+```
+
+## Typical output (log file)
+
+```
+2024-01-15 08:00:01 192.168.1.10 GET /index.html 200
+2024-01-15 08:00:03 10.0.0.5 POST /api/login 401
+2024-01-15 08:00:07 192.168.1.10 GET /dashboard 200
+2024-01-15 08:00:12 10.0.0.8 GET /api/data 200
+2024-01-15 08:00:15 192.168.1.10 DELETE /api/user/42 403
+```
+
+## Why `head` matters for data work
+
+When you receive an unfamiliar CSV or log file, the first thing to do is:
+
+```bash
+head -n 5 data.csv
+```
+
+This tells you:
+- The column names (if there's a header row)
+- The data format
+- Whether the file looks right before you process it
+
+Doing this before every pipeline saves you from running a 10-minute job on malformed data.
+
+## Using `head` in a pipeline
+
+```bash
+cat access.log | head -n 3
+```
+
+Same as `head -n 3 access.log` — but useful when you want to preview the output of another command.
+
+## Practice
+
+Show only the first 5 lines of `access.log` using `head -n 5`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

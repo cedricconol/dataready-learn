@@ -1,0 +1,63 @@
+---
+id: terminal-ls
+title: "ls: Looking Around"
+sidebar_label: "ls"
+sidebar_position: 3
+terminal_lesson_id: "01-02"
+show_course_promo: false
+---
+
+# `ls`: Looking Around
+
+Once you know where you are (`pwd`), the next question is: what's here? `ls` (list) shows you the contents of a directory.
+
+## Basic usage
+
+```bash
+ls
+```
+
+Output (your home directory):
+```
+documents  downloads
+```
+
+`ls` lists files and directories in the current directory. Directories are usually shown in blue (depending on your terminal settings).
+
+## Listing a specific path
+
+You can pass a path to `ls` to list something other than your current directory:
+
+```bash
+ls documents
+```
+
+Output:
+```
+notes.txt  projects
+```
+
+```bash
+ls /home/user/downloads
+```
+
+## How to read the output
+
+`ls` shows two types of things:
+
+| Icon/Color | Meaning |
+|------------|---------|
+| Blue name | Directory (folder) |
+| Plain name | File |
+
+## What `ls` does NOT show by default
+
+Hidden files — files whose names start with a `.` — are invisible to plain `ls`. You will need a flag for those. That's the next lesson.
+
+## Practice
+
+Run `ls` to list the contents of your home directory.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

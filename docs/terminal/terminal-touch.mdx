@@ -1,0 +1,65 @@
+---
+id: terminal-touch
+title: "touch: Creating Files"
+sidebar_label: "touch"
+sidebar_position: 8
+terminal_lesson_id: "02-01"
+show_course_promo: false
+---
+
+# `touch`: Creating Files
+
+`touch` is the fastest way to create an empty file from the command line. If the file already exists, it updates its timestamp without changing its contents.
+
+## Basic usage
+
+```bash
+touch report.txt
+```
+
+After running this, `report.txt` exists as an empty file. Confirm with:
+
+```bash
+ls -l report.txt
+```
+
+## Creating multiple files at once
+
+```bash
+touch file1.txt file2.txt file3.txt
+```
+
+All three are created in a single command.
+
+## Naming conventions
+
+| Pattern | Used for |
+|---------|----------|
+| `lowercase.txt` | Plain text files |
+| `my-report.csv` | CSV data files |
+| `setup.sh` | Shell scripts |
+| `.env` | Hidden config files |
+
+Avoid spaces in filenames. Use `-` or `_` instead.
+
+## Common use cases
+
+**Creating placeholder files before filling them:**
+
+```bash
+touch README.md requirements.txt .gitignore
+```
+
+**Resetting a file's timestamp** (useful in build systems):
+
+```bash
+touch existing-file.txt
+```
+
+## Practice
+
+Create a file called `report.txt` in your home directory.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />
