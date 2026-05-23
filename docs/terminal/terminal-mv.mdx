@@ -1,0 +1,69 @@
+---
+id: terminal-mv
+title: "mv: Moving and Renaming"
+sidebar_label: "mv"
+sidebar_position: 12
+terminal_lesson_id: "02-05"
+show_course_promo: false
+---
+
+# `mv`: Moving and Renaming
+
+`mv` (move) does two things, both with the same command:
+
+1. **Rename** a file or directory
+2. **Move** a file to a different directory
+
+There is no separate `rename` command in the terminal.
+
+## Renaming a file
+
+```bash
+mv notes.txt journal.txt
+```
+
+`notes.txt` no longer exists. `journal.txt` has the same contents.
+
+## Moving a file to another directory
+
+```bash
+mv report.txt documents/
+```
+
+`report.txt` disappears from the current directory and appears inside `documents/`.
+
+## Moving and renaming at the same time
+
+```bash
+mv old-name.txt documents/new-name.txt
+```
+
+The file moves to `documents/` and gets a new name in one step.
+
+## Renaming a directory
+
+```bash
+mv old-folder/ new-folder/
+```
+
+Works the same as renaming a file.
+
+## Moving multiple files
+
+```bash
+mv file1.txt file2.txt documents/
+```
+
+Both files move to `documents/`. The last argument must be a directory when moving multiple files.
+
+:::warning No confirmation prompt
+`mv` overwrites the destination without asking if the destination already exists. `mv source.txt existing.txt` silently replaces `existing.txt` with the contents of `source.txt`. The original is gone.
+:::
+
+## Practice
+
+Rename `notes.txt` to `journal.txt`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

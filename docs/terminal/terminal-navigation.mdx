@@ -1,0 +1,78 @@
+---
+id: terminal-navigation
+title: "cd shortcuts: Moving Back"
+sidebar_label: "cd .., ~, -"
+sidebar_position: 6
+terminal_lesson_id: "01-05"
+show_course_promo: false
+---
+
+# `cd` shortcuts: Moving Back
+
+Once you can go forward, you need to know how to come back. These three shortcuts cover the most common navigation moves.
+
+## `cd ..` — go up one level
+
+`..` always means "the parent directory". No matter how deep you are:
+
+```bash
+pwd
+# /home/user/documents/projects
+
+cd ..
+pwd
+# /home/user/documents
+
+cd ..
+pwd
+# /home/user
+```
+
+You can also chain them: `cd ../..` goes up two levels in one command.
+
+## `cd ~` — go home
+
+`~` is a shortcut for your home directory (`/home/user`). It works from anywhere:
+
+```bash
+cd /some/very/deep/path
+cd ~
+pwd
+# /home/user
+```
+
+`cd` with no arguments also goes home:
+
+```bash
+cd
+pwd
+# /home/user
+```
+
+## `cd -` — go back to the previous directory
+
+`-` means "wherever I was before". Useful for toggling between two locations:
+
+```bash
+cd /home/user/documents
+cd /home/user/downloads
+cd -         # back to /home/user/documents
+cd -         # back to /home/user/downloads
+```
+
+## Summary
+
+| Command | Effect |
+|---------|--------|
+| `cd ..` | Go up one level |
+| `cd ~` or `cd` | Go to home directory |
+| `cd -` | Go back to previous location |
+| `cd /absolute/path` | Go directly to a path |
+
+## Practice
+
+You start in the `documents` directory. Use `cd ..` or `cd ~` to navigate back to your home directory.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

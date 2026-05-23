@@ -1,0 +1,62 @@
+---
+id: terminal-cp
+title: "cp: Copying Files"
+sidebar_label: "cp"
+sidebar_position: 11
+terminal_lesson_id: "02-04"
+show_course_promo: false
+---
+
+# `cp`: Copying Files
+
+`cp` (copy) duplicates a file or directory. The original stays intact; you get a new copy at the destination.
+
+## Copying a file
+
+```bash
+cp notes.txt backup.txt
+```
+
+Both `notes.txt` and `backup.txt` now exist with identical contents.
+
+## Copying to a directory
+
+If the destination is an existing directory, `cp` places the file inside it:
+
+```bash
+cp notes.txt documents/
+```
+
+This creates `documents/notes.txt`. The original `/home/user/notes.txt` still exists.
+
+## Copying multiple files into a directory
+
+```bash
+cp file1.txt file2.txt target-directory/
+```
+
+## Copying a directory recursively
+
+To copy an entire directory and its contents, you need the `-r` (recursive) flag:
+
+```bash
+cp -r documents documents-backup
+```
+
+Without `-r`, `cp` refuses to copy a directory.
+
+## Common mistakes
+
+| Mistake | What happens |
+|---------|-------------|
+| `cp notes.txt notes.txt` | Copies a file onto itself — usually a no-op or error |
+| `cp dir/ file.txt` | Error: you need `-r` to copy a directory |
+| Missing the destination | Error: missing destination operand |
+
+## Practice
+
+Copy `notes.txt` to a new file called `backup.txt`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

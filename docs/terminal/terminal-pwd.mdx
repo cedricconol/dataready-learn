@@ -1,0 +1,59 @@
+---
+id: terminal-pwd
+title: "pwd: Where Am I?"
+sidebar_label: "pwd"
+sidebar_position: 2
+terminal_lesson_id: "01-01"
+show_course_promo: false
+---
+
+# `pwd`: Where Am I?
+
+The terminal is a place. Unlike a graphical desktop where you can see your files, the terminal is text-only — you have to know where you are and navigate explicitly. The `pwd` command tells you exactly where you are.
+
+## What `pwd` does
+
+`pwd` stands for **Print Working Directory**. It outputs the full path of your current location in the filesystem.
+
+```bash
+pwd
+```
+
+Output:
+```
+/home/user
+```
+
+The path `/home/user` tells you:
+
+- You are in a directory called `user`
+- `user` is inside a directory called `home`
+- `home` is at the root (`/`) of the filesystem
+
+## Understanding filesystem paths
+
+The filesystem is a tree that starts at `/` (called the **root**). Every file and directory has a unique path from the root.
+
+```
+/                  ← root
+└── home/
+    └── user/      ← you are here: /home/user
+        ├── documents/
+        └── downloads/
+```
+
+A path like `/home/user/documents` is called an **absolute path** because it starts from the root (`/`) and describes the full address of a directory.
+
+## When to use `pwd`
+
+- After `cd`-ing somewhere to confirm you ended up where you expected
+- When writing a script that needs to know its own location
+- When you get lost — `pwd` is your "you are here" marker
+
+## Practice
+
+Run `pwd` to print your current location.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

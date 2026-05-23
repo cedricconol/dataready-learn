@@ -1,0 +1,71 @@
+---
+id: terminal-ls-flags
+title: "ls flags: Seeing More"
+sidebar_label: "ls -l and -a"
+sidebar_position: 4
+terminal_lesson_id: "01-03"
+show_course_promo: false
+---
+
+# `ls` flags: Seeing More
+
+Plain `ls` shows you the names of files and directories. Flags unlock more detail.
+
+## The `-l` flag: long format
+
+```bash
+ls -l
+```
+
+Output:
+```
+drwxr-xr-x 1 user user   4096 Jan  1 00:00 documents
+drwxr-xr-x 1 user user   4096 Jan  1 00:00 downloads
+```
+
+Each column from left to right:
+
+| Column | Meaning |
+|--------|---------|
+| `drwxr-xr-x` | Permissions (covered in Module 7) |
+| `1` | Hard link count |
+| `user` | Owner |
+| `user` | Group |
+| `4096` | Size in bytes |
+| `Jan 1 00:00` | Last modified time |
+| `documents` | Name |
+
+## The `-a` flag: all files including hidden
+
+Hidden files start with a `.`. They are invisible to plain `ls` but show up with `-a`:
+
+```bash
+ls -a
+```
+
+Output:
+```
+.  ..  .bashrc  .secret_file  documents  downloads
+```
+
+- `.` is the current directory
+- `..` is the parent directory
+- `.bashrc` and `.secret_file` are hidden files
+
+## Combining flags
+
+You can combine flags in a single argument:
+
+```bash
+ls -la
+```
+
+This gives you the long format AND includes hidden files. It's one of the most common `ls` invocations you'll see in the wild.
+
+## Practice
+
+Use `ls -a` or `ls -la` to find the hidden file in your home directory.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

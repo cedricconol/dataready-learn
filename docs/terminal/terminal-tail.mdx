@@ -1,0 +1,57 @@
+---
+id: terminal-tail
+title: "tail: Bottom of File"
+sidebar_label: "tail"
+sidebar_position: 17
+terminal_lesson_id: "03-03"
+show_course_promo: false
+---
+
+# `tail`: Bottom of File
+
+`tail` shows the last N lines of a file — the mirror of `head`. For logs, where the newest entries are at the bottom, `tail` is often more useful than `head`.
+
+## Basic usage
+
+```bash
+tail access.log
+```
+
+Shows the last 10 lines.
+
+## Specifying a line count
+
+```bash
+tail -n 5 access.log
+```
+
+Shows the last 5 lines.
+
+## Typical use: checking recent log entries
+
+When a process is running and you want to see the most recent activity:
+
+```bash
+tail -n 20 server.log
+```
+
+This gives you the 20 most recent lines — enough context to see what's happening without scrolling through thousands of lines.
+
+## Comparing `head` and `tail`
+
+| Command | Shows |
+|---------|-------|
+| `head -n 5 file` | First 5 lines |
+| `tail -n 5 file` | Last 5 lines |
+| `head -n -5 file` | Everything except the last 5 lines |
+| `tail -n +5 file` | From line 5 onwards |
+
+The `+` and `-` variants are less common but good to know.
+
+## Practice
+
+Show the last 5 lines of `access.log` using `tail -n 5`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />

@@ -1,0 +1,67 @@
+---
+id: terminal-rm-rf
+title: "rm -r: The Danger Zone"
+sidebar_label: "rm -r"
+sidebar_position: 14
+terminal_lesson_id: "02-07"
+show_course_promo: true
+---
+
+# `rm -r`: The Danger Zone
+
+`rm -r` (recursive) deletes a directory and everything inside it. Combined with `-f` (force), `rm -rf` is one of the most powerful — and dangerous — commands in the terminal.
+
+## Deleting a directory
+
+```bash
+rm -r old-folder/
+```
+
+This removes `old-folder/` and all of its contents: every file, every subdirectory, everything. There is no trash can. There is no undo.
+
+## The flags
+
+| Flag | Meaning |
+|------|---------|
+| `-r` | Recursive — required for directories |
+| `-f` | Force — skip confirmation, ignore missing files |
+| `-rf` | Both combined — the common form |
+
+## The notorious command
+
+```bash
+rm -rf directory-name
+```
+
+This is a legitimate and frequently-used command. It appears in deployment scripts, CI pipelines, and Docker builds every day.
+
+The reason it has a reputation: on a real machine, a typo can be catastrophic.
+
+```bash
+# Intended
+rm -rf ./build
+
+# Typo: space after the dot
+rm -rf . /build   # deletes your entire current directory
+```
+
+:::danger This is a real risk
+The space in `rm -rf . /build` causes the shell to interpret `.` (current directory) and `/build` as two separate targets. The current directory and everything in it gets deleted. This mistake has destroyed production servers.
+
+In the playground it's safe. On your machine, it's not.
+:::
+
+## Safe practices
+
+1. **Double-check the path** before pressing Enter.
+2. **Use `ls` first** to confirm what's there: `ls old-folder/` then `rm -r old-folder/`.
+3. **Prefer relative paths** so you stay in scope. `rm -rf build/` is safer than `rm -rf /home/user/project/build/` (less to mistype).
+4. **Add `-i` in practice** to prompt before each deletion: `rm -ri old-folder/`.
+
+## Practice
+
+Remove the `danger` directory and everything inside it using `rm -r`.
+
+import CoursePromo from "@site/src/components/CoursePromo";
+
+<CoursePromo />
