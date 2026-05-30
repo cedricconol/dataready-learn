@@ -461,3 +461,87 @@ pre code {
   color: #94a3b8;
 }
 
+/* ── Progress nudge modal ────────────────────────────────────── */
+@keyframes nudgeFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.progress-nudge__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.progress-nudge__modal {
+  background: #0f1623;
+  border: 1px solid #1e2d45;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 22rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: nudgeFadeIn 0.25s ease forwards;
+}
+
+.progress-nudge__icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.progress-nudge__heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.progress-nudge__body {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.progress-nudge__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.progress-nudge__cta {
+  border-radius: 7px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.6rem 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.progress-nudge__cta:hover {
+  background: #2563eb;
+}
+
+.progress-nudge__dismiss {
+  background: none;
+  border: none;
+  color: #4b6080;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.15s;
+}
+
+.progress-nudge__dismiss:hover {
+  color: #94a3b8;
+}
+
