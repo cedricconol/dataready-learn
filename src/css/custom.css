@@ -217,70 +217,78 @@ html {
   letter-spacing: 0.03em;
 }
 
+/* ── TOC + pinned promo wrapper ──────────────────────────────── */
+.toc-with-promo {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 1rem);
+  max-height: calc(100vh - var(--ifm-navbar-height) - 2rem);
+}
+
+/* Remove the original TOC's own sticky since the wrapper handles it */
+.toc-with-promo > div:first-child {
+  position: static !important;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.toc-promo-pin {
+  flex-shrink: 0;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+}
+
 /* ── Course promo banner ─────────────────────────────────────── */
 .course-promo {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 0.6rem;
   border: 1px solid #063d29;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-top: 2.5rem;
+  border-radius: 8px;
+  padding: 1rem;
   background: linear-gradient(135deg, #071a10 0%, #0c1e14 100%);
 }
 
 .course-promo__eyebrow {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #10b981;
-  margin-bottom: 0.35rem;
 }
 
 .course-promo__heading {
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: #f1f5f9;
-  margin-bottom: 0.25rem;
+  line-height: 1.3;
 }
 
 .course-promo__body {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #94a3b8;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .course-promo__cta {
-  flex-shrink: 0;
-  border-radius: 8px;
+  display: block;
+  border-radius: 6px;
   background: #10b981;
   color: #fff !important;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.6rem 1.25rem;
+  padding: 0.45rem 0.9rem;
   text-decoration: none !important;
-  white-space: nowrap;
+  text-align: center;
   transition: background 0.2s;
+  margin-top: 0.25rem;
 }
 
 .course-promo__cta:hover {
   background: #059669;
   color: #fff !important;
-}
-
-@media (max-width: 640px) {
-  .course-promo {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .course-promo__cta {
-    width: 100%;
-    text-align: center;
-    display: block;
-  }
 }
 
 code,
@@ -294,5 +302,246 @@ pre code {
    two do not overlap in the bottom-right corner. */
 .theme-back-to-top-button {
   bottom: 5.5rem !important;
+}
+
+/* ── Sidebar completion dot ──────────────────────────────────── */
+.sidebar-item-wrapper {
+  position: relative;
+}
+
+.sidebar-completion-dot {
+  position: absolute;
+  left: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #10b981;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.sidebar-item-wrapper--done > li > .menu__link {
+  padding-left: 1.5rem;
+}
+
+/* ── User button (navbar) ────────────────────────────────────── */
+.user-button__wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.user-button__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #1e3a6e;
+  border: 1px solid #3b82f6;
+  color: #60a5fa;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 0;
+  line-height: 1;
+}
+
+.user-button__avatar--loading {
+  background: #1e2d45;
+  border-color: #1e2d45;
+  cursor: default;
+}
+
+.user-button__signin {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #94a3b8;
+  background: none;
+  border: 1px solid #1e2d45;
+  border-radius: 6px;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.user-button__signin:hover {
+  border-color: #3b82f6;
+  color: #f1f5f9;
+}
+
+.user-button__dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 13rem;
+  background: #0f1623;
+  border: 1px solid #1e2d45;
+  border-radius: 8px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  z-index: 300;
+  animation: lessonCompleteFadeIn 0.15s ease forwards;
+}
+
+.user-button__email {
+  font-size: 0.75rem;
+  color: #4b6080;
+  padding: 0.25rem 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-button__signout {
+  font-size: 0.8125rem;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.user-button__signout:hover {
+  background: #141d2e;
+  color: #f1f5f9;
+}
+
+/* ── Lesson completion badge (auto-complete on scroll) ───────── */
+.lesson-completion {
+  margin-top: 2rem;
+}
+
+.lesson-completion__sentinel {
+  height: 1px;
+}
+
+@keyframes lessonCompleteFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lesson-completion__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  color: #10b981;
+  animation: lessonCompleteFadeIn 0.4s ease forwards;
+  margin-bottom: 0.75rem;
+}
+
+.lesson-completion__check {
+  font-size: 0.875rem;
+}
+
+.lesson-completion__undo {
+  font-size: 0.75rem;
+  color: #4b6080;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  margin-left: 0.25rem;
+  transition: color 0.15s;
+}
+
+.lesson-completion__undo:hover {
+  color: #94a3b8;
+}
+
+/* ── Progress nudge modal ────────────────────────────────────── */
+@keyframes nudgeFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.progress-nudge__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.progress-nudge__modal {
+  background: #0f1623;
+  border: 1px solid #1e2d45;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 22rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: nudgeFadeIn 0.25s ease forwards;
+}
+
+.progress-nudge__icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.progress-nudge__heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.progress-nudge__body {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.progress-nudge__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.progress-nudge__cta {
+  border-radius: 7px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.6rem 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.progress-nudge__cta:hover {
+  background: #2563eb;
+}
+
+.progress-nudge__dismiss {
+  background: none;
+  border: none;
+  color: #4b6080;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.15s;
+}
+
+.progress-nudge__dismiss:hover {
+  color: #94a3b8;
 }
 
