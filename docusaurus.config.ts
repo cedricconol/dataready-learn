@@ -1,6 +1,9 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import * as dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
 
 const config: Config = {
   title: "DataReady",
@@ -20,6 +23,11 @@ const config: Config = {
 
   organizationName: "cedricconol",
   projectName: "dataready-learn",
+
+  customFields: {
+    supabaseUrl: process.env.SUPABASE_URL ?? "",
+    supabaseAnonKey: process.env.SUPABASE_ANON_KEY ?? "",
+  },
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -87,6 +95,10 @@ const config: Config = {
         {
           href: "https://github.com/cedricconol/dataready-learn",
           label: "GitHub",
+          position: "right",
+        },
+        {
+          type: "custom-user",
           position: "right",
         },
       ],
