@@ -21,7 +21,7 @@ Each question shows the target output. Write a SQL query that produces exactly t
 
 ## Question 1
 
-For each customer, compute their total number of orders (`order_count`), total amount spent (`total_spent`), and a `segment` label: `'High Value'` if total spent >= 1000, `'Mid Value'` if between 100 and 999, `'Low Value'` if below 100. Return `name`, `order_count`, `total_spent`, and `segment`.
+For each customer, compute their total number of orders (`order_count`), total amount spent (`total_spent`), and a `segment` label: `'High Value'` if total spent >= 1000, `'Mid Value'` if between 100 and 999, `'Low Value'` if below 100. Include customers with no orders, treating their total spent as 0. Return `name`, `order_count`, `total_spent`, and `segment`.
 
 <SqlExercise
   tables={["customers", "orders"]}
@@ -33,6 +33,7 @@ For each customer, compute their total number of orders (`order_count`), total a
       ["Carol White", 2, 1795, "High Value"],
       ["Dave Brown", 2, 74.85, "Low Value"],
       ["Eve Davis", 1, 89.97, "Low Value"],
+      ["Frank Lee", 0, 0, "Low Value"],
     ]
   }}
 />
