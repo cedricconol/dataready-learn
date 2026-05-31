@@ -102,6 +102,7 @@
   font-family: var(--ifm-font-family-monospace, monospace);
   font-size: 0.88rem;
   line-height: 1.6;
+  font-variant-ligatures: none;
   resize: vertical;
   outline: none;
 }
