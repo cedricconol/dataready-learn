@@ -103,7 +103,9 @@
   font-size: 0.88rem;
   line-height: 1.6;
   font-variant-ligatures: none;
-  resize: vertical;
+  min-height: 7rem;
+  resize: none;
+  overflow-y: hidden;
   outline: none;
 }
 

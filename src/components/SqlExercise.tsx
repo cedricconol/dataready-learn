@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { Database } from "sql.js";
 import styles from "./SqlExercise.module.css";
+import { useAutoResizeTextarea } from "./useAutoResizeTextarea";
 
 const SEED_SQL = `
 CREATE TABLE customers (
@@ -182,7 +183,10 @@ function ResultTable({ columns, rows }: { columns: string[]; rows: Cell[][] }) {
 
 export default function SqlExercise({ expected, tables = [] }: Props): React.ReactElement {
   const dbRef = useRef<Database | null>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
   const [query, setQuery] = useState("-- Write your query here\n");
+
+  useAutoResizeTextarea(editorRef, query);
   const [actual, setActual] = useState<{ columns: string[]; rows: Cell[][] } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -275,6 +279,7 @@ export default function SqlExercise({ expected, tables = [] }: Props): React.Rea
 
       {/* Editor */}
       <textarea
+        ref={editorRef}
         className={styles.editor}
         value={query}
         onChange={e => setQuery(e.target.value)}

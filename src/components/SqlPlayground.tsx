@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { Database } from "sql.js";
 import styles from "./SqlPlayground.module.css";
+import { useAutoResizeTextarea } from "./useAutoResizeTextarea";
 
 const SEED_SQL = `
 CREATE TABLE customers (
@@ -96,7 +97,10 @@ type QueryResult = {
 
 export default function SqlPlayground(): React.ReactElement {
   const dbRef = useRef<Database | null>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
   const [query, setQuery] = useState(DEFAULT_QUERY);
+
+  useAutoResizeTextarea(editorRef, query);
   const [results, setResults] = useState<QueryResult[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -178,6 +182,7 @@ export default function SqlPlayground(): React.ReactElement {
       )}
 
       <textarea
+        ref={editorRef}
         className={styles.editor}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
