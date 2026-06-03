@@ -109,7 +109,9 @@
   font-family: var(--ifm-font-family-monospace, monospace);
   font-size: 0.88rem;
   line-height: 1.6;
-  resize: vertical;
+  min-height: 9rem;
+  resize: none;
+  overflow-y: hidden;
   outline: none;
 }
 
