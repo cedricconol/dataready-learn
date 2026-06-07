@@ -137,77 +137,55 @@ html {
   border: none;
 }
 
-/* ── Hero (homepage) ─────────────────────────────────────────── */
-.hero--dataready {
-  background: linear-gradient(135deg, #07090f 0%, #0f1e3d 100%);
-  padding: 5rem 0;
+/* ── Homepage chrome (light, route-scoped) ───────────────────────
+   The homepage (src/pages/index.tsx) is a self-contained light/warm page,
+   so its navbar and footer are forced light regardless of the global dark
+   theme. Scoped via :has() to the homepage marker, which is a CSS-module
+   class (hashed at build time), so it is matched by substring. Docs/lessons
+   keep their dark default and the theme toggle untouched. */
+/* Light the body so the translucent navbar and any overscroll read light,
+   not the dark theme background showing through. */
+body:has([class*="homepageRoot"]) {
+  background-color: #faf9f7;
 }
 
-.hero--dataready .hero__title {
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #f1f5f9;
+#__docusaurus:has([class*="homepageRoot"]) .navbar,
+[data-theme="dark"] #__docusaurus:has([class*="homepageRoot"]) .navbar {
+  background: rgba(250, 249, 247, 0.85);
+  border-bottom: 1px solid #e8e6e2;
 }
 
-.hero--dataready .hero__subtitle {
-  color: #94a3b8;
-  font-size: 1.25rem;
+#__docusaurus:has([class*="homepageRoot"]) .navbar__link,
+#__docusaurus:has([class*="homepageRoot"]) .navbar__title,
+[data-theme="dark"] #__docusaurus:has([class*="homepageRoot"]) .navbar__link {
+  color: #1a2236;
 }
 
-.hero-cta-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 2rem;
+#__docusaurus:has([class*="homepageRoot"]) .navbar__link:hover {
+  color: #2563eb;
 }
 
-/* ── Cards (homepage) ────────────────────────────────────────── */
-.curriculum-card {
-  border: 1px solid #1e2d45;
-  border-radius: 10px;
-  padding: 1.5rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  height: 100%;
+/* Sign-in button (UserButton) reads on the light navbar. */
+#__docusaurus:has([class*="homepageRoot"]) .user-button__signin {
+  color: #1a2236;
+  border-color: #d8dde6;
+}
+#__docusaurus:has([class*="homepageRoot"]) .user-button__signin:hover {
+  color: #2563eb;
+  border-color: #2563eb;
 }
 
-.curriculum-card:hover {
-  border-color: var(--ifm-color-primary);
-  box-shadow: 0 0 0 1px var(--ifm-color-primary);
-  text-decoration: none;
-}
+/* The homepage forces the light (dark-text) logo via the Logo swizzle in
+   src/theme/Logo/index.tsx, since the dark-theme logo variant is invisible on
+   the light navbar and cannot be swapped via CSS post-hydration. */
 
-.curriculum-card__icon {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
-}
-
-.curriculum-card__title {
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 0.4rem;
-  color: var(--ifm-font-color-base);
-}
-
-.curriculum-card__desc {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  line-height: 1.5;
-  margin-bottom: 1.25rem;
-}
-
-.curriculum-card__cta {
-  display: inline-block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--ifm-color-primary);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.curriculum-card__cta:hover {
-  color: var(--ifm-color-primary-light);
-  text-decoration: none;
+#__docusaurus:has([class*="homepageRoot"]) .footer,
+[data-theme="dark"] #__docusaurus:has([class*="homepageRoot"]) .footer {
+  background: #f4f5f7;
+  border-top: 1px solid #e8e6e2;
+  --ifm-footer-title-color: #1a2236;
+  --ifm-footer-link-color: #55617a;
+  --ifm-footer-color: #55617a;
 }
 
 .null-value {

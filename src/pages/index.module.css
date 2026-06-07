@@ -1,22 +1,558 @@
-.curriculumSection {
-  padding: 4rem 0;
+/**
+ * Homepage (light / warm) styles.
+ * Self-contained: all colors are explicit so the page reads light even when the
+ * global Docusaurus theme is dark. Code/playground previews stay dark on purpose.
+ */
+
+.homepageRoot {
+  /* Light / warm surface set, scoped to the homepage. */
+  --home-bg: #faf9f7;
+  --home-surface: #ffffff;
+  --home-tint: #eef3fd;
+  --home-border: #e8e6e2;
+  --home-text: #1a2236;
+  --home-text-2: #55617a;
+  --home-text-3: #8a93a6;
+  --home-accent: #2563eb;
+  --home-accent-strong: #1d4ed8;
+  --home-blue: #3b82f6;
+  --home-cyan: #0891b2;
+  --home-radius-card: 16px;
+  --home-radius-btn: 10px;
+  --home-max: 1120px;
+
+  background: var(--home-bg);
+  color: var(--home-text);
+  min-height: 70vh;
+}
+
+/* ── Shared section scaffolding ──────────────────────────────── */
+.section {
+  max-width: var(--home-max);
+  margin-inline: auto;
+  padding: 5.5rem 1.5rem;
+}
+
+.sectionHead {
+  max-width: 42rem;
+  margin-bottom: 3rem;
 }
 
 .sectionTitle {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--home-text);
+  margin: 0 0 1rem;
 }
 
-@media screen and (max-width: 996px) {
-  .curriculumSection {
-    padding: 2rem 0;
+.sectionLead {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--home-text-2);
+  max-width: 38rem;
+  margin: 0;
+}
+
+.accentText {
+  color: var(--home-accent);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btnPrimary,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--home-radius-btn);
+  padding: 0.75rem 1.4rem;
+  text-decoration: none;
+  transition: background 0.18s, border-color 0.18s, transform 0.1s,
+    color 0.18s;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btnPrimary {
+  background: var(--home-accent);
+  color: #ffffff;
+}
+
+.btnPrimary:hover {
+  background: var(--home-accent-strong);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.btnPrimary:active {
+  transform: translateY(1px);
+}
+
+.btnGhost {
+  background: var(--home-surface);
+  color: var(--home-text);
+  border-color: var(--home-border);
+}
+
+.btnGhost:hover {
+  border-color: var(--home-accent);
+  color: var(--home-accent);
+  text-decoration: none;
+}
+
+.btnPrimary svg,
+.btnGhost svg {
+  font-size: 1.1em;
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--home-accent);
+  text-decoration: none;
+  transition: gap 0.18s, color 0.18s;
+}
+
+.textLink:hover {
+  color: var(--home-accent-strong);
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.hero {
+  max-width: var(--home-max);
+  margin-inline: auto;
+  padding: 4rem 1.5rem 3rem;
+}
+
+.heroInner {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+  margin: 0 0 1.25rem;
+  color: var(--home-text);
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--home-text-2);
+  max-width: 30rem;
+  margin: 0 0 2rem;
+}
+
+.heroCtaRow {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.heroArt {
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Trust strip ─────────────────────────────────────────────── */
+.trust {
+  border-top: 1px solid var(--home-border);
+  border-bottom: 1px solid var(--home-border);
+  background: var(--home-surface);
+}
+
+.trustInner {
+  max-width: var(--home-max);
+  margin-inline: auto;
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  justify-content: center;
+}
+
+.trustItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--home-text-2);
+}
+
+.trustItem svg {
+  color: var(--home-cyan);
+  flex-shrink: 0;
+}
+
+/* ── Split: learn by doing (dark code panel) ─────────────────── */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.splitCopy {
+  max-width: 30rem;
+}
+
+.splitCopy .sectionLead {
+  margin-bottom: 1.5rem;
+}
+
+.codePanel {
+  border-radius: var(--home-radius-card);
+  background: #0f1623;
+  border: 1px solid #1e2d45;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(30, 58, 110, 0.18);
+}
+
+.codeBar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  background: #0b111c;
+  border-bottom: 1px solid #1e2d45;
+}
+
+.codeDot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+}
+
+.codeBarLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #8a93a6;
+}
+
+.code {
+  margin: 0;
+  padding: 1.25rem 1.25rem 1rem;
+  background: #0f1623;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #e2e8f0;
+  overflow-x: auto;
+}
+
+.code .kw {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.code .fn {
+  color: #22d3ee;
+}
+
+.resultTable {
+  border-top: 1px solid #1e2d45;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.85rem;
+}
+
+.resultHead,
+.resultRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  padding: 0.55rem 1.25rem;
+}
+
+.resultHead {
+  color: #8a93a6;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  background: #0b111c;
+}
+
+.resultRow {
+  color: #cbd5e1;
+  border-top: 1px solid #16223a;
+}
+
+.resultRow .num {
+  color: #5eead4;
+}
+
+/* ── Curriculum tracks ───────────────────────────────────────── */
+.trackGrid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.trackGridLower {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.trackCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--home-surface);
+  border: 1px solid var(--home-border);
+  border-radius: var(--home-radius-card);
+  padding: 1.75rem;
+  text-decoration: none;
+  color: var(--home-text);
+  transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
+}
+
+.trackCard:hover {
+  border-color: var(--home-blue);
+  box-shadow: 0 16px 40px rgba(30, 58, 110, 0.12);
+  transform: translateY(-3px);
+  text-decoration: none;
+  color: var(--home-text);
+}
+
+.trackCardFlagship {
+  background: linear-gradient(135deg, #ffffff 0%, var(--home-tint) 100%);
+}
+
+.trackHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.trackIcon {
+  display: inline-flex;
+  font-size: 1.75rem;
+  color: var(--home-blue);
+  background: var(--home-tint);
+  border-radius: 12px;
+  padding: 0.6rem;
+  line-height: 1;
+}
+
+.trackTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.trackCount {
+  font-size: 0.85rem;
+  color: var(--home-text-3);
+  font-weight: 500;
+}
+
+.trackDesc {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--home-text-2);
+  margin: 0 0 1.25rem;
+}
+
+.topicRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.topicChip {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--home-text-2);
+  background: var(--home-tint);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+}
+
+.trackCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  font-weight: 600;
+  color: var(--home-accent);
+  transition: gap 0.18s;
+}
+
+.trackCard:hover .trackCta {
+  gap: 0.6rem;
+}
+
+/* ── Why different ───────────────────────────────────────────── */
+.featureGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem 3rem;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+}
+
+.featureIcon {
+  display: inline-flex;
+  font-size: 1.9rem;
+  color: var(--home-cyan);
+  margin-bottom: 0.85rem;
+}
+
+.featureTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5rem;
+  color: var(--home-text);
+}
+
+.featureDesc {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--home-text-2);
+  margin: 0;
+}
+
+/* ── Final CTA ───────────────────────────────────────────────── */
+.finalCta {
+  background: linear-gradient(135deg, #0f1e3d 0%, #0c2a3a 100%);
+  margin-top: 2rem;
+}
+
+.finalCtaInner {
+  max-width: var(--home-max);
+  margin-inline: auto;
+  padding: 5rem 1.5rem;
+  text-align: center;
+}
+
+.finalCtaTitle {
+  font-size: clamp(1.9rem, 1.3rem + 2.4vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #f8fafc;
+  margin: 0 0 1rem;
+}
+
+.finalCtaLead {
+  font-size: 1.15rem;
+  color: #b6c2da;
+  margin: 0 0 2rem;
+}
+
+.reportLine {
+  margin: 2rem 0 0;
+  font-size: 0.9rem;
+  color: #7e8aa3;
+}
+
+.reportLink {
+  background: none;
+  border: none;
+  color: #93c5fd;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.reportLink:hover {
+  color: #bfdbfe;
+}
+
+/* ── Scroll reveal ───────────────────────────────────────────── */
+[data-reveal] {
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-reveal="out"] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+[data-reveal="in"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transition: none;
+  }
+  [data-reveal="out"] {
+    opacity: 1;
+    transform: none;
   }
 }
 
-/* ── Report modal ── */
+/* ── Responsive ──────────────────────────────────────────────── */
+@media screen and (max-width: 996px) {
+  .heroInner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  .heroSubtitle {
+    margin-inline: auto;
+  }
+  .heroCtaRow {
+    justify-content: center;
+  }
+  .heroArt {
+    order: -1;
+    max-width: 24rem;
+    margin-inline: auto;
+  }
+  .split {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .splitCopy {
+    max-width: none;
+  }
+}
 
+@media screen and (max-width: 768px) {
+  .section {
+    padding: 3.5rem 1.25rem;
+  }
+  .hero {
+    padding: 2.5rem 1.25rem 2rem;
+  }
+  .trackGridLower {
+    grid-template-columns: 1fr;
+  }
+  .featureGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .finalCtaInner {
+    padding: 3.5rem 1.25rem;
+  }
+}
+
+/* ── Report modal ────────────────────────────────────────────── */
 .modalBackdrop {
   position: fixed;
   inset: 0;
