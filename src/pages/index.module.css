@@ -5,25 +5,59 @@
  */
 
 .homepageRoot {
-  /* Light / warm surface set, scoped to the homepage. */
-  --home-bg: #faf9f7;
-  --home-surface: #ffffff;
-  --home-tint: #eef3fd;
-  --home-border: #e8e6e2;
-  --home-text: #1a2236;
-  --home-text-2: #55617a;
-  --home-text-3: #8a93a6;
-  --home-accent: #2563eb;
-  --home-accent-strong: #1d4ed8;
-  --home-blue: #3b82f6;
-  --home-cyan: #0891b2;
-  --home-radius-card: 16px;
-  --home-radius-btn: 10px;
+  /* Warm "byconol" cream-paper set, scoped to the homepage.
+     Single persimmon accent; --home-blue / --home-cyan are kept as names but
+     repointed to persimmon so all brand chrome reads on-brand. */
+  --home-bg: #f3ede1;
+  --home-surface: #fbf7ef;
+  --home-tint: #f1e7d6;
+  --home-border: #dcd1bd;
+  --home-text: #211c16;
+  --home-text-2: #4a4136;
+  --home-text-3: #8a7e6c;
+  --home-accent: #e0512f;
+  --home-accent-strong: #c2431f;
+  --home-blue: #e0512f;
+  --home-cyan: #c2431f;
+  --home-ink: #211c16;
+  --home-radius-card: 18px;
+  --home-radius-btn: 999px;
+  --home-display: "Bricolage Grotesque", "Geist", system-ui, sans-serif;
   --home-max: 1120px;
 
   background: var(--home-bg);
   color: var(--home-text);
   min-height: 70vh;
+  /* Warm radial depth + paper grain, byconol-style. */
+  position: relative;
+  background-image: radial-gradient(
+      55rem 38rem at 50% -8%,
+      rgba(224, 81, 47, 0.07),
+      transparent 60%
+    ),
+    radial-gradient(
+      48rem 48rem at 108% 102%,
+      rgba(33, 28, 22, 0.05),
+      transparent 55%
+    );
+}
+
+/* Fine paper grain overlay (fixed, never on scroll containers). */
+.homepageRoot::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Keep page content above the grain layer. */
+.homepageRoot > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Shared section scaffolding ──────────────────────────────── */
@@ -39,6 +73,7 @@
 }
 
 .sectionTitle {
+  font-family: var(--home-display);
   font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -68,40 +103,101 @@
   font-size: 1rem;
   font-weight: 600;
   border-radius: var(--home-radius-btn);
-  padding: 0.75rem 1.4rem;
+  padding: 0.8rem 1.5rem;
   text-decoration: none;
-  transition: background 0.18s, border-color 0.18s, transform 0.1s,
-    color 0.18s;
   white-space: nowrap;
   cursor: pointer;
   border: 1px solid transparent;
 }
 
+/* Dark-ink pill with a persimmon glow that slides across on hover (byconol). */
 .btnPrimary {
-  background: var(--home-accent);
-  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  background: var(--home-ink);
+  color: #f3ede1;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btnPrimary::before {
+  content: "";
+  position: absolute;
+  right: -30%;
+  top: -60%;
+  width: 70%;
+  height: 220%;
+  background: radial-gradient(
+    closest-side,
+    rgba(224, 81, 47, 0.55),
+    transparent 70%
+  );
+  opacity: 0.5;
+  transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btnPrimary > * {
+  position: relative;
+  z-index: 1;
 }
 
 .btnPrimary:hover {
-  background: var(--home-accent-strong);
-  color: #ffffff;
+  color: #f3ede1;
   text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.btnPrimary:hover::before {
+  opacity: 0.9;
+  transform: translateX(-14%);
 }
 
 .btnPrimary:active {
-  transform: translateY(1px);
+  transform: scale(0.99);
 }
 
 .btnGhost {
   background: var(--home-surface);
   color: var(--home-text);
   border-color: var(--home-border);
+  transition: border-color 0.18s, color 0.18s, transform 0.22s
+    cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btnGhost:hover {
   border-color: var(--home-accent);
   color: var(--home-accent);
   text-decoration: none;
+  transform: translateY(-2px);
+}
+
+/* Paper pill for use on the dark final-CTA band (inverse of .btnPrimary). */
+.btnOnDark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--home-radius-btn);
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: #f3ede1;
+  color: #211c16;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s,
+    color 0.18s;
+}
+
+.btnOnDark:hover {
+  background: var(--home-accent);
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.btnOnDark svg {
+  font-size: 1.1em;
 }
 
 .btnPrimary svg,
@@ -139,7 +235,27 @@
   align-items: center;
 }
 
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--home-accent-strong);
+  background: var(--home-tint);
+  border: 1px solid var(--home-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.heroBadge svg {
+  font-size: 1em;
+  color: var(--home-cyan);
+}
+
 .heroTitle {
+  font-family: var(--home-display);
   font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4rem);
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -235,7 +351,7 @@
   width: 0.6rem;
   height: 0.6rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  background: linear-gradient(135deg, #e0512f, #f0a08e);
 }
 
 .codeBarLabel {
@@ -322,7 +438,7 @@
 
 .trackCard:hover {
   border-color: var(--home-blue);
-  box-shadow: 0 16px 40px rgba(30, 58, 110, 0.12);
+  box-shadow: 0 16px 40px rgba(194, 67, 31, 0.14);
   transform: translateY(-3px);
   text-decoration: none;
   color: var(--home-text);
@@ -350,6 +466,7 @@
 }
 
 .trackTitle {
+  font-family: var(--home-display);
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -418,6 +535,7 @@
 }
 
 .featureTitle {
+  font-family: var(--home-display);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -434,7 +552,12 @@
 
 /* ── Final CTA ───────────────────────────────────────────────── */
 .finalCta {
-  background: linear-gradient(135deg, #0f1e3d 0%, #0c2a3a 100%);
+  background: radial-gradient(
+      40rem 26rem at 50% 0%,
+      rgba(224, 81, 47, 0.18),
+      transparent 62%
+    ),
+    linear-gradient(135deg, #211c16 0%, #2c241a 100%);
   margin-top: 2rem;
 }
 
@@ -446,29 +569,30 @@
 }
 
 .finalCtaTitle {
+  font-family: var(--home-display);
   font-size: clamp(1.9rem, 1.3rem + 2.4vw, 2.75rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #f8fafc;
+  color: #f3ede1;
   margin: 0 0 1rem;
 }
 
 .finalCtaLead {
   font-size: 1.15rem;
-  color: #b6c2da;
+  color: #d8cdba;
   margin: 0 0 2rem;
 }
 
 .reportLine {
   margin: 2rem 0 0;
   font-size: 0.9rem;
-  color: #7e8aa3;
+  color: #a89a85;
 }
 
 .reportLink {
   background: none;
   border: none;
-  color: #93c5fd;
+  color: #f0a08e;
   font-size: inherit;
   cursor: pointer;
   padding: 0;
@@ -477,7 +601,7 @@
 }
 
 .reportLink:hover {
-  color: #bfdbfe;
+  color: #f5c4b6;
 }
 
 /* ── Scroll reveal ───────────────────────────────────────────── */
@@ -566,13 +690,13 @@
 }
 
 .modal {
-  background: #0f1623;
-  border: 1px solid #1e2d45;
-  border-radius: 12px;
+  background: #241e17;
+  border: 1px solid #3a3127;
+  border-radius: 16px;
   padding: 2rem;
   max-width: 540px;
   width: 100%;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
 }
 
 .modalHeader {
@@ -584,16 +708,17 @@
 }
 
 .modalTitle {
+  font-family: var(--home-display);
   font-size: 1.2rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #f3ede1;
   margin: 0;
 }
 
 .modalClose {
   background: none;
   border: none;
-  color: #4b6080;
+  color: #a89a85;
   font-size: 1rem;
   cursor: pointer;
   padding: 0;
@@ -603,12 +728,12 @@
 }
 
 .modalClose:hover {
-  color: #f1f5f9;
+  color: #f3ede1;
 }
 
 .modalIntro {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: #d8cdba;
   line-height: 1.6;
   margin-bottom: 1.25rem;
 }
@@ -623,35 +748,35 @@
 
 .modalSteps li {
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: #d8cdba;
   line-height: 1.6;
 }
 
 .modalSteps strong {
-  color: #e2e8f0;
+  color: #f3ede1;
 }
 
 .example {
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.8rem;
-  background: #1e2d45;
+  background: #3a3127;
   border-radius: 4px;
   padding: 1px 6px;
-  color: #60a5fa;
+  color: #f0a08e;
 }
 
 .modalCta {
   display: inline-block;
-  background: #3b82f6;
+  background: #e0512f;
   color: #fff !important;
   font-size: 0.9rem;
   font-weight: 600;
   padding: 0.6rem 1.25rem;
-  border-radius: 8px;
+  border-radius: 999px;
   text-decoration: none !important;
   transition: background 0.15s;
 }
 
 .modalCta:hover {
-  background: #2563eb;
+  background: #c2431f;
 }

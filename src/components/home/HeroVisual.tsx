@@ -3,7 +3,7 @@ import styles from "./HeroVisual.module.css";
 
 /**
  * Abstract data motif for the homepage hero: a result-table card and a small
- * chart card in the brand blue-to-cyan range, tuned for a light background.
+ * chart card in the brand persimmon range, tuned for a warm cream background.
  * This is a single intentional geometric mark rendered as inline SVG (no neon
  * glow, reduced-motion safe via HeroVisual.module.css).
  *
@@ -21,19 +21,19 @@ export default function HeroVisual(): JSX.Element {
       >
         <defs>
           <linearGradient id="hvAccent" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#3b82f6" />
-            <stop offset="1" stopColor="#06b6d4" />
+            <stop offset="0" stopColor="#e0512f" />
+            <stop offset="1" stopColor="#f0a08e" />
           </linearGradient>
           <linearGradient id="hvBar" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0" stopColor="#3b82f6" />
-            <stop offset="1" stopColor="#06b6d4" />
+            <stop offset="0" stopColor="#e0512f" />
+            <stop offset="1" stopColor="#f0a08e" />
           </linearGradient>
           <filter id="hvShadow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow
               dx="0"
               dy="18"
               stdDeviation="24"
-              floodColor="#1e3a6e"
+              floodColor="#5a3420"
               floodOpacity="0.18"
             />
           </filter>
@@ -41,7 +41,7 @@ export default function HeroVisual(): JSX.Element {
 
         {/* Result-table card */}
         <g className={styles.tableCard} filter="url(#hvShadow)">
-          <rect x="40" y="40" width="268" height="220" rx="18" fill="#ffffff" />
+          <rect x="40" y="40" width="268" height="220" rx="18" fill="#fbf7ef" />
           <rect
             x="40"
             y="40"
@@ -49,19 +49,19 @@ export default function HeroVisual(): JSX.Element {
             height="220"
             rx="18"
             fill="none"
-            stroke="#e2e8f0"
+            stroke="#e5dccb"
           />
           {/* Header bar */}
-          <rect x="40" y="40" width="268" height="44" rx="18" fill="#f1f5f9" />
-          <rect x="40" y="66" width="268" height="18" fill="#f1f5f9" />
+          <rect x="40" y="40" width="268" height="44" rx="18" fill="#f1e7d6" />
+          <rect x="40" y="66" width="268" height="18" fill="#f1e7d6" />
           <circle cx="64" cy="62" r="5" fill="#3b82f6" />
-          <rect x="80" y="57" width="86" height="10" rx="5" fill="#cbd5e1" />
-          <rect x="206" y="57" width="64" height="10" rx="5" fill="#cbd5e1" />
+          <rect x="80" y="57" width="86" height="10" rx="5" fill="#cfc2a9" />
+          <rect x="206" y="57" width="64" height="10" rx="5" fill="#cfc2a9" />
 
           {/* Rows */}
           <g className={styles.accentRow}>
-            <rect x="40" y="100" width="268" height="30" fill="#eff6ff" />
-            <rect x="64" y="110" width="96" height="10" rx="5" fill="#93c5fd" />
+            <rect x="40" y="100" width="268" height="30" fill="#fbeee6" />
+            <rect x="64" y="110" width="96" height="10" rx="5" fill="#f0a08e" />
             <rect
               x="206"
               y="110"
@@ -71,12 +71,12 @@ export default function HeroVisual(): JSX.Element {
               fill="url(#hvAccent)"
             />
           </g>
-          <rect x="64" y="146" width="120" height="10" rx="5" fill="#cbd5e1" />
-          <rect x="206" y="146" width="44" height="10" rx="5" fill="#cbd5e1" />
-          <rect x="64" y="180" width="104" height="10" rx="5" fill="#cbd5e1" />
-          <rect x="206" y="180" width="60" height="10" rx="5" fill="#cbd5e1" />
-          <rect x="64" y="214" width="132" height="10" rx="5" fill="#cbd5e1" />
-          <rect x="206" y="214" width="40" height="10" rx="5" fill="#cbd5e1" />
+          <rect x="64" y="146" width="120" height="10" rx="5" fill="#cfc2a9" />
+          <rect x="206" y="146" width="44" height="10" rx="5" fill="#cfc2a9" />
+          <rect x="64" y="180" width="104" height="10" rx="5" fill="#cfc2a9" />
+          <rect x="206" y="180" width="60" height="10" rx="5" fill="#cfc2a9" />
+          <rect x="64" y="214" width="132" height="10" rx="5" fill="#cfc2a9" />
+          <rect x="206" y="214" width="40" height="10" rx="5" fill="#cfc2a9" />
         </g>
 
         {/* Chart card, overlapping bottom-right */}
@@ -87,9 +87,9 @@ export default function HeroVisual(): JSX.Element {
             width="194"
             height="158"
             rx="18"
-            fill="#0f1623"
+            fill="#241e17"
           />
-          <rect x="270" y="206" width="84" height="9" rx="4.5" fill="#334155" />
+          <rect x="270" y="206" width="84" height="9" rx="4.5" fill="#6b5d49" />
           {/* Bars */}
           <rect
             className={`${styles.bar} ${styles.b1}`}
@@ -146,11 +146,11 @@ export default function HeroVisual(): JSX.Element {
             width="118"
             height="40"
             rx="12"
-            fill="#ffffff"
+            fill="#fbf7ef"
             filter="url(#hvShadow)"
           />
           <circle cx="324" cy="112" r="10" fill="url(#hvAccent)" />
-          <rect x="342" y="107" width="60" height="10" rx="5" fill="#cbd5e1" />
+          <rect x="342" y="107" width="60" height="10" rx="5" fill="#cfc2a9" />
         </g>
         <g className={`${styles.chip} ${styles.chipB}`}>
           <rect
@@ -159,11 +159,11 @@ export default function HeroVisual(): JSX.Element {
             width="150"
             height="44"
             rx="12"
-            fill="#ffffff"
+            fill="#fbf7ef"
             filter="url(#hvShadow)"
           />
-          <rect x="48" y="290" width="30" height="16" rx="8" fill="#dbeafe" />
-          <rect x="88" y="293" width="72" height="10" rx="5" fill="#cbd5e1" />
+          <rect x="48" y="290" width="30" height="16" rx="8" fill="#f7ddd0" />
+          <rect x="88" y="293" width="72" height="10" rx="5" fill="#cfc2a9" />
         </g>
       </svg>
     </div>

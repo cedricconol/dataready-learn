@@ -191,13 +191,18 @@ function Hero() {
     <header className={styles.hero}>
       <div className={styles.heroInner}>
         <div className={styles.heroCopy}>
+          <span className={styles.heroBadge}>
+            <Check weight="bold" aria-hidden="true" />
+            100% free &amp; open source
+          </span>
           <h1 className={styles.heroTitle}>
-            Learn data skills <span className={styles.accentText}>by doing</span>
-            . <span className={styles.accentText}>Free.</span>
+            Learn data analytics{" "}
+            <span className={styles.accentText}>for free</span>.
           </h1>
           <p className={styles.heroSubtitle}>
-            Interactive SQL, Terminal, and Git lessons you run right in your
-            browser. No installs. No paywall.
+            Learn by doing: interactive SQL, Terminal, and Git lessons that run
+            right in your browser. Start with the fundamentals every analyst
+            needs, with more advanced tracks on the way.
           </p>
           <div className={styles.heroCtaRow}>
             <Link to="/sql" className={styles.btnPrimary}>
@@ -384,7 +389,7 @@ function FinalCta({ onReport }: { onReport: () => void }) {
         <p className={styles.finalCtaLead}>
           Open the first lesson and run your first query in the next two minutes.
         </p>
-        <Link to="/sql" className={styles.btnPrimary}>
+        <Link to="/sql" className={styles.btnOnDark}>
           Start with SQL
           <ArrowRight weight="bold" aria-hidden="true" />
         </Link>

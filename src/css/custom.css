@@ -1,44 +1,83 @@
 /**
- * DataReady – global styles.
- * Dark palette mirrors dataready-web globals.css.
+ * DataReady Learn – global styles.
+ * Warm "byconol" identity: cream paper + single persimmon accent,
+ * Bricolage Grotesque display over Geist body. Light mode is the signature
+ * look; dark mode is a warm-dark variant of the same palette.
  * Infima colour shades generated via https://docusaurus.io/docs/styling-layout#styling-your-site-with-infima
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
 
 :root {
-  --ifm-color-primary: #3b82f6;
-  --ifm-color-primary-dark: #2172f5;
-  --ifm-color-primary-darker: #1469f4;
-  --ifm-color-primary-darkest: #0756d5;
-  --ifm-color-primary-light: #5592f7;
-  --ifm-color-primary-lighter: #629bf7;
-  --ifm-color-primary-lightest: #89b5f9;
+  /* Persimmon accent (byconol brand) */
+  --ifm-color-primary: #e0512f;
+  --ifm-color-primary-dark: #d8401b;
+  --ifm-color-primary-darker: #cc3d19;
+  --ifm-color-primary-darkest: #a83215;
+  --ifm-color-primary-light: #e5694b;
+  --ifm-color-primary-lighter: #e87a5f;
+  --ifm-color-primary-lightest: #f0a08e;
+
+  /* Shared brand variables (consumed across this stylesheet) */
+  --dr-accent: #e0512f;
+  --dr-accent-strong: #c2431f;
+  --dr-paper: #f3ede1;
+  --dr-paper-2: #ece3d3;
+  --dr-ink: #211c16;
+  --dr-ink-soft: #4a4136;
+  --dr-muted: #8a7e6c;
+  --dr-line: #dcd1bd;
+  --dr-line-2: #cfc2a9;
+
+  /* Warm cream surfaces (light mode = the signature look) */
+  --ifm-background-color: #f3ede1;
+  --ifm-background-surface-color: #ece3d3;
+  --ifm-navbar-background-color: #f3ede1;
+  --ifm-footer-background-color: #ece3d3;
+  --ifm-font-color-base: #211c16;
+  --ifm-heading-color: #211c16;
+  --ifm-toc-border-color: #dcd1bd;
+  --ifm-hr-border-color: #dcd1bd;
+  --ifm-color-emphasis-300: #cfc2a9;
 
   --ifm-font-family-base: "Geist", system-ui, -apple-system, sans-serif;
+  --ifm-heading-font-family: "Bricolage Grotesque", "Geist", system-ui, sans-serif;
   --ifm-font-family-monospace: "Geist Mono", monospace;
-  --ifm-heading-font-weight: 600;
+  --ifm-heading-font-weight: 700;
   --ifm-code-font-size: 94%;
-  --docusaurus-highlighted-code-line-bg: rgba(59, 130, 246, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(224, 81, 47, 0.1);
 }
 
 [data-theme="dark"] {
-  --ifm-color-primary: #60a5fa;
-  --ifm-color-primary-dark: #3b8ef9;
-  --ifm-color-primary-darker: #2882f9;
-  --ifm-color-primary-darkest: #0763e5;
-  --ifm-color-primary-light: #85bbfb;
-  --ifm-color-primary-lighter: #98c4fb;
-  --ifm-color-primary-lightest: #c2dbfd;
+  /* Persimmon, lifted slightly for contrast on warm-dark surfaces */
+  --ifm-color-primary: #f0633f;
+  --ifm-color-primary-dark: #ed4e26;
+  --ifm-color-primary-darker: #e8441b;
+  --ifm-color-primary-darkest: #c03415;
+  --ifm-color-primary-light: #f37c5d;
+  --ifm-color-primary-lighter: #f58a6e;
+  --ifm-color-primary-lightest: #f9b0a0;
 
-  --ifm-background-color: #07090f;
-  --ifm-background-surface-color: #0f1623;
-  --ifm-navbar-background-color: #07090f;
-  --ifm-footer-background-color: #07090f;
-  --ifm-toc-border-color: #1e2d45;
-  --ifm-hr-border-color: #1e2d45;
-  --ifm-color-emphasis-300: #1e2d45;
-  --docusaurus-highlighted-code-line-bg: rgba(96, 165, 250, 0.12);
+  --dr-accent: #f0633f;
+  --dr-accent-strong: #e0512f;
+  --dr-paper: #1b1712;
+  --dr-paper-2: #241e17;
+  --dr-ink: #f3ede1;
+  --dr-ink-soft: #d8cdba;
+  --dr-muted: #a89a85;
+  --dr-line: #3a3127;
+  --dr-line-2: #463b2e;
+
+  --ifm-background-color: #1b1712;
+  --ifm-background-surface-color: #241e17;
+  --ifm-navbar-background-color: #1b1712;
+  --ifm-footer-background-color: #1b1712;
+  --ifm-font-color-base: #f3ede1;
+  --ifm-heading-color: #f7f2e9;
+  --ifm-toc-border-color: #3a3127;
+  --ifm-hr-border-color: #3a3127;
+  --ifm-color-emphasis-300: #3a3127;
+  --docusaurus-highlighted-code-line-bg: rgba(240, 99, 63, 0.14);
 }
 
 /* ── Base ────────────────────────────────────────────────────── */
@@ -47,12 +86,12 @@ html {
 }
 
 ::selection {
-  background-color: #1e3a6e;
-  color: #f1f5f9;
+  background-color: rgba(224, 81, 47, 0.22);
+  color: var(--dr-ink);
 }
 
 :focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--dr-accent);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -62,24 +101,24 @@ html {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #07090f;
+  background: var(--dr-paper);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e2d45;
+  background: var(--dr-line-2);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a3d5c;
+  background: var(--dr-muted);
 }
 
 /* ── Navbar ─────────────────────────────────────────────────── */
 .navbar {
-  border-bottom: 1px solid #1e2d45;
+  border-bottom: 1px solid var(--dr-line);
   box-shadow: none;
 }
 
 [data-theme="dark"] .navbar {
-  background: rgba(7, 9, 15, 0.85);
+  background: rgba(27, 23, 18, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -90,25 +129,25 @@ html {
 
 /* ── Sidebar ─────────────────────────────────────────────────── */
 .theme-doc-sidebar-container {
-  border-right: 1px solid #1e2d45;
+  border-right: 1px solid var(--dr-line);
 }
 
 .menu__link--sublist {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #64748b;
+  color: var(--dr-muted);
   margin-top: 0.5rem;
 }
 
 [data-theme="dark"] .menu__link--sublist {
-  color: #60a5fa;
-  opacity: 0.75;
+  color: var(--dr-accent);
+  opacity: 0.85;
 }
 
 .menu__link--sublist:hover,
 [data-theme="dark"] .menu__link--sublist:hover {
-  color: #60a5fa;
+  color: var(--dr-accent);
   opacity: 1;
 }
 
@@ -146,33 +185,33 @@ html {
 /* Light the body so the translucent navbar and any overscroll read light,
    not the dark theme background showing through. */
 body:has([class*="homepageRoot"]) {
-  background-color: #faf9f7;
+  background-color: #f3ede1;
 }
 
 #__docusaurus:has([class*="homepageRoot"]) .navbar,
 [data-theme="dark"] #__docusaurus:has([class*="homepageRoot"]) .navbar {
-  background: rgba(250, 249, 247, 0.85);
-  border-bottom: 1px solid #e8e6e2;
+  background: rgba(243, 237, 225, 0.85);
+  border-bottom: 1px solid #dcd1bd;
 }
 
 #__docusaurus:has([class*="homepageRoot"]) .navbar__link,
 #__docusaurus:has([class*="homepageRoot"]) .navbar__title,
 [data-theme="dark"] #__docusaurus:has([class*="homepageRoot"]) .navbar__link {
-  color: #1a2236;
+  color: #211c16;
 }
 
 #__docusaurus:has([class*="homepageRoot"]) .navbar__link:hover {
-  color: #2563eb;
+  color: #c2431f;
 }
 
 /* Sign-in button (UserButton) reads on the light navbar. */
 #__docusaurus:has([class*="homepageRoot"]) .user-button__signin {
-  color: #1a2236;
-  border-color: #d8dde6;
+  color: #211c16;
+  border-color: #cfc2a9;
 }
 #__docusaurus:has([class*="homepageRoot"]) .user-button__signin:hover {
-  color: #2563eb;
-  border-color: #2563eb;
+  color: #c2431f;
+  border-color: #c2431f;
 }
 
 /* The homepage forces the light (dark-text) logo via the Logo swizzle in
@@ -181,11 +220,11 @@ body:has([class*="homepageRoot"]) {
 
 #__docusaurus:has([class*="homepageRoot"]) .footer,
 [data-theme="dark"] #__docusaurus:has([class*="homepageRoot"]) .footer {
-  background: #f4f5f7;
-  border-top: 1px solid #e8e6e2;
-  --ifm-footer-title-color: #1a2236;
-  --ifm-footer-link-color: #55617a;
-  --ifm-footer-color: #55617a;
+  background: #ece3d3;
+  border-top: 1px solid #dcd1bd;
+  --ifm-footer-title-color: #211c16;
+  --ifm-footer-link-color: #4a4136;
+  --ifm-footer-color: #4a4136;
 }
 
 .null-value {
@@ -223,10 +262,15 @@ body:has([class*="homepageRoot"]) {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  border: 1px solid #063d29;
-  border-radius: 8px;
+  border: 1px solid #3a3127;
+  border-radius: 12px;
   padding: 1rem;
-  background: linear-gradient(135deg, #071a10 0%, #0c1e14 100%);
+  background: radial-gradient(
+      14rem 8rem at 100% 0%,
+      rgba(224, 81, 47, 0.16),
+      transparent 60%
+    ),
+    linear-gradient(135deg, #211c16 0%, #2c241a 100%);
 }
 
 .course-promo__eyebrow {
@@ -234,26 +278,26 @@ body:has([class*="homepageRoot"]) {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #10b981;
+  color: #f0a08e;
 }
 
 .course-promo__heading {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #f3ede1;
   line-height: 1.3;
 }
 
 .course-promo__body {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: #d8cdba;
   line-height: 1.4;
 }
 
 .course-promo__cta {
   display: block;
-  border-radius: 6px;
-  background: #10b981;
+  border-radius: 999px;
+  background: #e0512f;
   color: #fff !important;
   font-size: 0.8rem;
   font-weight: 600;
@@ -265,7 +309,7 @@ body:has([class*="homepageRoot"]) {
 }
 
 .course-promo__cta:hover {
-  background: #059669;
+  background: #c2431f;
   color: #fff !important;
 }
 
@@ -314,9 +358,9 @@ pre code {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background: #1e3a6e;
-  border: 1px solid #3b82f6;
-  color: #60a5fa;
+  background: rgba(224, 81, 47, 0.16);
+  border: 1px solid var(--dr-accent);
+  color: var(--dr-accent);
   font-size: 0.8125rem;
   font-weight: 600;
   display: inline-flex;
@@ -329,17 +373,17 @@ pre code {
 }
 
 .user-button__avatar--loading {
-  background: #1e2d45;
-  border-color: #1e2d45;
+  background: var(--dr-line);
+  border-color: var(--dr-line);
   cursor: default;
 }
 
 .user-button__signin {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #94a3b8;
+  color: var(--dr-ink-soft);
   background: none;
-  border: 1px solid #1e2d45;
+  border: 1px solid var(--dr-line);
   border-radius: 6px;
   padding: 0.3rem 0.75rem;
   cursor: pointer;
@@ -348,8 +392,8 @@ pre code {
 }
 
 .user-button__signin:hover {
-  border-color: #3b82f6;
-  color: #f1f5f9;
+  border-color: var(--dr-accent);
+  color: var(--dr-ink);
 }
 
 .user-button__dropdown {
@@ -357,8 +401,8 @@ pre code {
   top: calc(100% + 0.5rem);
   right: 0;
   min-width: 13rem;
-  background: #0f1623;
-  border: 1px solid #1e2d45;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--dr-line);
   border-radius: 8px;
   padding: 0.5rem;
   display: flex;
@@ -370,7 +414,7 @@ pre code {
 
 .user-button__email {
   font-size: 0.75rem;
-  color: #4b6080;
+  color: var(--dr-muted);
   padding: 0.25rem 0.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -379,7 +423,7 @@ pre code {
 
 .user-button__signout {
   font-size: 0.8125rem;
-  color: #94a3b8;
+  color: var(--dr-ink-soft);
   background: none;
   border: none;
   border-radius: 5px;
@@ -390,8 +434,8 @@ pre code {
 }
 
 .user-button__signout:hover {
-  background: #141d2e;
-  color: #f1f5f9;
+  background: var(--dr-paper-2);
+  color: var(--dr-ink);
 }
 
 /* ── Lesson completion badge (auto-complete on scroll) ───────── */
@@ -457,8 +501,8 @@ pre code {
 }
 
 .progress-nudge__modal {
-  background: #0f1623;
-  border: 1px solid #1e2d45;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--dr-line);
   border-radius: 12px;
   padding: 2rem;
   max-width: 22rem;
@@ -477,12 +521,12 @@ pre code {
 .progress-nudge__heading {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--dr-ink);
 }
 
 .progress-nudge__body {
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: var(--dr-ink-soft);
   line-height: 1.5;
 }
 
@@ -495,7 +539,7 @@ pre code {
 
 .progress-nudge__cta {
   border-radius: 7px;
-  background: #3b82f6;
+  background: var(--dr-accent);
   color: #fff;
   font-size: 0.875rem;
   font-weight: 600;
@@ -506,13 +550,13 @@ pre code {
 }
 
 .progress-nudge__cta:hover {
-  background: #2563eb;
+  background: var(--dr-accent-strong);
 }
 
 .progress-nudge__dismiss {
   background: none;
   border: none;
-  color: #4b6080;
+  color: var(--dr-muted);
   font-size: 0.8125rem;
   cursor: pointer;
   padding: 0.25rem;
@@ -520,6 +564,6 @@ pre code {
 }
 
 .progress-nudge__dismiss:hover {
-  color: #94a3b8;
+  color: var(--dr-ink-soft);
 }
 
