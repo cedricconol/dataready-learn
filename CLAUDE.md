@@ -158,10 +158,16 @@ youtube_url: ""
 
 ## Styling Notes
 
-- Primary accent color: `#3B82F6` (Tailwind blue-500)
-- Dark mode is the default; light mode is available via the toggle
-- Dark background: `#0f172a` (Tailwind slate-900)
-- CSS variables live in `src/css/custom.css`
+This site uses the warm "byconol" identity (modeled on `byconol.com`), which is **intentionally different** from the dark blue/cyan DataReady system used by `dataready-web`. Do not "resync" it back to blue/dark.
+
+- Primary accent: persimmon `#E0512F` (hover/strong `#C2431F`; lifted `#F0633F` in dark mode)
+- Surfaces: warm cream paper `#F3EDE1` (light) / warm near-black `#1B1712` (dark)
+- Text/ink: `#211C16` on light, `#F3EDE1` on dark
+- Light mode is the signature look; dark mode is a warm-dark variant of the same palette (toggle still works)
+- Display/heading font: **Bricolage Grotesque**; body: Geist; mono: Geist Mono
+- Signature button: dark-ink pill with a persimmon glow that slides on hover (`.btnPrimary` in `index.module.css`); `.btnOnDark` is the paper-pill variant for dark bands
+- Code/playground previews stay dark on purpose (they mirror the real in-browser SQL editor); success states stay green
+- CSS variables live in `src/css/custom.css` (global `--dr-*` + Infima tokens); homepage-scoped `--home-*` vars live in `src/pages/index.module.css`
 - Do not add inline styles for things that should be in `custom.css`
 
 ---
