@@ -40,15 +40,15 @@ Find all customers who have placed at least one order. Use a subquery with `IN`.
 
 ## Question 2
 
-Find all products that have **never** been ordered. Use `NOT IN`. Return all columns from `products`.
-
-*(All products in this dataset have been ordered, so the result is 0 rows.)*
+Find all products that have **never** appeared in a **completed** order. Use `NOT IN`. Return all columns from `products`.
 
 <SqlExercise
   tables={["products", "orders"]}
   expected={{
     columns: ["product_id", "name", "category", "price"],
-    rows: []
+    rows: [
+      [5, "Notebook", "Stationery", 4.99],
+    ]
   }}
 />
 
