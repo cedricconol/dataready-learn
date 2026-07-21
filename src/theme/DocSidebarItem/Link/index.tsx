@@ -7,10 +7,9 @@ import { useProgress } from "@site/src/context/ProgressContext";
 type Props = WrapperProps<typeof DocSidebarItemLinkType>;
 
 export default function DocSidebarItemLink(props: Props): JSX.Element {
-  const { isComplete, completedLessons } = useProgress();
+  const { isComplete } = useProgress();
   const docId = (props.item as Record<string, unknown>).docId as string | undefined;
   const done = docId ? isComplete(docId) : false;
-  console.log("[sidebar]", { docId, done, completedLessons: [...completedLessons] });
 
   return (
     <div className={`sidebar-item-wrapper${done ? " sidebar-item-wrapper--done" : ""}`}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { DirectoryNode, FileSystemNode, ShellState } from "../engine/types";
-import { getLessonById, getNextLesson, getPrevLesson } from "../engine/lessons";
+import { getLessonById } from "../engine/lessons";
 import { executeCommand, getPrompt, makeInitialState } from "../engine/shell";
 import styles from "./TerminalPlayground.module.css";
 
@@ -176,18 +176,6 @@ export default function TerminalPlayground({ lessonId }: TerminalPlaygroundProps
       write(getPrompt(lesson.initialCwd));
     }
   };
-
-  // Navigate to a different lesson (reload page)
-  const handleNav = (id: string) => {
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      url.searchParams.set("lesson", id);
-      window.location.href = url.toString();
-    }
-  };
-
-  const nextLesson = getNextLesson(lessonId);
-  const prevLesson = getPrevLesson(lessonId);
 
   // xterm.js setup
   useEffect(() => {
@@ -387,16 +375,6 @@ export default function TerminalPlayground({ lessonId }: TerminalPlaygroundProps
           <span className={styles.lessonBadge}>{lesson.title}</span>
         </div>
         <div className={styles.headerActions}>
-          {prevLesson && (
-            <button className={styles.btnSecondary} onClick={() => handleNav(prevLesson.id)}>
-              ← Prev
-            </button>
-          )}
-          {nextLesson && isPassed && (
-            <button className={styles.btnSecondary} onClick={() => handleNav(nextLesson.id)}>
-              Next →
-            </button>
-          )}
           <button className={styles.btnSecondary} onClick={handleReset}>
             Reset
           </button>

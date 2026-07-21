@@ -117,10 +117,19 @@ html {
   box-shadow: none;
 }
 
-[data-theme="dark"] .navbar {
-  background: rgba(27, 23, 18, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Translucent blurred navbar is a desktop-only treatment. On mobile (≤996px)
+   the navbar is the ancestor of the slide-in sidebar drawer (.navbar-sidebar),
+   and `backdrop-filter` makes the navbar the containing block for that
+   fixed-positioned drawer, clipping it to the navbar's ~60px height and hiding
+   the whole nav pane (dark mode only). Scoping the blur to desktop lets the
+   mobile drawer size against the viewport; on mobile dark it falls back to the
+   opaque --ifm-navbar-background-color. */
+@media (min-width: 997px) {
+  [data-theme="dark"] .navbar {
+    background: rgba(27, 23, 18, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
 }
 
 .navbar__logo {

@@ -448,6 +448,26 @@
   background: linear-gradient(135deg, #ffffff 0%, var(--home-tint) 100%);
 }
 
+.trackCardSoon {
+  border-style: dashed;
+}
+
+.soonBadge {
+  display: inline-block;
+  margin-left: 0.6rem;
+  vertical-align: middle;
+  font-family: var(--home-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--home-accent-strong);
+  background: rgba(224, 81, 47, 0.1);
+  border: 1px solid rgba(224, 81, 47, 0.25);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+}
+
 .trackHeader {
   display: flex;
   align-items: center;

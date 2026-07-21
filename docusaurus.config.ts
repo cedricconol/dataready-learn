@@ -93,6 +93,11 @@ const config: Config = {
           label: "Git",
         },
         {
+          to: "/python",
+          label: "Python",
+          position: "left",
+        },
+        {
           href: "https://github.com/cedricconol/dataready-learn",
           label: "GitHub",
           position: "right",
@@ -112,6 +117,7 @@ const config: Config = {
             { label: "SQL", to: "/sql" },
             { label: "Terminal", to: "/terminal" },
             { label: "Git", to: "/git" },
+            { label: "Python", to: "/python" },
           ],
         },
         {
