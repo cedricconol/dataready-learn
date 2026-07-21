@@ -6,6 +6,7 @@ import {
   ArrowRight,
   ChartLineUp,
   Check,
+  Code,
   CursorClick,
   Database,
   Exam,
@@ -29,6 +30,7 @@ type Track = {
   description: string;
   topics: string[];
   href: string;
+  comingSoon?: boolean;
 };
 
 const FLAGSHIP_TRACK: Track = {
@@ -73,6 +75,16 @@ const TRACKS: Track[] = [
       "Open-source workflow",
     ],
     href: "/git",
+  },
+  {
+    icon: <Code weight="duotone" />,
+    title: "Python",
+    count: "Coming soon",
+    description:
+      "A hands-on Python track for data analytics, built the same learn-by-doing way. It's in the kitchen.",
+    topics: ["Variables & types", "Data structures", "pandas", "Analysis"],
+    href: "/python",
+    comingSoon: true,
   },
 ];
 
@@ -300,15 +312,21 @@ function LearnByDoing() {
 }
 
 function TrackCard({ track, flagship }: { track: Track; flagship?: boolean }) {
+  const { comingSoon } = track;
   return (
     <Link
       to={track.href}
-      className={`${styles.trackCard} ${flagship ? styles.trackCardFlagship : ""}`}
+      className={`${styles.trackCard} ${flagship ? styles.trackCardFlagship : ""} ${
+        comingSoon ? styles.trackCardSoon : ""
+      }`}
     >
       <div className={styles.trackHeader}>
         <span className={styles.trackIcon}>{track.icon}</span>
         <div>
-          <div className={styles.trackTitle}>{track.title}</div>
+          <div className={styles.trackTitle}>
+            {track.title}
+            {comingSoon && <span className={styles.soonBadge}>Coming soon</span>}
+          </div>
           <div className={styles.trackCount}>{track.count}</div>
         </div>
       </div>
@@ -321,7 +339,7 @@ function TrackCard({ track, flagship }: { track: Track; flagship?: boolean }) {
         ))}
       </div>
       <span className={styles.trackCta}>
-        Start {track.title}
+        {comingSoon ? "Take a peek" : `Start ${track.title}`}
         <ArrowRight weight="bold" aria-hidden="true" />
       </span>
     </Link>
