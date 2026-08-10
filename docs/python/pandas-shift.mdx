@@ -1,0 +1,157 @@
+---
+id: pandas-shift
+title: "shift: Comparing to the Previous Row"
+sidebar_label: "shift"
+sidebar_position: 37
+youtube_url: ""
+---
+
+# `shift`: Comparing to the Previous Row
+
+"How does this month compare to last month?" In a spreadsheet you answer this question with a formula that you copy down a column. `shift` is the pandas method. It makes growth rates and time gaps between events possible.
+
+## The function of `shift`
+
+`shift` moves a column down by one row. Each row then holds its own value and the previous value:
+
+```python
+previous = orders["total_amount"].shift()
+with_previous = orders.assign(previous=previous)
+
+cols = ["order_id", "total_amount", "previous"]
+with_previous.head(5)[cols]
+```
+
+**Result:**
+
+|   | order_id | total_amount | previous |
+|---|----------|--------------|----------|
+| 0 | 1 | 999.0 | NaN |
+| 1 | 2 | 59.98 | 999.0 |
+| 2 | 3 | 349.0 | 59.98 |
+| 3 | 4 | 796.0 | 349.0 |
+| 4 | 5 | 49.9 | 796.0 |
+
+Row 1 now holds its own amount and the amount from row 0. No row comes before the first row, so the `previous` value there is `NaN`. Every shifted column starts with a missing value. This result is correct. Do not hide it.
+
+`shift(-1)` moves in the opposite direction. It brings the value of the *next* row up.
+
+## The change between two rows
+
+Both values are now on the same row, so the calculation is simple:
+
+```python
+amount = orders["total_amount"]
+change = (amount - amount.shift()).round(2)
+
+with_change = orders.assign(change=change)
+with_change.head(5)[["order_id", "total_amount", "change"]]
+```
+
+**Result:**
+
+|   | order_id | total_amount | change |
+|---|----------|--------------|--------|
+| 0 | 1 | 999.0 | NaN |
+| 1 | 2 | 59.98 | -939.02 |
+| 2 | 3 | 349.0 | 289.02 |
+| 3 | 4 | 796.0 | 447.0 |
+| 4 | 5 | 49.9 | -746.1 |
+
+`.diff()` is a short form of this subtraction. `.pct_change()` returns the same change as a proportion. That proportion is the meaning of "growth against last month".
+
+## How to shift inside a group
+
+This calculation shows the value of `shift`. How many days are there between the orders of one customer?
+
+```python
+# 1. Sort, so the orders of each customer are in date order.
+sort_keys = ["customer_id", "order_date"]
+sorted_orders = orders.sort_values(sort_keys)
+
+# 2. Take the previous order date inside each customer.
+by_customer = sorted_orders.groupby("customer_id")
+previous_date = by_customer["order_date"].shift()
+
+# 3. Subtract the two dates to get the gap in days.
+gap = sorted_orders["order_date"] - previous_date
+with_gap = sorted_orders.assign(days_since_last=gap.dt.days)
+
+cols = ["order_id", "order_date", "days_since_last"]
+with_gap.query("customer_id == 1")[cols]
+```
+
+**Result:**
+
+|   | order_id | order_date | days_since_last |
+|---|----------|------------|-----------------|
+| 0 | 1 | 2024-01-05 | NaN |
+| 1 | 2 | 2024-01-10 | 5.0 |
+| 6 | 7 | 2024-02-01 | 22.0 |
+| 14 | 15 | 2024-03-06 | 34.0 |
+| 21 | 22 | 2024-04-07 | 32.0 |
+| 27 | 28 | 2024-05-08 | 31.0 |
+
+Customer 1 orders about one time each month, and the gap between the orders is increasing. This pattern is a churn signal, and one `shift` found it.
+
+Note three details:
+
+- **Sort the rows first.** A shift on unsorted data compares rows with no relation.
+- **Group the rows before the shift.** The last order of one customer must not move into the first order of the next customer.
+- **A subtraction of two dates gives a duration.** `.dt.days` changes the duration into a number.
+
+## Common applications
+
+| Question | Expression |
+|----------|-----------|
+| What is the change from the previous row? | `df["v"].diff()` |
+| What is the growth rate? | `df["v"].pct_change()` |
+| How many days are there between the events? | `(df["d"] - df["d"].shift()).dt.days` |
+| Did the value change? | `df["v"] != df["v"].shift()` |
+| What is the value of the next row? | `df["v"].shift(-1)` |
+
+:::warning Group the rows before you shift them
+```python
+# Ignores the customers:
+orders["total_amount"].shift()
+
+# Keeps the customers separate:
+orders.groupby("customer_id")["total_amount"].shift()
+```
+Without the `groupby`, the first row of each customer takes the value from the last row of the previous customer. The numbers look correct, but they are incorrect. This type of error is the most dangerous type.
+:::
+
+:::note Coming from SQL?
+`shift()` is `LAG()`. `shift(-1)` is `LEAD()`. A group before the shift is `PARTITION BY`. A sort before the shift is the `ORDER BY` inside the window.
+:::
+
+## Practice
+
+Add a `change` column. It shows the difference between each order and the previous order.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# .diff() subtracts the previous row from the current row.
+change = orders["total_amount"].diff().round(2)
+
+# Attach the result as a new column.
+with_change = orders.assign(change=change)
+
+# Show the first four rows and only the useful columns.
+with_change.head(4)[["order_id", "total_amount", "change"]]
+```
+
+**Result:**
+
+|   | order_id | total_amount | change |
+|---|----------|--------------|--------|
+| 0 | 1 | 999.0 | NaN |
+| 1 | 2 | 59.98 | -939.02 |
+| 2 | 3 | 349.0 | 289.02 |
+| 3 | 4 | 796.0 | 447.0 |
+
+`.diff()` does the same work as a subtraction with `shift()`, and it is easier to read. Note that this code compares sequential *orders* from all customers. The result has a meaning only because these rows are in date order.
+
+</details>

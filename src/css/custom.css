@@ -161,8 +161,19 @@ html {
 }
 
 /* ── Content ─────────────────────────────────────────────────── */
+/* Infima bumps headings inside .markdown above its own root scale, which left
+   the page title and section headings both at 2rem. Fall back to the root
+   scale (2 / 1.5 / 1.25) so the hierarchy reads the same on every width. */
 .markdown h1:first-child {
   font-size: 2rem;
+}
+
+.markdown > h2 {
+  --ifm-h2-font-size: 1.5rem;
+}
+
+.markdown > h3 {
+  --ifm-h3-font-size: 1.25rem;
 }
 
 /* ── YouTube embed ───────────────────────────────────────────── */
@@ -261,9 +272,48 @@ body:has([class*="homepageRoot"]) {
 }
 
 .toc-promo-pin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   flex-shrink: 0;
   padding-top: 0.75rem;
   margin-top: 0.75rem;
+}
+
+/* ── Doc feedback note ───────────────────────────────────────── */
+.doc-feedback {
+  border: 1px solid rgba(224, 81, 47, 0.35);
+  border-radius: 10px;
+  padding: 0.8rem 0.85rem;
+  background: rgba(224, 81, 47, 0.07);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.doc-feedback__eyebrow {
+  margin: 0 0 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dr-accent);
+}
+
+.doc-feedback__text {
+  margin: 0 0 0.55rem;
+  color: var(--dr-ink-soft);
+}
+
+.doc-feedback__link {
+  display: inline-block;
+  color: var(--dr-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.doc-feedback__link:hover {
+  color: var(--dr-accent-strong);
+  text-decoration: underline;
 }
 
 /* ── Course promo banner ─────────────────────────────────────── */

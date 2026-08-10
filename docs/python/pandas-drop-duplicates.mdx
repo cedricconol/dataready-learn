@@ -1,0 +1,138 @@
+---
+id: pandas-drop-duplicates
+title: "drop_duplicates: Removing Duplicates"
+sidebar_label: "drop_duplicates"
+sidebar_position: 16
+youtube_url: ""
+---
+
+# `drop_duplicates`: Removing Duplicates
+
+Duplicate rows are a very common cause of an incorrect report. An export ran two times, a join multiplied the rows, or a user sent a form two times. Two methods help you. Use the first method to examine the data, and the second method to clean it.
+
+## Examine: which distinct values are in this column?
+
+```python
+customers["country"].unique()
+```
+
+**Result:**
+
+```text
+<StringArray>
+['USA', 'UK', 'Australia', 'Canada', 'South Korea', 'Philippines', 'Japan']
+Length: 7, dtype: str
+```
+
+The column holds seven distinct countries. `unique()` returns the values as an array. The order is the order of the first occurrence of each value. To count the values, use this method:
+
+```python
+customers["country"].nunique()
+```
+
+**Result:** `7`
+
+Use these two methods first on every new text column. They show you the number of values. `status` can have 3 correct values, or it can have 47 values with errors.
+
+## `drop_duplicates` on a column
+
+```python
+customers["country"].drop_duplicates()
+```
+
+**Result:**
+
+|   | country |
+|---|---------|
+| 0 | USA |
+| 1 | UK |
+| 2 | Australia |
+| 3 | Canada |
+| 6 | South Korea |
+| 7 | Philippines |
+| 8 | Japan |
+
+These are the same seven values as `unique()`. But pandas returns a Series with the original index, so you can find the source row of each value. The result does not contain rows 4 and 5, because those countries occur at an earlier position.
+
+## `drop_duplicates` on a full table
+
+On a DataFrame with no arguments, `drop_duplicates` keeps only the rows that are distinct in every column. The `subset` argument is more useful. It sets the columns that define a duplicate:
+
+```python
+orders.drop_duplicates(subset=["customer_id"]).head()
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 2 | 3 | 2 | 3 | 2024-01-15 | 1 | 349.0 | completed |
+| 3 | 4 | 3 | 4 | 2024-01-18 | 4 | 796.0 | completed |
+| 4 | 5 | 4 | 5 | 2024-01-22 | 10 | 49.9 | NaN |
+| 7 | 8 | 5 | 2 | 2024-02-04 | 3 | 89.97 | completed |
+
+The result has one row for each customer: the **first** order of that customer. The data is in date order, and `keep="first"` is the default.
+
+Use `keep="last"` to get the most recent order of each customer:
+
+```python
+orders.drop_duplicates(
+    subset=["customer_id"], keep="last"
+).head()
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 22 | 23 | 4 | 6 | 2024-04-12 | 2 | 498.0 | pending |
+| 23 | 24 | 5 | 5 | 2024-04-16 | 15 | 74.85 | completed |
+| 24 | 25 | 3 | 2 | 2024-04-21 | 1 | 29.99 | completed |
+| 25 | 26 | 7 | 4 | 2024-04-26 | 3 | 597.0 | completed |
+| 26 | 27 | 2 | 5 | 2024-05-02 | 8 | 39.92 | completed |
+
+The "first row of each group" method is very useful. Use it to find the first order, the latest price, or the most recent status.
+
+## How to check for duplicate combinations
+
+```python
+pairs = orders[["customer_id", "product_id"]]
+pairs.drop_duplicates().shape
+```
+
+**Result:** `(29, 2)`
+
+The data has 30 orders but only 29 distinct customer-and-product pairs. One customer therefore ordered the same product two times. Compare the row count before `drop_duplicates` and after `drop_duplicates`. This comparison is the fastest check for duplicates.
+
+:::warning `keep="first"` uses the current row order
+"First" means the first row in the current DataFrame. It does not mean the first row by date. If the rows are not in the order that you expect, sort the rows first:
+
+```python
+by_date = orders.sort_values("order_date")
+by_date.drop_duplicates(subset=["customer_id"])
+```
+:::
+
+:::note Coming from SQL?
+`unique()` and `drop_duplicates()` are `DISTINCT`. `drop_duplicates(subset=[...], keep="last")` is closer to `DISTINCT ON` in Postgres, or to a window function with `ROW_NUMBER()`.
+:::
+
+## Practice
+
+How many distinct products did customers order?
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# nunique() counts the distinct values in the column.
+# Use it when you want the number, not the values.
+orders["product_id"].nunique()
+```
+
+**Result:** `6`
+
+Customers ordered all six products in the catalogue one or more times. If the result were 5, your next question is "which product did no customer order?".
+
+</details>

@@ -1,0 +1,138 @@
+---
+id: pandas-concat
+title: "concat: Stacking DataFrames"
+sidebar_label: "concat"
+sidebar_position: 21
+youtube_url: ""
+---
+
+# `concat`: Stacking DataFrames
+
+`merge` joins two tables side by side on a key. `concat` puts one table on top of another table. Use `concat` when you have the files January.csv to December.csv and you need one table.
+
+## How to stack rows
+
+```python
+pd.concat([orders.head(2), orders.tail(2)])
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed |
+| 28 | 29 | 8 | 1 | 2024-05-14 | 1 | NaN | completed |
+| 29 | 30 | 6 | 6 | 2024-05-20 | 1 | 249.0 | completed |
+
+Put the DataFrames in a **list**, inside square brackets. Pandas matches the columns by name and not by position. The two parts can therefore have different column orders.
+
+Examine the index: 0, 1, 28, 29. Each part kept its original labels, so the result has missing numbers. Usually you want a new count:
+
+```python
+parts = [orders.head(2), orders.tail(2)]
+pd.concat(parts, ignore_index=True)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed |
+| 2 | 29 | 8 | 1 | 2024-05-14 | 1 | NaN | completed |
+| 3 | 30 | 6 | 6 | 2024-05-20 | 1 | 249.0 | completed |
+
+`ignore_index=True` numbers the rows again from 0. Use it when the old row labels have no meaning.
+
+## The usual application
+
+You rarely stack a table on itself. Usually you stack files:
+
+```python
+jan = pd.read_csv("january.csv")
+feb = pd.read_csv("february.csv")
+mar = pd.read_csv("march.csv")
+
+quarter = pd.concat([jan, feb, mar], ignore_index=True)
+```
+
+Three months become one DataFrame and one analysis. This task is one of the most common pandas tasks for an analyst, and it needs one line of code.
+
+## When the columns do not match
+
+```python
+full = products.head(2)
+partial = products[["name", "price"]].tail(2)
+
+pd.concat([full, partial])
+```
+
+**Result:**
+
+|   | product_id | name | category | price |
+|---|-----------|------|----------|-------|
+| 0 | 1.0 | Laptop | Electronics | 999.0 |
+| 1 | 2.0 | Mouse | Electronics | 29.99 |
+| 4 | NaN | Notebook | NaN | 4.99 |
+| 5 | NaN | Monitor | NaN | 249.0 |
+
+The second part has no `product_id` column and no `category` column. Pandas therefore put `NaN` in those cells, and it showed no error. This behavior is convenient, but it is also a risk. A spelling error in a column name in one file creates an extra column that is almost empty, and pandas shows no error. After you stack files from different sources, check `.columns` and `.isna().sum()`.
+
+## How to stack side by side
+
+`axis=1` joins the columns instead of the rows:
+
+```python
+parts = [products[["name"]], products[["price"]]]
+pd.concat(parts, axis=1).head(3)
+```
+
+**Result:**
+
+|   | name | price |
+|---|------|-------|
+| 0 | Laptop | 999.0 |
+| 1 | Mouse | 29.99 |
+| 2 | Desk | 349.0 |
+
+Pandas matches the rows by **index label** and not by a key. This method is fast, but it is also dangerous. If the two parts are not aligned, pandas joins the incorrect rows and shows no warning. If the tables have a key, use `merge`.
+
+## `concat` or `merge`?
+
+| Your data | Method |
+|----------|------|
+| The same columns and more rows (monthly files) | `concat` |
+| The same rows and more columns (matched by a key) | `merge` |
+
+:::note Coming from SQL?
+`pd.concat([a, b])` is `UNION ALL`. For the behavior of `UNION`, which removes duplicates, add one step: `pd.concat([a, b]).drop_duplicates()`.
+:::
+
+## Practice
+
+Stack the first two products and the last two products into one DataFrame. Give the result a new index.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# concat takes a list of DataFrames, so put the two parts
+# in square brackets.
+parts = [products.head(2), products.tail(2)]
+
+# ignore_index=True numbers the result again from 0, instead
+# of keeping the original labels 0, 1, 4, 5.
+pd.concat(parts, ignore_index=True)
+```
+
+**Result:**
+
+|   | product_id | name | category | price |
+|---|-----------|------|----------|-------|
+| 0 | 1 | Laptop | Electronics | 999.0 |
+| 1 | 2 | Mouse | Electronics | 29.99 |
+| 2 | 5 | Notebook | Stationery | 4.99 |
+| 3 | 6 | Monitor | Electronics | 249.0 |
+
+</details>

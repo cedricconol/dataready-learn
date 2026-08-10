@@ -1,0 +1,173 @@
+---
+id: pandas-pivot-table
+title: "pivot_table: Long to Wide"
+sidebar_label: "pivot_table"
+sidebar_position: 32
+youtube_url: ""
+---
+
+# `pivot_table`: Long to Wide
+
+If you built a pivot table in a spreadsheet, you know this method. `pivot_table` changes a long list of records into a grid. One variable goes down the side, a second variable goes across the top, and the numbers fill the center.
+
+## Preparation
+
+This example needs a `month` column and the product categories. First merge the tables and create the column:
+
+```python
+sales = (
+    orders
+    .merge(products, on="product_id")
+    .assign(month=orders["order_date"].dt.strftime("%Y-%m"))
+)
+cols = ["order_id", "category", "month", "total_amount"]
+sales[cols].head(5)
+```
+
+**Result:**
+
+|   | order_id | category | month | total_amount |
+|---|----------|----------|-------|--------------|
+| 0 | 1 | Electronics | 2024-01 | 999.0 |
+| 1 | 2 | Electronics | 2024-01 | 59.98 |
+| 2 | 3 | Furniture | 2024-01 | 349.0 |
+| 3 | 4 | Furniture | 2024-01 | 796.0 |
+| 4 | 5 | Stationery | 2024-01 | 49.9 |
+
+`.dt.strftime("%Y-%m")` takes the year and the month from a date column as text. [Datetime Handling](/python/pandas-datetime) teaches more about the `.dt` accessor.
+
+This shape is the **long** format: one row for each record, and one value on each row. Systems store data in this shape. But this shape is difficult to read.
+
+## The pivot
+
+```python
+sales.pivot_table(
+    index="category",
+    columns="month",
+    values="total_amount",
+    aggfunc="sum",
+)
+```
+
+**Result:**
+
+| category | 2024-01 | 2024-02 | 2024-03 | 2024-04 | 2024-05 |
+|----------|---------|---------|---------|---------|---------|
+| Electronics | 1556.98 | 2336.97 | 1427.94 | 1526.99 | 249.0 |
+| Furniture | 1145.0 | 747.0 | 548.0 | 946.0 | 199.0 |
+| Stationery | 49.9 | 24.95 | 99.8 | 74.85 | 39.92 |
+
+This grid is a report. It has four arguments, and each argument answers one question:
+
+| Argument | Question |
+|----------|----------|
+| `index` | Which variable goes down the side? |
+| `columns` | Which variable goes across the top? |
+| `values` | Which number fills the cells? |
+| `aggfunc` | How does pandas combine more than one value in one cell? |
+
+`aggfunc` is very important. Each cell here holds several orders, and `"sum"` adds them. You can also use `"mean"`, `"count"`, `"max"`, or any other value that `agg` accepts.
+
+## Empty cells
+
+```python
+sales.pivot_table(
+    index="category",
+    columns="status",
+    values="total_amount",
+    aggfunc="mean",
+).round(2)
+```
+
+**Result:**
+
+| category | cancelled | completed | pending |
+|----------|-----------|-----------|---------|
+| Electronics | NaN | 461.74 | 748.5 |
+| Furniture | 349.0 | 412.43 | NaN |
+| Stationery | NaN | 59.88 | NaN |
+
+`NaN` means that no row matched that combination. No customer cancelled an Electronics order.
+
+Your question decides between an empty cell and a zero. For an average, `NaN` is the correct value, because there is no average of zero values. For a revenue total, `fill_value=0` is usually easier to read:
+
+```python
+sales.pivot_table(
+    index="category",
+    columns="month",
+    values="total_amount",
+    aggfunc="sum",
+    fill_value=0,
+)
+```
+
+## More than one aggregation
+
+```python
+sales.pivot_table(
+    index="category",
+    values="total_amount",
+    aggfunc=["sum", "count"],
+)
+```
+
+**Result:**
+
+| category | ('sum', 'total_amount') | ('count', 'total_amount') |
+|----------|------------------------|---------------------------|
+| Electronics | 7097.88 | 15 |
+| Furniture | 3585.0 | 9 |
+| Stationery | 289.42 | 5 |
+
+Without a `columns` argument, this call gives a grouped summary. The column labels are pairs of values. This is a MultiIndex on the columns. It is easy to read here, but it is difficult to use in later steps. For this reason, use `groupby().agg()` with named outputs when you do not build a grid.
+
+## `pivot_table` or `groupby`?
+
+The two methods do similar work. Use this rule:
+
+| Your goal | Method |
+|------|------|
+| A grid for a person to read | `pivot_table` |
+| A tidy table for more analysis | `groupby().agg()` |
+
+The wide format is for reading. The long format is for calculation.
+
+:::warning `pivot` and `pivot_table` are different
+`df.pivot()` also exists. It does no aggregation, and it raises an error if two rows go into the same cell. `pivot_table` aggregates the values, and it is the correct method in almost every case.
+:::
+
+:::note Coming from SQL?
+Most SQL dialects have no simple pivot. The usual solution is a `GROUP BY` with a `CASE WHEN` for each column, written manually for each value. Pandas is much better here. This is a good reason to take the data out of the warehouse and complete the work in Python.
+:::
+
+## Practice
+
+Build a grid of order counts. Put `category` down the side and `status` across the top.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# The category lives in products, so merge it in first.
+sales = orders.merge(products, on="product_id")
+
+sales.pivot_table(
+    index="category",       # goes down the side
+    columns="status",       # goes across the top
+    values="order_id",      # count IDs, not amounts
+    aggfunc="count",
+    fill_value=0,           # write 0, not NaN, when empty
+)
+```
+
+**Result:**
+
+| category | cancelled | completed | pending |
+|----------|-----------|-----------|---------|
+| Electronics | 0 | 13 | 2 |
+| Furniture | 2 | 7 | 0 |
+| Stationery | 0 | 4 | 0 |
+
+Count `order_id` and not `total_amount`. This choice is important here. One completed Electronics order has no amount. A count of `total_amount` therefore returns 12 and not 13.
+
+</details>

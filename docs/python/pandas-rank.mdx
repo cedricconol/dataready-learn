@@ -1,0 +1,159 @@
+---
+id: pandas-rank
+title: "rank: Ranking Rows"
+sidebar_label: "rank"
+sidebar_position: 35
+youtube_url: ""
+---
+
+# `rank`: Ranking Rows
+
+A sort puts the rows in order. A rank gives each row a number for its position. You can keep that number as a column, filter on it, or compare it between groups.
+
+## The basic rank
+
+```python
+price_rank = products["price"].rank(ascending=False)
+products.assign(price_rank=price_rank)
+```
+
+**Result:**
+
+|   | product_id | name | category | price | price_rank |
+|---|-----------|------|----------|-------|------------|
+| 0 | 1 | Laptop | Electronics | 999.0 | 1.0 |
+| 1 | 2 | Mouse | Electronics | 29.99 | 5.0 |
+| 2 | 3 | Desk | Furniture | 349.0 | 2.0 |
+| 3 | 4 | Chair | Furniture | 199.0 | 4.0 |
+| 4 | 5 | Notebook | Stationery | 4.99 | 6.0 |
+| 5 | 6 | Monitor | Electronics | 249.0 | 3.0 |
+
+`ascending=False` gives rank 1 to the largest value. This is the usual meaning of "top ranked". Without this argument, the smallest value gets rank 1.
+
+The rows stay in their original order. This is the difference from a sort. A rank adds information, and it moves no rows.
+
+## Equal values
+
+Five orders in this data have the value 999. Which rank do they get?
+
+```python
+rank = orders["total_amount"].rank(
+    ascending=False, method="min"
+)
+ranked = orders.assign(rank=rank)
+
+cols = ["order_id", "total_amount", "rank"]
+ranked.nsmallest(5, "rank")[cols]
+```
+
+**Result:**
+
+|   | order_id | total_amount | rank |
+|---|----------|--------------|------|
+| 0 | 1 | 999.0 | 1.0 |
+| 8 | 9 | 999.0 | 1.0 |
+| 10 | 11 | 999.0 | 1.0 |
+| 17 | 18 | 999.0 | 1.0 |
+| 21 | 22 | 999.0 | 1.0 |
+
+All five orders share the first position. The `method` argument sets the rule:
+
+| `method` | The five equal values get | The next value gets |
+|----------|-------------------------------|-----------------|
+| `"average"` (default) | 3.0 each | 6 |
+| `"min"` | 1.0 each | 6 |
+| `"dense"` | 1.0 each | 2 |
+| `"first"` | 1, 2, 3, 4, 5 in row order | 6 |
+
+`"min"` gives the result of a sport competition: five winners, then sixth place. `"dense"` leaves no gaps, so it is correct for price bands. `"first"` uses the row order to separate the equal values, so it selects exactly one winner.
+
+The default, `"average"`, gives 3.0 to each equal row. That is the middle of the five positions. This result is statistically correct, but a business report rarely wants it. Always set the `method` argument yourself.
+
+## How to rank inside a group
+
+`rank` is much better than a sort here. Which order of each customer was the largest?
+
+```python
+by_customer = orders.groupby("customer_id")
+rank = by_customer["total_amount"].rank(
+    ascending=False, method="dense"
+)
+ranked = orders.assign(rank_in_customer=rank)
+
+cols = [
+    "order_id",
+    "customer_id",
+    "total_amount",
+    "rank_in_customer",
+]
+ranked.query("customer_id == 1")[cols]
+```
+
+**Result:**
+
+|   | order_id | customer_id | total_amount | rank_in_customer |
+|---|----------|-------------|--------------|------------------|
+| 0 | 1 | 1 | 999.0 | 1.0 |
+| 1 | 2 | 1 | 59.98 | 5.0 |
+| 6 | 7 | 1 | 349.0 | 2.0 |
+| 14 | 15 | 1 | 249.0 | 3.0 |
+| 21 | 22 | 1 | 999.0 | 1.0 |
+| 27 | 28 | 1 | 199.0 | 4.0 |
+
+Each customer gets a separate ranking, and each ranking starts at 1. The two orders of 999 for customer 1 share first place, because the method is `"dense"`.
+
+Add a filter, and you have a useful query:
+
+```python
+by_customer = orders.groupby("customer_id")
+r = by_customer["total_amount"].rank(
+    ascending=False, method="first"
+)
+
+ranked = orders.assign(r=r)
+ranked[ranked["r"] <= 2]
+```
+
+This code returns the two largest orders of each customer. It solves the standard "top N in each group" problem.
+
+:::tip A rank on a date instead of a value
+`rank` also works on dates. A rank on `order_date` inside each customer numbers the orders by time. Use this method to find first orders, second orders, and repeat purchases.
+:::
+
+:::note Coming from SQL?
+`rank(method="min")` is `RANK()`. `method="dense"` is `DENSE_RANK()`. `method="first"` is `ROW_NUMBER()`. A group before the rank is `PARTITION BY`.
+:::
+
+## Practice
+
+Number the orders of customer 3 by date. Put the oldest order first.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# Rank inside each customer, not across the whole table.
+by_customer = orders.groupby("customer_id")
+
+# method="first" breaks ties by row order.
+rank = by_customer["order_date"].rank(method="first")
+
+# Attach the rank, then keep only customer 3.
+ranked = orders.assign(rank=rank)
+
+cols = ["order_id", "customer_id", "order_date", "rank"]
+ranked.query("customer_id == 3")[cols]
+```
+
+**Result:**
+
+|   | order_id | customer_id | order_date | rank |
+|---|----------|-------------|------------|------|
+| 3 | 4 | 3 | 2024-01-18 | 1.0 |
+| 8 | 9 | 3 | 2024-02-09 | 2.0 |
+| 16 | 17 | 3 | 2024-03-15 | 3.0 |
+| 24 | 25 | 3 | 2024-04-21 | 4.0 |
+
+Customer 3 made four orders. The next lesson teaches `cumcount`. That method numbers the rows inside a group, and it needs no rank calculation.
+
+</details>

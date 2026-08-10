@@ -1,0 +1,197 @@
+---
+id: python-functions-loops
+title: "Functions and Loops, Briefly"
+sidebar_label: "Functions & Loops"
+sidebar_position: 6
+youtube_url: ""
+---
+
+import FunctionDiagram from '@site/src/components/FunctionDiagram';
+
+# Functions and Loops, Briefly
+
+This is the last lesson before pandas. You need functions and loops for two reasons. First, you will read them in code that other people write. Second, a later lesson teaches you when a loop is the *wrong* tool. Both topics are short.
+
+## Functions
+
+A function is a named piece of code. It takes inputs and returns a result. Think of a box: values go into one side, the box does the work, and an answer comes out of the other side.
+
+<FunctionDiagram
+  name="function"
+  inputs={["input"]}
+  output="output"
+  showLabels={false}
+  caption="Every function has this shape."
+/>
+
+Here is that box in Python. It takes a price and a quantity. It returns the cost of that line of an order:
+
+```python
+def line_total(price, quantity):
+    result = price * quantity
+    return result
+
+line_total(4.99, 20)
+```
+
+**Result:** `99.80000000000001`
+
+Here is the same box with your names in it:
+
+<FunctionDiagram
+  name="line_total"
+  inputs={["price = 4.99", "quantity = 20"]}
+  output="99.80000000000001"
+/>
+
+Read the code part by part:
+
+- **`def`** is the keyword for "define a function". Python runs no calculation at this point. You write a recipe. You do not cook.
+- **`line_total`** is the name of the function. You choose this name, and you use it later to call the function. The naming rules are the same as the rules for variables: lowercase letters, with underscores between the words.
+- **`(price, quantity)`** are the **inputs**. The correct term is *parameters*. They are names for values that do not exist yet. In the function body, `price` and `quantity` mean "the values that the caller supplies".
+- **The colon** ends the first line and shows that a body comes next.
+- **The indented lines below `def`** are the body. The body does the work on the inputs. Here it multiplies them and stores the answer in `result`. `result` is an ordinary variable, but it exists only inside the function. Python removes it when the function ends.
+- **`return`** sets the value that the function gives to the caller. `return result` means "the answer to this call is the value in `result`". Without a `return`, the function does the work and returns nothing.
+
+The last line, `line_total(4.99, 20)`, is the **call**. At this point Python runs the recipe. `4.99` goes into `price`. `20` goes into `quantity`. The body runs, and the function returns `99.80000000000001`.
+
+You build the box one time, then you use it many times. The same box takes different numbers and returns a different number:
+
+<FunctionDiagram
+  name="line_total"
+  inputs={["price = 999.00", "quantity = 2"]}
+  output="1998.0"
+/>
+
+<FunctionDiagram
+  name="line_total"
+  inputs={["price = 29.99", "quantity = 3"]}
+  output="89.97"
+  caption="You write line_total once. Every call after that is one line."
+/>
+
+The output is not fixed. The inputs set the output. This is the difference between a function and a variable. A variable holds one answer. A function produces an answer for any inputs that you supply.
+
+The intermediate variable is optional. You can write `return price * quantity` and get the same answer. But give the middle step a name when the calculation has more than one stage:
+
+```python
+def line_total_with_tax(price, quantity):
+    subtotal = price * quantity
+    tax = subtotal * 0.12
+    return subtotal + tax
+
+line_total_with_tax(4.99, 20)
+```
+
+**Result:** `111.77600000000001`
+
+This function has three steps and one returned value. The reader can follow the calculation line by line. The reader does not have to read one long expression.
+
+Indentation in Python is not decoration. Python uses the indentation to find the lines that belong to the function. Use four spaces. Pandas code uses the same convention. If the indentation is incorrect, Python shows an `IndentationError`.
+
+## Loops
+
+A `for` loop repeats the work one time for each item:
+
+```python
+total = 0
+for amount in [999.0, 59.98, 349.0]:
+    total = total + amount
+print(total)
+```
+
+**Output:**
+
+```text
+1407.98
+```
+
+Read this code as: for each amount in the list, add the amount to the running total.
+
+## `if` statements
+
+```python
+amount = 999.0
+if amount > 500:
+    print("big order")
+else:
+    print("small order")
+```
+
+**Output:**
+
+```text
+big order
+```
+
+The structure is the same as before: a first line that ends in a colon, then an indented body. `elif` adds more branches between the `if` and the `else`.
+
+## The habit to change early
+
+Here is the same loop method applied to real data.
+
+`orders` is one of the three tables in every editor on this site. It has 30 rows, one row for each order. `orders["total_amount"]` selects one column, the money value of each order. It returns a Series: an ordered set of 30 numbers that starts with these values
+
+```text
+999.00, 59.98, 349.00, 796.00, 49.90, ...
+```
+
+The Series has one missing value near the end, because order 29 has no recorded amount.
+
+When you write `for amount in orders["total_amount"]`, Python reads the numbers one at a time. On the first pass, `amount` is `999.00`. On the second pass, `amount` is `59.98`. This continues for all 30 values. This code adds every order total:
+
+```python
+total = 0
+for amount in orders["total_amount"]:
+    # Skip the one missing value.
+    if not pd.isna(amount):
+        total = total + amount
+print(total)
+```
+
+**Output:**
+
+```text
+10972.300000000001
+```
+
+`pd.isna(amount)` asks "is this value missing?". It returns `True` or `False`. The `if` statement therefore ignores the orders that have an empty amount.
+
+Here is the same calculation in pandas:
+
+```python
+orders["total_amount"].sum()
+```
+
+**Result:** `10972.300000000001`
+
+The result is the same number. The loop needs five lines, and pandas needs one line. Pandas also ignores the missing value automatically. With 30 rows you cannot see a difference in speed. With one million rows the loop takes seconds, and the pandas code takes milliseconds. `.sum()` sends the work to compiled code, and that code adds the full column in one pass. Python does not process one value at a time.
+
+This is the largest change in habit between general programming and data work: **do not loop over rows in pandas.** [Vectorization vs Loops](/python/pandas-vectorization) gives the full explanation. For now, remember the pattern. From the next lesson, every example uses the one-line method.
+
+:::note Why not `amount is None`?
+`is None` is the usual Python test for a missing value, but it does not work on a numeric column. Pandas stores a missing number as `nan` and not as `None`. `is None` therefore finds nothing, and the total is still `nan`. `pd.isna()` finds both `nan` and `None`, so always use `pd.isna()` with data. [Missing Data](/python/pandas-missing-data) gives more detail.
+:::
+
+## Practice
+
+Write a function with the name `with_tax`. The function takes an amount and returns the amount multiplied by 1.12. Then call the function with `999.0`.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# def starts a function. `amount` is the input name.
+def with_tax(amount):
+    # return sends the value back to the caller.
+    return amount * 1.12
+
+# Call the function with a real value.
+with_tax(999.0)
+```
+
+**Result:** `1118.88`
+
+This type of function is useful in pandas. You can apply the same calculation to a full column with `orders["total_amount"] * 1.12`. You do not need a loop.
+
+</details>

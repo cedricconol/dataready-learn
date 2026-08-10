@@ -1,0 +1,192 @@
+---
+id: pandas-datetime
+title: "Datetime Handling"
+sidebar_label: "Datetimes"
+sidebar_position: 42
+youtube_url: ""
+---
+
+# Datetime Handling
+
+Most analysis uses dates: revenue by month, days after signup, or activity by weekday. All of this work needs pandas to know that a column holds dates and not text.
+
+## How to convert text into dates
+
+```python
+raw = pd.read_csv("orders.csv")
+raw["order_date"] = pd.to_datetime(raw["order_date"])
+raw["order_date"].dtype
+```
+
+**Result:** `dtype('<M8[us]')`
+
+`<M8[us]` is the NumPy code for "datetime with microsecond resolution". `datetime64[us]` is the readable name, and `info()` shows that name.
+
+Microsecond resolution is new in pandas 3.0. Older versions stored every date in nanoseconds. Those versions could not hold a date before 1678 or after 2262. Historical dates now work correctly.
+
+There are two methods:
+
+```python
+# During the load:
+pd.read_csv("orders.csv", parse_dates=["order_date"])
+
+# After the load:
+df["order_date"] = pd.to_datetime(df["order_date"])
+```
+
+For an unusual format, give pandas the format: `pd.to_datetime(df["d"], format="%d/%m/%Y")`. This argument also prevents confusion between day-month-year order and month-day-year order. That confusion corrupts the first twelve days of every month, and pandas shows no error.
+
+## The `.dt` accessor
+
+When a column holds real dates, `.dt` gives you the parts of each date:
+
+```python
+date = orders["order_date"]
+
+parts = orders.assign(
+    year=date.dt.year,
+    month=date.dt.month,
+    day_name=date.dt.day_name(),
+)
+
+cols = [
+    "order_id",
+    "order_date",
+    "year",
+    "month",
+    "day_name",
+]
+parts.head(4)[cols]
+```
+
+**Result:**
+
+|   | order_id | order_date | year | month | day_name |
+|---|----------|------------|------|-------|----------|
+| 0 | 1 | 2024-01-05 | 2024 | 1 | Friday |
+| 1 | 2 | 2024-01-10 | 2024 | 1 | Wednesday |
+| 2 | 3 | 2024-01-15 | 2024 | 1 | Monday |
+| 3 | 4 | 2024-01-18 | 2024 | 1 | Thursday |
+
+These attributes are the most useful:
+
+| Attribute | Result |
+|-----------|-------|
+| `.dt.year`, `.dt.month`, `.dt.day` | Numbers |
+| `.dt.day_name()`, `.dt.month_name()` | Names |
+| `.dt.quarter` | A value from 1 to 4 |
+| `.dt.dayofweek` | 0 for Monday to 6 for Sunday |
+| `.dt.date` | The date without the time |
+| `.dt.to_period("M")` | The month as one value |
+| `.dt.strftime("%Y-%m")` | The date as formatted text |
+
+## How to group by month
+
+```python
+month = orders["order_date"].dt.to_period("M")
+by_month = orders.assign(month=month).groupby("month")
+
+by_month["total_amount"].sum().round(2)
+```
+
+**Result:**
+
+| month | total_amount |
+|-------|--------------|
+| 2024-01 | 2751.88 |
+| 2024-02 | 3108.92 |
+| 2024-03 | 2075.74 |
+| 2024-04 | 2547.84 |
+| 2024-05 | 487.92 |
+
+`to_period("M")` changes every date in a month into that month. This value is the correct group key. `strftime("%Y-%m")` gives the same groups as text. But the period value sorts correctly by time, and it formats itself well.
+
+## Calculations with dates
+
+A subtraction of two dates gives a duration. `.dt.days` changes the duration into a number:
+
+```python
+joined = orders.merge(customers, on="customer_id")
+
+age = joined["order_date"] - joined["signup_date"]
+joined = joined.assign(days_since_signup=age.dt.days)
+
+cols = [
+    "order_id",
+    "order_date",
+    "signup_date",
+    "days_since_signup",
+]
+joined.head(4)[cols]
+```
+
+**Result:**
+
+|   | order_id | order_date | signup_date | days_since_signup |
+|---|----------|------------|-------------|-------------------|
+| 0 | 1 | 2024-01-05 | 2023-11-02 | 64 |
+| 1 | 2 | 2024-01-10 | 2023-11-02 | 69 |
+| 2 | 3 | 2024-01-15 | 2023-12-15 | 31 |
+| 3 | 4 | 2024-01-18 | 2024-01-08 | 10 |
+
+"The days from signup to the first purchase" is one of the most useful numbers in a customer analysis, and one subtraction gives it to you.
+
+## How to filter by date
+
+```python
+date = orders["order_date"]
+
+# From one date forward:
+orders[date >= "2024-03-01"]
+
+# A date range:
+orders[date.between("2024-02-01", "2024-02-29")]
+
+# Every March:
+orders[date.dt.month == 3]
+```
+
+You can compare a date column to a text date, because pandas converts the text for you.
+
+:::warning A date column that holds text
+This problem is the most common date error. Every method above fails on a text column. The usual message is `AttributeError: Can only use .dt accessor with datetimelike values`. When a date operation fails, check `df.dtypes` first.
+:::
+
+:::note Coming from SQL?
+`.dt.year` is `EXTRACT(YEAR FROM d)`. `.dt.to_period("M")` is `DATE_TRUNC('month', d)`. A subtraction of two dates is `DATEDIFF`. The `resample` method from the [rolling lesson](/python/pandas-rolling) has no simple SQL equivalent. It is a good reason to do time-series work in pandas.
+:::
+
+## Practice
+
+Which weekday has the most orders?
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# .dt.day_name() changes each date into a weekday name.
+weekday = orders["order_date"].dt.day_name()
+
+# Keep it as a column called "weekday", so the result is
+# labelled with that name and not with "order_date".
+named = orders.assign(weekday=weekday)
+
+# value_counts() counts each name and sorts by the count.
+named["weekday"].value_counts()
+```
+
+**Result:**
+
+| weekday | count |
+|---------|-------|
+| Friday | 7 |
+| Sunday | 6 |
+| Tuesday | 5 |
+| Wednesday | 4 |
+| Monday | 4 |
+| Thursday | 3 |
+| Saturday | 1 |
+
+Friday is first with seven orders. But this data has only 30 orders, so the result is noise and not a finding. Always check the quantity of data behind a pattern before you report the pattern.
+
+</details>

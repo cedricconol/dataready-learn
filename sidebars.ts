@@ -141,6 +141,162 @@ const sidebars: SidebarsConfig = {
     },
   ],
 
+  pythonSidebar: [
+    {
+      type: "doc",
+      id: "python/python",
+      label: "Overview",
+    },
+    {
+      type: "category",
+      label: "Lessons",
+      collapsed: false,
+      items: [
+        {
+          type: "category",
+          label: "Getting Started",
+          collapsed: false,
+          items: [
+            "python/intro-to-python",
+            "python/python-first-code",
+            "python/python-variables",
+            "python/python-lists-dicts",
+            "python/python-functions-loops",
+          ],
+        },
+        {
+          type: "category",
+          label: "Pandas Fundamentals",
+          collapsed: false,
+          items: [
+            "python/pandas-series-dataframe",
+            "python/pandas-read-csv",
+            "python/pandas-loc-iloc",
+          ],
+        },
+        {
+          type: "category",
+          label: "Filtering Techniques",
+          collapsed: false,
+          items: [
+            "python/pandas-boolean-filtering",
+            "python/pandas-isin",
+            "python/pandas-between",
+            "python/pandas-str-contains",
+            "python/pandas-isna",
+          ],
+        },
+        {
+          type: "category",
+          label: "Shaping Results",
+          collapsed: false,
+          items: [
+            "python/pandas-rename-assign",
+            "python/pandas-drop-duplicates",
+            "python/pandas-sort-values",
+            "python/pandas-head-nlargest",
+          ],
+        },
+        {
+          type: "category",
+          label: "Combining Data",
+          collapsed: false,
+          items: [
+            "python/pandas-merge",
+            "python/pandas-merge-how",
+            "python/pandas-concat",
+          ],
+        },
+        {
+          type: "category",
+          label: "Aggregating Data",
+          collapsed: false,
+          items: [
+            "python/pandas-groupby",
+            "python/pandas-agg",
+            "python/pandas-filter-groups",
+          ],
+        },
+        {
+          type: "category",
+          label: "How Pandas Thinks",
+          collapsed: false,
+          items: [
+            "python/pandas-method-chaining",
+            "python/pandas-vectorization",
+            "python/pandas-copy-on-write",
+          ],
+        },
+        {
+          type: "category",
+          label: "Writing Cleaner Code",
+          collapsed: false,
+          items: [
+            "python/pandas-apply-lambda",
+            "python/pandas-np-where",
+            "python/pandas-col",
+            "python/pandas-pipe",
+          ],
+        },
+        {
+          type: "category",
+          label: "Reshaping Data",
+          collapsed: false,
+          items: [
+            "python/pandas-pivot-table",
+            "python/pandas-melt",
+            "python/pandas-stack-unstack",
+          ],
+        },
+        {
+          type: "category",
+          label: "Rolling, Ranking & Time",
+          collapsed: false,
+          items: [
+            "python/pandas-rank",
+            "python/pandas-cumsum",
+            "python/pandas-shift",
+            "python/pandas-rolling",
+            "python/pandas-expanding",
+          ],
+        },
+        {
+          type: "category",
+          label: "Data Cleaning & Dtypes",
+          collapsed: false,
+          items: [
+            "python/pandas-missing-data",
+            "python/pandas-string-dtype",
+            "python/pandas-datetime",
+          ],
+        },
+        {
+          type: "category",
+          label: "Choosing Your Tool",
+          collapsed: false,
+          items: ["python/pandas-vs-sql"],
+        },
+      ],
+    },
+    {
+      type: "category",
+      label: "Practice Exams",
+      collapsed: false,
+      items: [
+        "python/python-exam-01-reading-selecting",
+        "python/python-exam-02-filtering",
+        "python/python-exam-03-shaping",
+        "python/python-exam-04-combining",
+        "python/python-exam-05-aggregation",
+        "python/python-exam-06-vectorization",
+        "python/python-exam-07-custom-columns",
+        "python/python-exam-08-reshaping",
+        "python/python-exam-09-rolling-time",
+        "python/python-exam-10-mixed",
+      ],
+    },
+  ],
+
   terminalSidebar: [
     {
       type: "doc",

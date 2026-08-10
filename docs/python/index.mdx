@@ -1,0 +1,181 @@
+---
+id: python
+title: Python
+sidebar_label: Overview
+sidebar_position: 1
+slug: /python
+---
+
+# Python
+
+## Why does this track exist?
+
+A colleague sends you a CSV file with 300,000 rows of sales records. Excel opens the file, but then it becomes very slow. You build a pivot table. The pivot table answers half of your question. Then your manager asks a question that a pivot table cannot answer: "For each customer, what changed between the first order and the second order?"
+
+**Python and the pandas library do this work.** Analysts use pandas to load, clean, reshape, and analyze tabular data. Pandas can hold data that is too large or too irregular for a spreadsheet. You write code instead of clicking through menus.
+
+After you learn to write this line:
+
+```python
+orders.groupby("status")["total_amount"].sum()
+```
+
+you can answer in one line a question that needs twelve steps in a spreadsheet. The code is also repeatable. Next month you run the same code again. You do not do the work again.
+
+Pandas is the most-used data tool in Python. It connects two skills: you can look at data, and you can build things with data. These things include scripts, dashboards, and models.
+
+## What You Learn
+
+- Load, inspect, and select data with Series and DataFrames
+- Filter, sort, and clean data that contains errors
+- Combine more than one dataset
+- Aggregate and summarize data by group
+- Reshape data between long format and wide format
+- Calculate rolling values, ranks, and time-based results
+- Write pandas the way that experienced analysts write it: vectorized, chained, and readable
+- Choose between pandas and SQL, and use both together
+
+:::info You do not need SQL first
+This track is complete on its own. If you completed the [SQL track](/sql), you will see notes with the title "Coming from SQL?". Each note connects a pandas idea to the equivalent SQL. These notes are optional. Skip them if you do not know SQL.
+:::
+
+:::tip This course teaches pandas 3.0
+Every lesson uses pandas 3.0 conventions: Copy-on-Write, the string dtype, and `pd.col()`. You will not have to learn different habits later. The playground at the end of each lesson runs pandas 3.0 in your browser. You install nothing.
+:::
+
+## The Sample Data
+
+Every lesson and every exercise uses the same three tables. The playground loads them as DataFrames with the names `customers`, `products`, and `orders`.
+
+| DataFrame | Rows | What it holds |
+|-----------|------|---------------|
+| `customers` | 9 | One row per customer: name, email, city, country, signup date |
+| `products` | 6 | One row per product: name, category, price |
+| `orders` | 30 | One row per order: who bought what, when, how many, and for how much |
+
+The data contains problems on purpose. One customer has no city. Two orders have no status. One order has no amount. One customer made no orders. Real data has the same problems, and an analyst spends much of the day on them.
+
+## Lessons
+
+### Getting Started
+
+| Lesson | Concept |
+|--------|---------|
+| [Why Python](/python/intro-to-python) | What Python solves that a spreadsheet cannot |
+| [Your First Code](/python/python-first-code) | Run code in the browser and read the output |
+| [Variables & Types](/python/python-variables) | The minimum syntax that you need |
+| [Lists & Dicts](/python/python-lists-dicts) | The two structures below pandas |
+| [Functions & Loops](/python/python-functions-loops) | The background for the vectorization lesson |
+
+### Pandas Fundamentals
+
+| Lesson | Concept |
+|--------|---------|
+| [Series & DataFrame](/python/pandas-series-dataframe) | The two core objects |
+| [Reading data](/python/pandas-read-csv) | `read_csv`, `head`, `info`, `describe` |
+| [loc & iloc](/python/pandas-loc-iloc) | Select columns and rows |
+
+### Filtering Techniques
+
+| Lesson | Concept |
+|--------|---------|
+| [Boolean filtering](/python/pandas-boolean-filtering) | The core filtering pattern |
+| [isin](/python/pandas-isin) | Match against a list of values |
+| [between](/python/pandas-between) | Filter by an inclusive range |
+| [str.contains](/python/pandas-str-contains) | Match a text pattern |
+| [isna / notna](/python/pandas-isna) | Filter on missing values |
+
+### Shaping Results
+
+| Lesson | Concept |
+|--------|---------|
+| [rename & assign](/python/pandas-rename-assign) | Rename and create columns |
+| [drop_duplicates](/python/pandas-drop-duplicates) | Remove duplicate rows |
+| [sort_values](/python/pandas-sort-values) | Order your results |
+| [head & nlargest](/python/pandas-head-nlargest) | Limit the output |
+
+### Combining Data
+
+| Lesson | Concept |
+|--------|---------|
+| [merge](/python/pandas-merge) | Combine two DataFrames on a key |
+| [how=](/python/pandas-merge-how) | Control which rows stay after a merge |
+| [concat](/python/pandas-concat) | Stack DataFrames together |
+
+### Aggregating Data
+
+| Lesson | Concept |
+|--------|---------|
+| [groupby](/python/pandas-groupby) | The core summarization pattern |
+| [agg](/python/pandas-agg) | Several aggregations in one call |
+| [Filtering groups](/python/pandas-filter-groups) | Keep only groups that meet a condition |
+
+### How Pandas Thinks
+
+| Lesson | Concept |
+|--------|---------|
+| [Method chaining](/python/pandas-method-chaining) | Read code as one transformation per line |
+| [Vectorization](/python/pandas-vectorization) | Why a loop is the wrong choice |
+| [Copy-on-Write](/python/pandas-copy-on-write) | Every subset behaves as its own copy |
+
+### Writing Cleaner Code
+
+| Lesson | Concept |
+|--------|---------|
+| [apply](/python/pandas-apply-lambda) | Custom logic, and when to avoid it |
+| [np.where & np.select](/python/pandas-np-where) | Conditional columns |
+| [pd.col](/python/pandas-col) | How to reference a column inside a chain |
+| [pipe](/python/pandas-pipe) | Add your own function to a chain |
+
+### Reshaping Data
+
+| Lesson | Concept |
+|--------|---------|
+| [pivot_table](/python/pandas-pivot-table) | Summarize long format into wide format |
+| [melt](/python/pandas-melt) | Change wide format back to long format |
+| [stack & unstack](/python/pandas-stack-unstack) | Work with an index that has layers |
+
+### Rolling, Ranking & Time
+
+| Lesson | Concept |
+|--------|---------|
+| [rank](/python/pandas-rank) | Rank rows, including within a group |
+| [cumsum & cumcount](/python/pandas-cumsum) | Running totals and running counts |
+| [shift](/python/pandas-shift) | Compare a row to the one before it |
+| [rolling](/python/pandas-rolling) | Moving averages |
+| [expanding](/python/pandas-expanding) | Calculate over all earlier rows |
+
+### Data Cleaning & Dtypes
+
+| Lesson | Concept |
+|--------|---------|
+| [Missing data](/python/pandas-missing-data) | `fillna`, `dropna`, and when to use each |
+| [String dtype](/python/pandas-string-dtype) | The pandas 3.0 `str` type and the `.str` accessor |
+| [Datetimes](/python/pandas-datetime) | `to_datetime` and the `.dt` accessor |
+
+### Choosing Your Tool
+
+| Lesson | Concept |
+|--------|---------|
+| [Pandas vs SQL](/python/pandas-vs-sql) | Which tool for which job, and how to use both |
+
+## Practice Exams
+
+Ten exams. Each exam checks your answer against the real data.
+
+| Exam | Topics |
+|------|--------|
+| [Exam 1](/python/python-exam-01-reading-selecting) | Reading and selecting data |
+| [Exam 2](/python/python-exam-02-filtering) | Filtering techniques |
+| [Exam 3](/python/python-exam-03-shaping) | Shaping results |
+| [Exam 4](/python/python-exam-04-combining) | merge and concat |
+| [Exam 5](/python/python-exam-05-aggregation) | groupby and agg |
+| [Exam 6](/python/python-exam-06-vectorization) | Vectorization and chaining |
+| [Exam 7](/python/python-exam-07-custom-columns) | apply, np.where, pd.col |
+| [Exam 8](/python/python-exam-08-reshaping) | pivot_table and melt |
+| [Exam 9](/python/python-exam-09-rolling-time) | Rolling and time-based analysis |
+| [Exam 10](/python/python-exam-10-mixed) | Everything at once |
+
+## Ready?
+
+Start with [Why Python](/python/intro-to-python).

@@ -1,0 +1,185 @@
+---
+id: pandas-melt
+title: "melt: Wide to Long"
+sidebar_label: "melt"
+sidebar_position: 33
+youtube_url: ""
+---
+
+# `melt`: Wide to Long
+
+`melt` is the opposite of `pivot_table`. It takes a wide grid and changes each cell into its own row. This operation looks unhelpful. But it is necessary when you receive a spreadsheet with twelve month columns and you must build a chart.
+
+## The wide table
+
+Start from the pivot table in the previous lesson:
+
+```python
+sales = (
+    orders
+    .merge(products, on="product_id")
+    .assign(month=orders["order_date"].dt.strftime("%Y-%m"))
+)
+
+wide = sales.pivot_table(
+    index="category",
+    columns="month",
+    values="total_amount",
+    aggfunc="sum",
+    fill_value=0,
+).reset_index()
+
+wide
+```
+
+**Result:**
+
+|   | category | 2024-01 | 2024-02 | 2024-03 | 2024-04 | 2024-05 |
+|---|----------|---------|---------|---------|---------|---------|
+| 0 | Electronics | 1556.98 | 2336.97 | 1427.94 | 1526.99 | 249.0 |
+| 1 | Furniture | 1145.0 | 747.0 | 548.0 | 946.0 | 199.0 |
+| 2 | Stationery | 49.9 | 24.95 | 99.8 | 74.85 | 39.92 |
+
+This table is easy to read, but it is difficult to use. The month is in the column headers. You therefore cannot filter by month, group by month, or plot by month. If you add a sixth month, you must change every formula that names those columns.
+
+## How to melt the table
+
+```python
+long = wide.melt(
+    id_vars="category",
+    var_name="month",
+    value_name="revenue",
+)
+long.head(8)
+```
+
+**Result:**
+
+|   | category | month | revenue |
+|---|----------|-------|---------|
+| 0 | Electronics | 2024-01 | 1556.98 |
+| 1 | Furniture | 2024-01 | 1145.0 |
+| 2 | Stationery | 2024-01 | 49.9 |
+| 3 | Electronics | 2024-02 | 2336.97 |
+| 4 | Furniture | 2024-02 | 747.0 |
+| 5 | Stationery | 2024-02 | 24.95 |
+| 6 | Electronics | 2024-03 | 1427.94 |
+| 7 | Furniture | 2024-03 | 548.0 |
+
+The result has fifteen rows: three categories multiplied by five months. The method has three arguments:
+
+| Argument | Meaning |
+|----------|---------|
+| `id_vars` | The columns that stay unchanged, one value on each output row |
+| `var_name` | The name of the column that holds the old column headers |
+| `value_name` | The name of the column that holds the values |
+
+`melt` converts every column that is not in `id_vars`.
+
+## Why the long format is useful
+
+`month` is now a column, so every pandas method works on it:
+
+```python
+# Filter by month:
+long[long["month"] >= "2024-03"]
+
+# Total per month:
+long.groupby("month")["revenue"].sum()
+
+# The three largest values:
+long.sort_values("revenue", ascending=False).head(3)
+```
+
+None of these operations work when the months are column headers. This shape is **tidy data**: one row for each observation, and one column for each variable. Charting libraries, statistical models, and databases all need this shape.
+
+## A real example
+
+A colleague usually sends you a table in this format:
+
+| region | Q1 | Q2 | Q3 | Q4 |
+|--------|----|----|----|----|
+| North | 100 | 120 | 115 | 130 |
+| South | 90 | 95 | 105 | 110 |
+
+One `melt` changes it into a shape that you can use:
+
+```python
+df.melt(
+    id_vars="region",
+    var_name="quarter",
+    value_name="revenue",
+)
+```
+
+A `melt` on a spreadsheet export is one of the most common first steps in a real analysis.
+
+## How to keep more than one id column
+
+Give `id_vars` a list when more than one column identifies the row:
+
+```python
+df.melt(
+    id_vars=["region", "manager"],
+    var_name="quarter",
+    value_name="revenue",
+)
+```
+
+:::tip The full cycle
+`pivot_table` and `melt` reverse each other. Melt the data to calculate. Pivot the data to present. A common workflow has three steps. First melt the export. Then do the analysis on the long format. Then pivot the final answer back into a grid for the report.
+:::
+
+:::note Coming from SQL?
+`melt` is `UNPIVOT`, and most SQL dialects do not have it. The manual form is a `UNION ALL` for each column. As with a pivot, the work is much easier in pandas.
+:::
+
+## Practice
+
+Take the category-by-status count grid from the previous lesson. Melt it back into a long table with the columns `category`, `status`, and `orders`.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# 1. Build the same count grid as the previous lesson.
+wide = (
+    orders
+    .merge(products, on="product_id")
+    .pivot_table(
+        index="category",
+        columns="status",
+        values="order_id",
+        aggfunc="count",
+        fill_value=0,
+    )
+    # reset_index() makes "category" a column again, so that
+    # melt can use it as an id column.
+    .reset_index()
+)
+
+# 2. Melt every status column back into rows.
+wide.melt(
+    id_vars="category",
+    var_name="status",
+    value_name="orders",
+)
+```
+
+**Result:**
+
+|   | category | status | orders |
+|---|----------|--------|--------|
+| 0 | Electronics | cancelled | 0 |
+| 1 | Furniture | cancelled | 2 |
+| 2 | Stationery | cancelled | 0 |
+| 3 | Electronics | completed | 13 |
+| 4 | Furniture | completed | 7 |
+| 5 | Stationery | completed | 4 |
+| 6 | Electronics | pending | 2 |
+| 7 | Furniture | pending | 0 |
+| 8 | Stationery | pending | 0 |
+
+The `.reset_index()` call is necessary. Without it, `category` is the index and not a column, so `id_vars="category"` finds no column.
+
+</details>

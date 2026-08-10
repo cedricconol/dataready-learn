@@ -1,0 +1,120 @@
+---
+id: python-exam-07-custom-columns
+title: "Exam 7: Custom Columns"
+sidebar_label: "Exam 7: Custom Columns"
+sidebar_position: 106
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 7: Custom Columns
+
+**Difficulty:** Intermediate
+
+**Topics covered:** `np.where`, `np.select`, `pd.col`, text columns
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+Return the columns `name`, `price`, and a new `band` column. The value of `band` is `"high"` when the price is 200 or more. In all other rows the value is `"low"`.
+
+<PythonExercise
+  frames={["products"]}
+  solution={`# np.where picks the first value where the test is True,
+# and the second value everywhere else.
+band = np.where(products["price"] >= 200, "high", "low")
+
+banded = products.assign(band=band)
+banded[["name", "price", "band"]]`}
+/>
+
+---
+
+## Question 2
+
+Return the columns `name`, `price`, and a new `band` column with three levels. The value is `"premium"` above 500 and `"standard"` above 100. In all other rows the value is `"budget"`.
+
+<PythonExercise
+  frames={["products"]}
+  solution={`price = products["price"]
+
+# np.select uses the FIRST condition that matches, so put
+# the most specific one first.
+conditions = [price > 500, price > 100]
+choices = ["premium", "standard"]
+
+# default covers the rows that match no condition.
+band = np.select(conditions, choices, default="budget")
+
+banded = products.assign(band=band)
+banded[["name", "price", "band"]]`}
+/>
+
+---
+
+## Question 3
+
+Give the cancelled orders a value of 0. What is the total net revenue? Round the result to two decimals and return one number.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# Cancelled orders count as 0, all others keep their value.
+net = np.where(
+    orders["status"] == "cancelled",
+    0,
+    orders["total_amount"],
+)
+
+orders.assign(net=net)["net"].sum().round(2)`}
+/>
+
+---
+
+## Question 4
+
+Use `pd.col` to add a `price_with_tax` column to `products`. Its value is 12% more than `price`, rounded to two decimals.
+
+<PythonExercise
+  frames={["products"]}
+  solution={`# pd.col names a column without naming the DataFrame.
+price_with_tax = (pd.col("price") * 1.12).round(2)
+
+products.assign(price_with_tax=price_with_tax)`}
+/>
+
+---
+
+## Question 5
+
+Return the `product_id` column and a `label` column with the form `"Laptop (Electronics)"`.
+
+<PythonExercise
+  frames={["products"]}
+  solution={`# + joins text columns one row at a time, so this needs
+# no apply and no Python function.
+label = products["name"] + " (" + products["category"] + ")"
+
+labelled = products.assign(label=label)
+labelled[["product_id", "label"]]`}
+/>

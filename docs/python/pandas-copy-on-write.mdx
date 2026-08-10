@@ -1,0 +1,139 @@
+---
+id: pandas-copy-on-write
+title: "Copy-on-Write, the pandas 3.0 Way"
+sidebar_label: "Copy-on-Write"
+sidebar_position: 27
+youtube_url: ""
+---
+
+# Copy-on-Write, the pandas 3.0 Way
+
+Older pandas tutorials show `SettingWithCopyWarning` and give advice about "views compared to copies". Pandas 3.0 removes that problem and replaces it with one rule.
+
+**Every subset behaves as its own copy. A change to the subset never changes the original.**
+
+This rule is Copy-on-Write. This lesson shows the effect in practice, because the rule changes how you write code.
+
+:::info Always know which pandas version you run
+The playground in this track runs pandas 3.0, so the rules in this lesson always apply here. Your own machine or your company server can have an older version. Before you trust these rules at work, check the version:
+
+```python
+import pandas as pd
+pd.__version__
+```
+
+A version that starts with `1.` or `2.` obeys the old rules. `SettingWithCopyWarning` is the clearest signal. Pandas 3.0 does not have this warning. A warning of this type therefore tells you that you run pandas 1.x or 2.x. On those versions, a change to a subset can change the original data, and the result is not dependable.
+:::
+
+## A change to a subset does not change the original
+
+```python
+subset = orders[orders["status"] == "completed"]
+subset = subset.assign(total_amount=0)
+
+orders["total_amount"].head(3)
+```
+
+**Result:**
+
+|   | total_amount |
+|---|--------------|
+| 0 | 999.0 |
+| 1 | 59.98 |
+| 2 | 349.0 |
+
+Pandas did not change `orders`. In older versions of pandas, this code sometimes changed the original and sometimes did not. The result depended on the memory layout. Now the result is always the same. You can give a filtered DataFrame to a function, and that function cannot change your data.
+
+## Chained assignment does not work
+
+```python
+orders[orders["quantity"] > 5]["status"] = "bulk"
+```
+
+**Output:**
+
+```text
+ChainedAssignmentError: A value is being set on a copy of a DataFrame or Series
+through chained assignment. Such chained assignment never works to update the
+original DataFrame or Series ...
+```
+
+Two sets of square brackets in sequence create a problem. The first set produces a temporary copy, and you write into a copy that Python then removes. Pandas 3.0 raises an error and not a warning. It therefore stops the run, and it does not give you unchanged data with no explanation.
+
+## The correction: one step with `loc`
+
+```python
+updated = orders.copy()
+updated.loc[updated["quantity"] > 5, "status"] = "bulk"
+
+bulk = updated[updated["quantity"] > 5]
+bulk[["order_id", "quantity", "status"]]
+```
+
+**Result:**
+
+|   | order_id | quantity | status |
+|---|----------|----------|--------|
+| 4 | 5 | 10 | bulk |
+| 16 | 17 | 20 | bulk |
+| 23 | 24 | 15 | bulk |
+| 26 | 27 | 8 | bulk |
+
+`loc` selects the rows and the column in one operation, so pandas knows your intent. Read the code as `df.loc[which rows, which column] = value`.
+
+The `.copy()` on the first line is intentional. It means "I will change this data, and I want my own version". The playground creates new data for each run, so `.copy()` changes nothing here. But in a real script, `.copy()` decides between a change to your data and a change to a copy of your data.
+
+## The style that this rule encourages
+
+Copy-on-Write makes the functional style the natural style:
+
+```python
+# Preferred: build a new DataFrame
+unit_price = orders["total_amount"] / orders["quantity"]
+priced = orders.assign(unit_price=unit_price)
+
+# Also correct when a change is your intent:
+orders.loc[orders["quantity"] > 5, "status"] = "bulk"
+```
+
+The first form has no hidden effects. It works inside a chain, and it keeps the original data for your next test. For these reasons, every lesson in this track uses `assign` and not bracket assignment.
+
+:::tip How to read old tutorials
+Advice about `SettingWithCopyWarning`, `is_copy`, or "use `.copy()` for safety" applies to pandas 1.x and 2.x. In pandas 3.0 the rules are simple. A subset is a copy. Chained assignment raises an error. Use `loc` for a one-step change. There are no other rules.
+:::
+
+:::note Coming from SQL?
+SQL never had this problem. A query result is a new result set, and it is not a view of the table. Copy-on-Write gives pandas the same behavior: a subset is a result and not a live view.
+:::
+
+## Practice
+
+Make a copy of `orders`. Replace the missing statuses with `"unknown"`. Then count the statuses.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# .copy() says "I mean to change this data, on my own
+# version of it". Without it we would change `orders`.
+clean = orders.copy()
+
+# One loc step: which rows, then which column, then the
+# value. Chained brackets would raise an error here.
+clean.loc[clean["status"].isna(), "status"] = "unknown"
+
+clean["status"].value_counts()
+```
+
+**Result:**
+
+| status | count |
+|--------|-------|
+| completed | 24 |
+| unknown | 2 |
+| cancelled | 2 |
+| pending | 2 |
+
+One `loc` step changes both rows. `clean["status"].fillna("unknown")` is a shorter form of the same operation. [Missing Data](/python/pandas-missing-data) teaches it.
+
+</details>

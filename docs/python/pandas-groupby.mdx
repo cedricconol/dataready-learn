@@ -1,0 +1,183 @@
+---
+id: pandas-groupby
+title: "groupby: Summarizing by Group"
+sidebar_label: "groupby"
+sidebar_position: 22
+youtube_url: ""
+---
+
+# `groupby`: Summarizing by Group
+
+Almost every analytics question is a `groupby` question. Revenue by month. Orders for each customer. Average basket by category. `groupby` is the most useful method in pandas.
+
+## Split, apply, combine
+
+`groupby` always does three steps:
+
+1. **Split** the rows into groups by a column
+2. **Apply** a calculation to each group
+3. **Combine** the answers into one result
+
+```python
+orders.groupby("status")["total_amount"].sum()
+```
+
+**Result:**
+
+| status | total_amount |
+|--------|--------------|
+| cancelled | 698.0 |
+| completed | 8667.42 |
+| pending | 1497.0 |
+
+The code splits the rows by status, adds the amounts, and combines the results into three rows. Read the code from left to right: take orders, group the rows by status, take the total_amount column, and add the values.
+
+Examine the result. `status` is no longer a column. It is now the **index**, so it is on the left with no header. The values in the group column become the row labels.
+
+## The structure of the call
+
+```python
+df.groupby("group_column")["value_column"].aggregation()
+```
+
+Change the aggregation for each question:
+
+| Method | Answer |
+|--------|---------|
+| `.sum()` | The total |
+| `.mean()` | The average |
+| `.count()` | The number of values that are not missing |
+| `.min()` / `.max()` | The smallest value, the largest value |
+| `.nunique()` | The number of distinct values |
+
+```python
+by_customer = orders.groupby("customer_id")
+by_customer["total_amount"].mean().head()
+```
+
+**Result:**
+
+| customer_id | total_amount |
+|-------------|--------------|
+| 1 | 475.83 |
+| 2 | 416.984 |
+| 3 | 481.1975 |
+| 4 | 315.3 |
+| 5 | 171.2733333 |
+
+## `size`: the number of rows in each group
+
+```python
+orders.groupby("customer_id").size()
+```
+
+**Result:**
+
+| customer_id | value |
+|-------------|-------|
+| 1 | 6 |
+| 2 | 5 |
+| 3 | 4 |
+| 4 | 3 |
+| 5 | 3 |
+| 6 | 3 |
+| 7 | 3 |
+| 8 | 3 |
+
+Customer 1 made six orders. Customer 9 is absent from the result, because that customer made no orders. `size()` needs no column name, because it counts rows and not values.
+
+:::warning `size` and `count` are different
+`size()` counts every row in the group. `count()` counts the rows where the selected column is not missing. This data has one missing amount, so `groupby("status")["total_amount"].count()` returns 23 completed orders, and `size()` returns 24. A difference between these two numbers shows you the missing values.
+:::
+
+## How to get an ordinary DataFrame
+
+The group column becomes the index. This behavior is inconvenient before a merge:
+
+```python
+by_status = orders.groupby("status", as_index=False)
+by_status["total_amount"].sum()
+```
+
+**Result:**
+
+|   | status | total_amount |
+|---|--------|--------------|
+| 0 | cancelled | 698.0 |
+| 1 | completed | 8667.42 |
+| 2 | pending | 1497.0 |
+
+`as_index=False` keeps `status` as an ordinary column. `.reset_index()` after the call gives the same result.
+
+## How to group by more than one column
+
+```python
+group_keys = ["customer_id", "status"]
+totals = orders.groupby(group_keys)["total_amount"].sum()
+
+totals.head(6)
+```
+
+**Result:**
+
+|   | total_amount |
+|---|--------------|
+| (1, 'cancelled') | 349.0 |
+| (1, 'completed') | 2505.98 |
+| (2, 'completed') | 2084.92 |
+| (3, 'completed') | 925.79 |
+| (3, 'pending') | 999.0 |
+| (4, 'completed') | 398.0 |
+
+The result has one row for each combination in the data. The index now holds pairs of values. This index is a **MultiIndex**. It is the correct output shape for this question. [stack and unstack](/python/pandas-stack-unstack) shows how to change it into a grid that is easy to read.
+
+## How to group after a merge
+
+The most useful questions need both tables. The product category is in `products`, but the money is in `orders`:
+
+```python
+sales = orders.merge(products, on="product_id")
+sales.groupby("category")["total_amount"].sum()
+```
+
+**Result:**
+
+| category | total_amount |
+|----------|--------------|
+| Electronics | 7097.88 |
+| Furniture | 3585.0 |
+| Stationery | 289.42 |
+
+First merge, then group. These two steps answer a large number of real analyst questions.
+
+:::note Coming from SQL?
+`df.groupby("status")["total_amount"].sum()` is `SELECT status, SUM(total_amount) FROM orders GROUP BY status`. There is one important difference. SQL returns the group column as an ordinary column. Pandas puts the group column in the index, unless you supply `as_index=False`.
+:::
+
+## Practice
+
+Which three customers spent the most money in total?
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# 1. One total for each customer.
+by_customer = orders.groupby("customer_id")
+totals = by_customer["total_amount"].sum()
+
+# 2. nlargest(3) takes the three highest of those totals.
+totals.nlargest(3)
+```
+
+**Result:**
+
+| customer_id | total_amount |
+|-------------|--------------|
+| 1 | 2854.98 |
+| 2 | 2084.92 |
+| 3 | 1924.79 |
+
+`nlargest` works on the grouped result in the same way as on a DataFrame, because that result is a Series.
+
+</details>

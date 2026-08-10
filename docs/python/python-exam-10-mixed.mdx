@@ -1,0 +1,158 @@
+---
+id: python-exam-10-mixed
+title: "Exam 10: Mixed Challenge"
+sidebar_label: "Exam 10: Mixed"
+sidebar_position: 109
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 10: Mixed Challenge
+
+**Difficulty:** Advanced
+
+**Topics covered:** every topic. Each question needs several steps: filter, merge, group, and reshape.
+
+An analyst receives these types of question in real work. Build each answer one step at a time in the editor, and run the code after each step. Do not write the full chain in one attempt.
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+Use the completed orders only. Return the revenue and the order count of each product category, rounded to two decimals. Give the columns the names `revenue` and `orders`.
+
+<PythonExercise
+  frames={["orders", "products"]}
+  solution={`(
+    orders
+    # 1. Completed orders only.
+    .query("status == 'completed'")
+    # 2. Bring in the category from products.
+    .merge(products, on="product_id")
+    # 3. One group for each category.
+    .groupby("category")
+    # 4. Two figures per group, with names we choose.
+    .agg(
+        revenue=("total_amount", "sum"),
+        orders=("order_id", "count"),
+    )
+    .round(2)
+)`}
+/>
+
+---
+
+## Question 2
+
+Which countries produce the most revenue? Return a `revenue` column for each country. Sort the rows from the highest value to the lowest value, and round the values to two decimals. **The row order is important here.**
+
+<PythonExercise
+  frames={["orders", "customers"]}
+  ordered
+  solution={`(
+    orders
+    # 1. The country lives in customers, so merge it in.
+    .merge(customers, on="customer_id")
+    .groupby("country")
+    .agg(revenue=("total_amount", "sum"))
+    # 2. Highest revenue first.
+    .sort_values("revenue", ascending=False)
+    .round(2)
+)`}
+/>
+
+---
+
+## Question 3
+
+Build a grid of the revenue. Put the product `category` down the side and the `month` across the top. Put a zero in each empty cell, and round the values to two decimals. Use `.dt.to_period("M")` for the month.
+
+<PythonExercise
+  frames={["orders", "products"]}
+  solution={`month = orders["order_date"].dt.to_period("M")
+
+(
+    orders
+    # 1. Add the month as its own column.
+    .assign(month=month)
+    # 2. Bring in the category from products.
+    .merge(products, on="product_id")
+    # 3. Category down the side, month across the top.
+    .pivot_table(
+        index="category",
+        columns="month",
+        values="total_amount",
+        aggfunc="sum",
+        fill_value=0,
+    )
+    .round(2)
+)`}
+/>
+
+---
+
+## Question 4
+
+Ignore the orders that have no amount. Return the customers with three or more orders. Keep `customer_id` as the index. Show three columns: `orders` is the count of orders, `revenue` is the sum of `total_amount`, and `avg_order` is the mean of `total_amount`. Round the values to two decimals.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`(
+    orders
+    # 1. Drop the order with no amount.
+    .dropna(subset=["total_amount"])
+    .groupby("customer_id")
+    # 2. Three figures per customer.
+    .agg(
+        orders=("order_id", "count"),
+        revenue=("total_amount", "sum"),
+        avg_order=("total_amount", "mean"),
+    )
+    # 3. Filter the summary, not the original rows.
+    .query("orders >= 3")
+    .round(2)
+)`}
+/>
+
+---
+
+## Question 5
+
+How many days are there between the signup of each customer and their first order? Return one row for each customer. Put the customer `name` in the index. Give the new column the name `days_to_order`.
+
+<PythonExercise
+  frames={["orders", "customers"]}
+  solution={`joined = orders.merge(customers, on="customer_id")
+
+# Subtracting two dates gives a duration. .dt.days turns
+# that duration into a plain number.
+gap = joined["order_date"] - joined["signup_date"]
+
+(
+    joined
+    .assign(days_to_order=gap.dt.days)
+    .groupby("name")["days_to_order"]
+    # min() gives the first order of each customer.
+    .min()
+)`}
+/>

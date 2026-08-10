@@ -1,0 +1,130 @@
+---
+id: python-exam-08-reshaping
+title: "Exam 8: Reshaping"
+sidebar_label: "Exam 8: Reshaping"
+sidebar_position: 107
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 8: Reshaping
+
+**Difficulty:** Intermediate
+
+**Topics covered:** `pivot_table`, `unstack`, `melt`, `reset_index`
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+Build a grid of the total revenue. Put `category` down the side and `status` across the top. Put a zero in each cell that has no data.
+
+<PythonExercise
+  frames={["orders", "products"]}
+  solution={`# The category lives in products, so merge it in first.
+sales = orders.merge(products, on="product_id")
+
+sales.pivot_table(
+    index="category",      # goes down the side
+    columns="status",      # goes across the top
+    values="total_amount",
+    aggfunc="sum",
+    fill_value=0,          # write 0, not NaN, when empty
+)`}
+/>
+
+---
+
+## Question 2
+
+Build a grid of order **counts**. Put `customer_id` down the side and `status` across the top. Put a zero in each empty cell. Use `unstack` for this question. A `pivot_table` gives the same grid, and the check accepts it, but this question is about `unstack`.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# Group by both columns at once.
+group_keys = ["customer_id", "status"]
+
+# size() counts rows, so no value column is needed.
+counts = orders.groupby(group_keys).size()
+
+# unstack moves "status" up into the columns.
+counts.unstack(fill_value=0)`}
+/>
+
+---
+
+## Question 3
+
+What is the average order value of each product category? Return a table with one column, rounded to two decimals.
+
+<PythonExercise
+  frames={["orders", "products"]}
+  solution={`sales = orders.merge(products, on="product_id")
+
+# With no columns= argument, pivot_table is a grouped
+# summary rather than a grid.
+sales.pivot_table(
+    index="category",
+    values="total_amount",
+    aggfunc="mean",
+).round(2)`}
+/>
+
+---
+
+## Question 4
+
+Take the customer-by-status count grid from Question 2. Melt it into a long table with the columns `customer_id`, `status`, and `orders`.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# 1. Build the count grid.
+group_keys = ["customer_id", "status"]
+counts = orders.groupby(group_keys).size()
+
+# reset_index() makes customer_id a column again, so melt
+# can use it as an id column.
+wide = counts.unstack(fill_value=0).reset_index()
+
+# 2. Melt every status column back into rows.
+wide.melt(
+    id_vars="customer_id",
+    var_name="status",
+    value_name="orders",
+)`}
+/>
+
+---
+
+## Question 5
+
+Return the total revenue for each customer and status. Use a flat table with the columns `customer_id`, `status`, and `total_amount`. Do not leave these names in the index.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`group_keys = ["customer_id", "status"]
+totals = orders.groupby(group_keys)["total_amount"].sum()
+
+# reset_index() turns the MultiIndex back into columns.
+totals.reset_index()`}
+/>

@@ -1,0 +1,204 @@
+---
+id: pandas-merge-how
+title: "how=: Controlling a Merge"
+sidebar_label: "how="
+sidebar_position: 20
+youtube_url: ""
+---
+
+import JoinVenn from '@site/src/components/JoinVenn';
+
+# `how=`: Controlling a Merge
+
+`how=` answers one question: what does pandas do with the rows that find no match? An incorrect answer removes customers from a report, and pandas shows no error.
+
+This data contains the important case. Ivy Nakamura is customer 9, and this customer made no orders.
+
+## The four options
+
+| `how` | Rows that pandas keeps |
+|-------|-------|
+| `"inner"` (default) | Only the rows that matched in both tables |
+| `"left"` | Every row from the left table, with a match or without a match |
+| `"right"` | Every row from the right table |
+| `"outer"` | Every row from both tables |
+
+A diagram is easier to understand than a list. In the diagrams below, the left circle is `customers` and the right circle is `orders`. The common area holds the customers with one or more orders. A shaded area stays in the result.
+
+## `inner`: only the matched rows
+
+<JoinVenn
+  kind="inner"
+  left="customers"
+  right="orders"
+  caption='how="inner" keeps only the overlap.'
+/>
+
+```python
+customers.merge(orders, on="customer_id", how="inner").shape
+```
+
+**Result:** `(30, 12)`
+
+The result has 30 rows, one row for each order. The result does not contain Ivy Nakamura, because that customer has no order to match. Pandas showed no warning. The row is simply absent. `inner` is the default, so always examine the result.
+
+## `left`: keep every row on the left
+
+<JoinVenn
+  kind="left"
+  left="customers"
+  right="orders"
+  caption='how="left" keeps the whole left circle, overlap included.'
+/>
+
+```python
+customers.merge(orders, on="customer_id", how="left").shape
+```
+
+**Result:** `(31, 12)`
+
+The result now has 31 rows: the same 30 orders, and one more row for Ivy Nakamura. The order columns of that row contain `NaN`.
+
+```python
+left = customers.merge(orders, on="customer_id", how="left")
+
+cols = ["customer_id", "name", "order_id", "total_amount"]
+left[cols].tail(4)
+```
+
+**Result:**
+
+|   | customer_id | name | order_id | total_amount |
+|---|-------------|------|----------|--------------|
+| 27 | 8 | Henry Cruz | 14.0 | 119.96 |
+| 28 | 8 | Henry Cruz | 21.0 | 349.0 |
+| 29 | 8 | Henry Cruz | 29.0 | NaN |
+| 30 | 9 | Ivy Nakamura | NaN | NaN |
+
+You will use `how="left"` most often. "Every customer, with their orders" is the correct answer to most business questions. The customers with zero orders are usually the most important customers.
+
+Examine `order_id`. The values are now `14.0` and not `14`. A whole-number column becomes a decimal column when it receives a `NaN`, because `NaN` is a float. This change is normal.
+
+## How to find the rows with no match
+
+This is often the real question. Which customers made no orders?
+
+<JoinVenn
+  kind="left-only"
+  left="customers"
+  right="orders"
+  caption="A left merge, then keep only the crescent: customers with no matching order."
+/>
+
+```python
+# 1. Keep every customer, matched or not.
+left = customers.merge(orders, on="customer_id", how="left")
+
+# 2. A missing order_id means the customer had no order.
+unmatched = left.query("order_id.isna()")
+
+unmatched[["customer_id", "name", "order_id"]]
+```
+
+**Result:**
+
+|   | customer_id | name | order_id |
+|---|-------------|------|----------|
+| 30 | 9 | Ivy Nakamura | NaN |
+
+First do a left merge. Then keep the rows with a missing value on the right side. This two-step pattern answers three questions: "which customers made no orders?", "which products did no customer buy?", and "which invoices have no payment?".
+
+## `right` and `outer`
+
+<JoinVenn
+  kind="right"
+  left="customers"
+  right="orders"
+  caption='how="right" keeps the whole right circle.'
+/>
+
+<JoinVenn
+  kind="outer"
+  left="customers"
+  right="orders"
+  caption='how="outer" keeps both circles entirely.'
+/>
+
+```python
+# (30, 12)
+customers.merge(orders, on="customer_id", how="right").shape
+
+# (31, 12)
+customers.merge(orders, on="customer_id", how="outer").shape
+```
+
+`right` keeps every order, with a match or without a match. Every order belongs to a real customer, so the result has the same 30 rows as `inner`.
+
+`outer` keeps every row from both tables. Analysts use `outer` rarely. It is most useful when you do not know which table has the extra rows.
+
+## How to check a merge with `indicator`
+
+```python
+checked = customers.merge(
+    orders, on="customer_id", how="left", indicator=True
+)
+checked["_merge"].value_counts()
+```
+
+**Result:**
+
+| _merge | count |
+|--------|-------|
+| both | 30 |
+| left_only | 1 |
+| right_only | 0 |
+
+`indicator=True` adds a `_merge` column. That column records the source table of each row. The result shows 30 matched rows and one customer with no orders. This is the fastest check of a merge. Run it each time a total looks incorrect.
+
+:::warning The default removes rows and shows no message
+`merge` without `how=` does an inner merge. If a region is absent from your revenue report, check the merge first. An inner merge removes the rows with no match. Always compare `shape` before the merge and after the merge.
+:::
+
+:::note Coming from SQL?
+`how="inner"` is `INNER JOIN`. `how="left"` is `LEFT JOIN`. `how="outer"` is `FULL OUTER JOIN`. The pattern above for the rows with no match is the pandas form of `LEFT JOIN ... WHERE right.id IS NULL`.
+:::
+
+## Practice
+
+Each merge above starts from `customers`. Start from `orders` instead. Write a merge that keeps Ivy Nakamura. Which `how=` do you need, and why is `"left"` incorrect?
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# "right" keeps every row of the table on the right, which
+# is customers here. 31 rows means the unmatched customer
+# survived the merge.
+orders.merge(customers, on="customer_id", how="right").shape
+```
+
+**Result:** `(31, 12)`
+
+The result has 31 rows, so it contains Ivy Nakamura:
+
+```python
+# customers is on the right here, so how="right" keeps
+# the customers that have no matching order.
+merged = orders.merge(
+    customers, on="customer_id", how="right"
+)
+
+merged[["order_id", "customer_id", "name"]].tail(3)
+```
+
+**Result:**
+
+|   | order_id | customer_id | name |
+|---|----------|-------------|------|
+| 28 | 21.0 | 8 | Henry Cruz |
+| 29 | 29.0 | 8 | Henry Cruz |
+| 30 | NaN | 9 | Ivy Nakamura |
+
+`"left"` and `"right"` name a position in the expression. They do not name the more important table. If you change the DataFrame that you call `.merge` on, the `how=` value that keeps the unmatched rows also changes. Here `customers` is on the right, so `how="right"` keeps the customer with no orders. `how="left"` keeps every order and removes that customer, and the shape returns to `(30, 12)`.
+
+</details>

@@ -1,0 +1,170 @@
+---
+id: pandas-string-dtype
+title: "The String Dtype"
+sidebar_label: "String dtype"
+sidebar_position: 41
+youtube_url: ""
+---
+
+# The String Dtype
+
+In pandas 3.0, a text column has its own type with the name `str`. Older versions of pandas stored text as `object`, a general type that can hold any value. The change is almost invisible. But you must understand it, because every tutorial before 2025 describes the old behavior.
+
+## How to check the type
+
+```python
+orders.info()
+```
+
+Examine the `Dtype` column. `status` is `str` and not `object`. Every text column has the same type. This type gives three advantages:
+
+- Pandas knows that the column holds text, so it stores the values in less memory and processes them faster
+- Errors occur sooner. A number in a text column is now a type error and not a silent success
+- The `.str` methods always work
+
+If a text column shows `object`, you use pandas 2.x, or the column holds more than one type.
+
+## The `.str` accessor
+
+Every text operation is behind `.str`. It applies to the full column:
+
+```python
+name_length = products["name"].str.len()
+named = products.assign(name_length=name_length)
+
+named[["name", "name_length"]]
+```
+
+**Result:**
+
+|   | name | name_length |
+|---|------|-------------|
+| 0 | Laptop | 6 |
+| 1 | Mouse | 5 |
+| 2 | Desk | 4 |
+| 3 | Chair | 5 |
+| 4 | Notebook | 8 |
+| 5 | Monitor | 7 |
+
+## How to take part of a text value
+
+`.str[:2]` takes the first two characters. It works like a slice on a Python string:
+
+```python
+country_code = customers["country"].str[:2].str.upper()
+coded = customers.assign(country_code=country_code)
+
+cols = ["name", "country", "country_code"]
+coded.head(4)[cols]
+```
+
+**Result:**
+
+|   | name | country | country_code |
+|---|------|---------|--------------|
+| 0 | Alice Johnson | USA | US |
+| 1 | Bob Smith | UK | UK |
+| 2 | Carol White | Australia | AU |
+| 3 | Dave Brown | Canada | CA |
+
+Note the two `.str` calls in a chain. The first call takes a slice, and the second call changes the letters to uppercase. Each call returns a text column, so the next call can use it.
+
+## How to split a text value
+
+```python
+first_name = customers["name"].str.split(" ").str[0]
+named = customers.assign(first_name=first_name)
+
+named.head(4)[["name", "first_name"]]
+```
+
+**Result:**
+
+|   | name | first_name |
+|---|------|------------|
+| 0 | Alice Johnson | Alice |
+| 1 | Bob Smith | Bob |
+| 2 | Carol White | Carol |
+| 3 | Dave Brown | Dave |
+
+`.str.split(" ")` changes each value into a list of parts. `.str[0]` then takes the first part from each list. The same method takes the domain from an email address:
+
+```python
+domain = customers["email"].str.split("@").str[1]
+with_domain = customers.assign(domain=domain)
+
+with_domain.head(3)[["email", "domain"]]
+```
+
+**Result:**
+
+|   | email | domain |
+|---|-------|--------|
+| 0 | alice@example.com | example.com |
+| 1 | bob@example.com | example.com |
+| 2 | carol@example.com | example.com |
+
+## The methods to learn
+
+| Method | Function |
+|--------|------|
+| `.str.lower()` / `.str.upper()` | Change the letter case |
+| `.str.strip()` | Remove the spaces at the start and the end |
+| `.str.len()` | Count the characters |
+| `.str.contains("x")` | Filter on a part of the text |
+| `.str.startswith` / `.endswith` | Filter on the start or the end |
+| `.str.replace("a", "b")` | Replace text |
+| `.str.split("x")` | Divide the value into parts |
+| `.str[0:3]` | Take a range of characters |
+| `.str.cat()` | Join a column into one text value |
+
+## The standard cleaning steps
+
+Text from forms and spreadsheets is inconsistent. This chain corrects most of the problems:
+
+```python
+customers["country"].str.strip().str.lower()
+```
+
+Remove the spaces, change the letters to lowercase, then compare or group. Without this step, a group on text from a user gives `"USA"`, `"usa"`, and `" USA"` as three different countries. This error is a common cause of an incorrect report.
+
+:::warning `.str` needs a text column
+```python
+orders["order_id"].str.contains("1")
+```
+This code fails, because `order_id` holds numbers. Convert the column first with `.astype("str")` if you must search inside the numbers. This operation is sometimes correct for a value such as a product code.
+:::
+
+:::note Coming from SQL?
+The `.str` methods are the SQL string functions: `UPPER`, `TRIM`, `SUBSTRING`, `SPLIT_PART`, and `REPLACE`. They do the same work, but you write them in a chain and not inside each other. A chain is easier to read than `UPPER(TRIM(SUBSTRING(country, 1, 2)))`.
+:::
+
+## Practice
+
+Take the email domain of each customer. Show it next to the customer name.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# Split each address at "@". The result is a list of parts.
+parts = customers["email"].str.split("@")
+
+# .str[1] takes the second part, which is the domain.
+domain = parts.str[1]
+
+with_domain = customers.assign(domain=domain)
+with_domain[["name", "domain"]].head(3)
+```
+
+**Result:**
+
+|   | name | domain |
+|---|------|--------|
+| 0 | Alice Johnson | example.com |
+| 1 | Bob Smith | example.com |
+| 2 | Carol White | example.com |
+
+Every customer here uses the same domain. With real data, run `value_counts()` on the new column. The result shows the number of customers with a free mail provider and the number with a company address.
+
+</details>

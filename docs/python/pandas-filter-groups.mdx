@@ -1,0 +1,170 @@
+---
+id: pandas-filter-groups
+title: "Filtering Groups"
+sidebar_label: "Filtering groups"
+sidebar_position: 24
+youtube_url: ""
+---
+
+# Filtering Groups
+
+A filter on rows is one operation. A filter on *groups* is a different operation. Examples are "the customers with five or more orders" and "the categories with a value above 1000". The condition applies to the full group and not to one row.
+
+There are two methods, and they answer different questions.
+
+## Method 1: aggregate first, then filter
+
+Summarize the data into one row for each group. Then filter that result like any other DataFrame:
+
+```python
+orders.groupby("customer_id").agg(
+    order_count=("order_id", "count"),
+    revenue=("total_amount", "sum"),
+).query("order_count >= 5")
+```
+
+**Result:**
+
+| customer_id | order_count | revenue |
+|-------------|-------------|---------|
+| 1 | 6 | 2854.98 |
+| 2 | 5 | 2084.92 |
+
+Two customers made five or more orders. `.query("...")` filters with a text condition. It is short, and it is easy to read on a summary table. The bracket form gives the same result:
+
+```python
+summary = orders.groupby("customer_id").agg(
+    order_count=("order_id", "count"),
+)
+summary[summary["order_count"] >= 5]
+```
+
+Use this method when you want **the summary**.
+
+## Method 2: use `filter` to keep the original rows
+
+```python
+orders.groupby("customer_id").filter(lambda g: len(g) >= 5)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed |
+| 2 | 3 | 2 | 3 | 2024-01-15 | 1 | 349.0 | completed |
+| 5 | 6 | 2 | 6 | 2024-01-28 | 2 | 498.0 | completed |
+| 6 | 7 | 1 | 3 | 2024-02-01 | 1 | 349.0 | cancelled |
+| 10 | 11 | 2 | 1 | 2024-02-18 | 1 | 999.0 | completed |
+| 14 | 15 | 1 | 6 | 2024-03-06 | 1 | 249.0 | completed |
+| 18 | 19 | 2 | 4 | 2024-03-24 | 1 | 199.0 | completed |
+| 21 | 22 | 1 | 1 | 2024-04-07 | 1 | 999.0 | completed |
+| 26 | 27 | 2 | 5 | 2024-05-02 | 8 | 39.92 | completed |
+| 27 | 28 | 1 | 4 | 2024-05-08 | 1 | 199.0 | completed |
+
+The result has eleven rows: every order of those two frequent customers. Pandas summarized nothing. It removed only the groups that do not match.
+
+The `lambda g: ...` is a small temporary function. Pandas gives each group to the function as a small DataFrame, with the name `g` here. Pandas keeps the group when the function returns `True`. You can write any condition inside the function:
+
+```python
+orders.groupby("customer_id").filter(
+    lambda g: g["total_amount"].mean() > 400
+)
+```
+
+This code keeps every order of customers 1, 2, 3, and 7. The average order of those customers is above 400.
+
+Use this method when you want **the rows**.
+
+## `transform`: add a group value to every row
+
+Sometimes you do not want a filter. You want each row to hold a value from its group:
+
+```python
+by_customer = orders.groupby("customer_id")
+total = by_customer["total_amount"].transform("sum")
+
+with_total = orders.assign(customer_total=total)
+
+cols = [
+    "order_id",
+    "customer_id",
+    "total_amount",
+    "customer_total",
+]
+with_total.head(4)[cols]
+```
+
+**Result:**
+
+|   | order_id | customer_id | total_amount | customer_total |
+|---|----------|-------------|--------------|----------------|
+| 0 | 1 | 1 | 999.0 | 2854.98 |
+| 1 | 2 | 1 | 59.98 | 2854.98 |
+| 2 | 3 | 2 | 349.0 | 2084.92 |
+| 3 | 4 | 3 | 796.0 | 1924.79 |
+
+`agg` returns one row for each group. `transform` returns one row for each *original row*, and it repeats the group answer on each of those rows. Use `transform` for a question such as "what part of the total spending of this customer was this order?":
+
+```python
+by_customer = orders.groupby("customer_id")
+total = by_customer["total_amount"].transform("sum")
+
+orders["total_amount"] / total
+```
+
+The result for order 1 is 0.35. The first order of customer 1 was therefore 35% of the total spending of that customer.
+
+:::tip Which method do I need?
+Decide the shape of the answer first.
+
+| Your goal | Method |
+|----------|-----|
+| One row for each group | `agg`, then a filter |
+| The original rows, with some groups removed | `filter` |
+| The original rows, with an extra group-level column | `transform` |
+:::
+
+:::note Coming from SQL?
+Method 1 is `GROUP BY ... HAVING`. `transform` is a window function: `SUM(total_amount) OVER (PARTITION BY customer_id)`. `filter` has no direct SQL equivalent. In SQL you usually write it as a subquery that selects the groups.
+:::
+
+## Practice
+
+Which customers spent more than 1500 in total?
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# One row for each customer, with that customer's revenue.
+summary = orders.groupby("customer_id").agg(
+    revenue=("total_amount", "sum"),
+)
+
+# Now filter that summary like any other DataFrame.
+summary.query("revenue > 1500")
+```
+
+**Result:**
+
+| customer_id | revenue |
+|-------------|---------|
+| 1 | 2854.98 |
+| 2 | 2084.92 |
+| 3 | 1924.79 |
+| 7 | 1845.0 |
+
+The result has four customers. To see the separate orders instead of the totals, use the `filter` form:
+
+```python
+# filter() gives each group to the function as a small
+# DataFrame, and keeps the group when it returns True.
+# The original rows come back, not a summary.
+orders.groupby("customer_id").filter(
+    lambda g: g["total_amount"].sum() > 1500
+)
+```
+
+</details>

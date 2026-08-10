@@ -1,0 +1,171 @@
+---
+id: pandas-pipe
+title: "pipe: Your Own Step in a Chain"
+sidebar_label: "pipe"
+sidebar_position: 31
+youtube_url: ""
+---
+
+# `pipe`: Your Own Step in a Chain
+
+A chain can contain only pandas methods. `pipe` adds your own function to a chain as one more step. Use it to keep a chain readable when the logic becomes specific to your business.
+
+## The method
+
+```python
+df.pipe(my_function)
+```
+
+This line is the same as `my_function(df)`, but it fits in a chain. Pandas gives the DataFrame to the function as the first argument. The return value then continues down the chain.
+
+```python
+def add_unit_price(df):
+    unit_price = df["total_amount"] / df["quantity"]
+    return df.assign(unit_price=unit_price)
+
+priced = orders.pipe(add_unit_price)
+
+cols = [
+    "order_id",
+    "quantity",
+    "total_amount",
+    "unit_price",
+]
+priced.head(3)[cols]
+```
+
+**Result:**
+
+|   | order_id | quantity | total_amount | unit_price |
+|---|----------|----------|--------------|------------|
+| 0 | 1 | 1 | 999.0 | 999.0 |
+| 1 | 2 | 2 | 59.98 | 29.99 |
+| 2 | 3 | 1 | 349.0 | 349.0 |
+
+Obey three rules in a function for `pipe`. Take a DataFrame. Return a DataFrame. Change nothing in the input.
+
+## How to name the steps of an analysis
+
+```python
+def only_completed(df):
+    return df[df["status"] == "completed"]
+
+def with_products(df):
+    return df.merge(products, on="product_id")
+
+(
+    orders
+    .pipe(only_completed)
+    .pipe(with_products)
+    .groupby("category")["total_amount"]
+    .sum()
+    .round(2)
+)
+```
+
+**Result:**
+
+| category | total_amount |
+|----------|--------------|
+| Electronics | 5540.9 |
+| Furniture | 2887.0 |
+| Stationery | 239.52 |
+
+Compare this code to the same logic written inside the chain. The chain is now a summary of the analysis. The definition of "completed" is in exactly one position. If a manager decides that pending orders also count, you change one function. You do not search through six notebooks.
+
+## How to supply more arguments
+
+Pandas gives every argument after the function name to that function:
+
+```python
+def top_n(df, n, column):
+    return df.nlargest(n, column)
+
+top = orders.pipe(top_n, 3, "total_amount")
+top[["order_id", "total_amount"]]
+```
+
+**Result:**
+
+|   | order_id | total_amount |
+|---|----------|--------------|
+| 0 | 1 | 999.0 |
+| 8 | 9 | 999.0 |
+| 10 | 11 | 999.0 |
+
+The DataFrame fills the first parameter. `3` and `"total_amount"` fill the other two parameters.
+
+## Why not call the function directly?
+
+```python
+# Read from the inside out:
+result = with_products(only_completed(orders))
+
+# Read in order:
+result = orders.pipe(only_completed).pipe(with_products)
+```
+
+The first line becomes difficult to read when you put more functions inside each other. The `pipe` version stays easy to read, because the steps stay in their order.
+
+:::tip Where `pipe` is most useful
+A cleaning function is the most common example:
+
+```python
+def clean_orders(df):
+    status = df["status"].fillna("unknown")
+    return (
+        df
+        .dropna(subset=["total_amount"])
+        .assign(status=status)
+        .drop_duplicates()
+    )
+```
+
+Write the function one time. Then use `pipe` at the start of every analysis. Every report then uses the same definition of clean data.
+:::
+
+:::warning Return a DataFrame. Do not change one.
+```python
+def bad(df):
+    # This changes the data of the caller.
+    df["flag"] = True
+```
+A piped function that changes its input has an effect that the chain does not show. Use `assign` to build and return a new DataFrame instead.
+:::
+
+## Practice
+
+Write a function `revenue_by(df, column)`. It returns the total revenue grouped by any column, rounded to two decimals. Then pipe `orders` through the function, grouped by `customer_id`.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# The function takes a DataFrame first, then its own
+# arguments. It returns a new object and changes nothing.
+def revenue_by(df, column):
+    # Group by whichever column the caller asked for.
+    grouped = df.groupby(column)["total_amount"]
+    return grouped.sum().round(2)
+
+# pipe passes `orders` in as `df`, and "customer_id" as
+# `column`.
+orders.pipe(revenue_by, "customer_id")
+```
+
+**Result:**
+
+| customer_id | total_amount |
+|-------------|--------------|
+| 1 | 2854.98 |
+| 2 | 2084.92 |
+| 3 | 1924.79 |
+| 4 | 945.9 |
+| 5 | 513.82 |
+| 6 | 333.93 |
+| 7 | 1845.0 |
+| 8 | 468.96 |
+
+Change the second argument, and the same function answers "revenue by status" or "revenue by product_id".
+
+</details>

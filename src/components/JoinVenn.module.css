@@ -1,0 +1,39 @@
+.wrap {
+  margin: 1.25rem 0 1.5rem;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.fill {
+  opacity: 0.28;
+}
+
+.fill circle {
+  fill: var(--dr-accent);
+}
+
+.outline {
+  fill: none;
+  stroke: var(--dr-ink);
+  stroke-width: 1.75;
+}
+
+.tableLabel {
+  font-family: var(--ifm-font-family-monospace, monospace);
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--dr-muted);
+}
+
+.caption {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--dr-muted);
+  text-align: center;
+}

@@ -1,0 +1,153 @@
+---
+id: pandas-agg
+title: "agg: Several Aggregations at Once"
+sidebar_label: "agg"
+sidebar_position: 23
+youtube_url: ""
+---
+
+# `agg`: Several Aggregations at Once
+
+A real summary needs more than one number for each group: the revenue, the order count, and the average value. `agg` calculates all of them in one pass.
+
+## Named aggregations: the best form
+
+```python
+orders.groupby("status").agg(
+    revenue=("total_amount", "sum"),
+    order_count=("order_id", "count"),
+    avg_value=("total_amount", "mean"),
+)
+```
+
+**Result:**
+
+| status | revenue | order_count | avg_value |
+|--------|---------|-------------|-----------|
+| cancelled | 698.0 | 2 | 349.0 |
+| completed | 8667.42 | 24 | 376.8443478 |
+| pending | 1497.0 | 2 | 748.5 |
+
+Each line has the form `new_column_name=("source_column", "the calculation")`. You choose the output names, so you can send the result to another person with no rename step.
+
+Use this form by default. The two other forms below create column names that you did not choose.
+
+## How to round the result
+
+```python
+orders.groupby("status").agg(
+    revenue=("total_amount", "sum"),
+    avg_value=("total_amount", "mean"),
+).round(2)
+```
+
+**Result:**
+
+| status | revenue | avg_value |
+|--------|---------|-----------|
+| cancelled | 698.0 | 349.0 |
+| completed | 8667.42 | 376.84 |
+| pending | 1497.0 | 748.5 |
+
+`.round(2)` on the full result rounds every float column in one call. Round the values at the end, for the display. Do not round in the middle of a calculation.
+
+## The two other forms
+
+The first form is a dictionary of a column and a function:
+
+```python
+orders.groupby("status").agg(
+    {"total_amount": "sum", "order_id": "count"}
+)
+```
+
+**Result:**
+
+| status | total_amount | order_id |
+|--------|--------------|----------|
+| cancelled | 698.0 | 2 |
+| completed | 8667.42 | 24 |
+| pending | 1497.0 | 2 |
+
+This form works. But the column with the name `order_id` holds a count of orders, and a later reader can misunderstand it.
+
+The second form is a list of functions applied to one column:
+
+```python
+by_status = orders.groupby("status")
+by_status["total_amount"].agg(["sum", "mean", "count"])
+```
+
+**Result:**
+
+| status | sum | mean | count |
+|--------|-----|------|-------|
+| cancelled | 698.0 | 349.0 | 2 |
+| completed | 8667.42 | 376.8443478 | 23 |
+| pending | 1497.0 | 748.5 | 2 |
+
+Compare the `count` column here with the `order_count` column in the first example. For completed orders, one result is 23 and the other result is 24. Both results are correct. This example counts the `total_amount` values that are not missing, and one completed order has no amount. In aggregation, you must always know exactly *what* you count.
+
+## The aggregations that you will use
+
+| Name | Result |
+|------|---------------|
+| `"sum"` | The total |
+| `"mean"` | The average |
+| `"median"` | The middle value. Extreme values change it less than the mean |
+| `"count"` | The values that are not missing |
+| `"size"` | All rows, with a value or without a value |
+| `"min"`, `"max"` | The two ends of the range |
+| `"nunique"` | The distinct values |
+| `"first"`, `"last"` | The first row or the last row in the group |
+
+```python
+orders.groupby("status")["quantity"].agg(["min", "max"])
+```
+
+**Result:**
+
+| status | min | max |
+|--------|-----|-----|
+| cancelled | 1 | 1 |
+| completed | 1 | 20 |
+| pending | 1 | 2 |
+
+:::tip Mean or median?
+Extreme values change the `mean`. They do not change the `median`. One order of 999 among many orders of 5.00 increases the mean, but the median does not move. Report both values for the most accurate summary.
+:::
+
+:::note Coming from SQL?
+The named form is the closest pandas form to `SELECT status, SUM(total_amount) AS revenue, COUNT(*) AS order_count FROM orders GROUP BY status`. Note one difference: `("order_id", "count")` behaves like `COUNT(order_id)` and not like `COUNT(*)`. The equivalent of `COUNT(*)` is `"size"`.
+:::
+
+## Practice
+
+For each status, show the number of orders and the total revenue. Use clear column names and two decimal places.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# The named form is new_name=("source_column", "how").
+# It lets you choose the output names here, so the result
+# needs no rename step afterwards.
+orders.groupby("status").agg(
+    # Count the IDs, because every order has one.
+    orders=("order_id", "count"),
+    revenue=("total_amount", "sum"),
+# Round once at the end, for display only.
+).round(2)
+```
+
+**Result:**
+
+| status | orders | revenue |
+|--------|--------|---------|
+| cancelled | 2 | 698.0 |
+| completed | 24 | 8667.42 |
+| pending | 2 | 1497.0 |
+
+Note an important detail: this table does not contain the two orders that have no status. By default, `groupby` ignores the rows with a missing group value. Supply `dropna=False` if you want to count them.
+
+</details>

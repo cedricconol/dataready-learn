@@ -1,0 +1,138 @@
+---
+id: pandas-str-contains
+title: "str.contains: Text Filtering"
+sidebar_label: "str.contains"
+sidebar_position: 13
+youtube_url: ""
+---
+
+# `str.contains`: Text Filtering
+
+An exact match cannot answer every question. Real questions are "which customers have a gmail address?", "which products have Pro in the name?", and "which cities start with San?". Use the `.str` accessor for these questions.
+
+## The `.str` accessor
+
+The text methods are behind `.str`. They apply to every value in the column:
+
+```python
+customers["name"].str.lower().head(3)
+```
+
+**Result:**
+
+|   | name |
+|---|------|
+| 0 | alice johnson |
+| 1 | bob smith |
+| 2 | carol white |
+
+These methods are the most useful:
+
+| Method | Function |
+|--------|--------------|
+| `.str.contains("x")` | Does the value contain "x" at any position? |
+| `.str.startswith("x")` | Does the value start with "x"? |
+| `.str.endswith("x")` | Does the value end with "x"? |
+| `.str.lower()` / `.str.upper()` | Change the letter case |
+| `.str.strip()` | Remove the spaces at the start and the end |
+| `.str.len()` | Count the characters |
+
+The first three methods return `True` or `False`, so you can use them directly in a filter.
+
+## How to filter with `contains`
+
+```python
+customers[customers["name"].str.contains("a")]
+```
+
+**Result:**
+
+|   | customer_id | name | email | city | country | signup_date |
+|---|-------------|------|-------|------|---------|-------------|
+| 2 | 3 | Carol White | carol@example.com | Sydney | Australia | 2024-01-08 |
+| 3 | 4 | Dave Brown | dave@example.com | Toronto | Canada | 2024-01-20 |
+| 4 | 5 | Eve Davis | eve@example.com | New York | USA | 2024-02-03 |
+| 5 | 6 | Frank Lee | frank@example.com | NaN | USA | 2024-01-30 |
+| 6 | 7 | Grace Kim | grace@example.com | Seoul | South Korea | 2024-02-01 |
+| 8 | 9 | Ivy Nakamura | ivy@example.com | Tokyo | Japan | 2024-04-02 |
+
+The list does not include Alice Johnson. That name contains a capital `A` and not a lowercase `a`. By default, the match is case sensitive.
+
+## How to ignore the letter case
+
+```python
+customers[customers["name"].str.contains("a", case=False)]
+```
+
+The list now includes Alice Johnson, and pandas returns seven rows. In real work you usually want `case=False`, because people type a city name in many different ways.
+
+## How to match the start or the end
+
+```python
+products[products["name"].str.startswith("M")]
+```
+
+**Result:**
+
+|   | product_id | name | category | price |
+|---|-----------|------|----------|-------|
+| 1 | 2 | Mouse | Electronics | 29.99 |
+| 5 | 6 | Monitor | Electronics | 249.0 |
+
+Use `endswith` to filter email domains: `customers["email"].str.endswith("example.com")`.
+
+## Missing values
+
+A missing value is not text, so pandas cannot search it. Pandas removes those rows from the result:
+
+```python
+customers[customers["city"].str.contains("o")]
+```
+
+Six cities contain an `o`. The result does not include Frank Lee, because that city is `NaN`. Write the decision in the code if you want to make it clear:
+
+```python
+customers[customers["city"].str.contains("o", na=False)]
+```
+
+`na=False` means "a missing value does not match". `na=True` keeps those rows. Write this argument, and the next reader of the code understands your intent.
+
+:::tip Clean the text before you compare it
+Text from real systems contains extra spaces and different letter cases. Learn this combination of methods:
+
+```python
+customers["country"].str.strip().str.lower() == "usa"
+```
+
+First remove the spaces. Then change the letters to lowercase. Then compare. This sequence changes `" USA "`, `"usa"`, and `"Usa"` into one value.
+:::
+
+:::note Coming from SQL?
+`str.contains("a")` is `WHERE name LIKE '%a%'`. `startswith("M")` is `LIKE 'M%'`. `case=False` gives the same behavior as `ILIKE` in Postgres.
+:::
+
+## Practice
+
+Find every product with the letter "o" in the name. Ignore the letter case.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# .str gives the text methods for a whole column.
+# case=False matches both "o" and "O".
+has_o = products["name"].str.contains("o", case=False)
+
+products[has_o]
+```
+
+**Result:**
+
+|   | product_id | name | category | price |
+|---|-----------|------|----------|-------|
+| 0 | 1 | Laptop | Electronics | 999.0 |
+| 1 | 2 | Mouse | Electronics | 29.99 |
+| 4 | 5 | Notebook | Stationery | 4.99 |
+| 5 | 6 | Monitor | Electronics | 249.0 |
+
+</details>

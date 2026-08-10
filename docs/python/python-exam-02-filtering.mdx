@@ -1,0 +1,118 @@
+---
+id: python-exam-02-filtering
+title: "Exam 2: Filtering Techniques"
+sidebar_label: "Exam 2: Filtering"
+sidebar_position: 101
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 2: Filtering Techniques
+
+**Difficulty:** Beginner
+
+**Topics covered:** boolean filtering, `&` and `|`, `isin`, `between`, `str.contains`, `isna`
+
+Return the filtered DataFrame for each question. Then click **Submit**.
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+Return every order with a value above 500.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# The comparison builds a True/False mask, and the outer
+# brackets keep the rows where the mask is True.
+orders[orders["total_amount"] > 500]`}
+/>
+
+---
+
+## Question 2
+
+Use `isin` to return every customer from the USA or Canada.
+
+<PythonExercise
+  frames={["customers"]}
+  solution={`# isin() tests each row against a list of values, so one
+# call replaces a chain of | comparisons.
+wanted = ["USA", "Canada"]
+
+customers[customers["country"].isin(wanted)]`}
+/>
+
+---
+
+## Question 3
+
+Return every order with a quantity from 2 to 4. Include both end values.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# between() includes both end values by default.
+orders[orders["quantity"].between(2, 4)]`}
+/>
+
+---
+
+## Question 4
+
+Return every product with the letter "o" in the name. Ignore the letter case.
+
+<PythonExercise
+  frames={["products"]}
+  solution={`# .str gives the text methods for a whole column.
+# case=False matches both "o" and "O".
+has_o = products["name"].str.contains("o", case=False)
+
+products[has_o]`}
+/>
+
+---
+
+## Question 5
+
+Return the orders with no `status` value.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# isna() is True where a value is missing.
+orders[orders["status"].isna()]`}
+/>
+
+---
+
+## Question 6
+
+Return every completed order with a quantity above 2. The row must agree with both conditions.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# Build one mask per condition, then combine with &.
+is_done = orders["status"] == "completed"
+is_bulk = orders["quantity"] > 2
+
+orders[is_done & is_bulk]`}
+/>

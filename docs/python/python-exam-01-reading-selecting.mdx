@@ -1,0 +1,112 @@
+---
+id: python-exam-01-reading-selecting
+title: "Exam 1: Reading & Selecting Data"
+sidebar_label: "Exam 1: Reading & Selecting"
+sidebar_position: 100
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 1: Reading & Selecting Data
+
+**Difficulty:** Beginner
+
+**Topics covered:** `shape`, column selection, `head`, `loc`, Series methods
+
+Write code that answers each question. Then click **Submit**. The exercise checks the last line of your code, so end your code with the value that you want to return. Do not end with a `print`.
+
+:::note The button tells you when Python is ready
+The first run on a page takes a few seconds, because the browser downloads Python and pandas. The text on the button shows the stage:
+
+| Button text | Meaning |
+| --- | --- |
+| **Starting Python…** | The browser downloads Python. Wait. |
+| **Loading pandas…** | The browser installs pandas. Wait. |
+| **▶ Run** | Python is ready. Click to run your code. |
+| **Running…** | Your code runs now. |
+
+This wait occurs one time for each browser session. **Submit** also waits, then it checks your answer.
+:::
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+How many rows and how many columns does `customers` have? Return the shape.
+
+<PythonExercise
+  frames={["customers"]}
+  solution={`# .shape returns the pair (rows, columns).
+customers.shape`}
+/>
+
+---
+
+## Question 2
+
+Return a DataFrame with only the `name` and `price` columns of `products`.
+
+<PythonExercise
+  frames={["products"]}
+  solution={`# Double brackets hold a list of columns, and return a
+# DataFrame. Single brackets would return a Series.
+products[["name", "price"]]`}
+/>
+
+---
+
+## Question 3
+
+Return the first five rows of `orders`.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# head(n) returns the first n rows.
+orders.head(5)`}
+/>
+
+---
+
+## Question 4
+
+Use `loc` to return the `name` and the `country` of the first four customers. Their index labels are 0 to 3.
+
+<PythonExercise
+  frames={["customers"]}
+  solution={`# loc reads index labels, and a loc slice includes both
+# ends, so 0:3 returns four rows. The list after the
+# comma chooses the columns.
+customers.loc[0:3, ["name", "country"]]`}
+/>
+
+---
+
+## Question 5
+
+What is the total quantity of all orders? Return one number.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# Select the column, then add its values.
+orders["quantity"].sum()`}
+/>

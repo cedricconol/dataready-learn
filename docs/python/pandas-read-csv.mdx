@@ -1,0 +1,202 @@
+---
+id: pandas-read-csv
+title: "Reading and Inspecting Data"
+sidebar_label: "Reading data"
+sidebar_position: 8
+youtube_url: ""
+---
+
+# Reading and Inspecting Data
+
+Every analysis starts in the same way. First, load the file. Then examine the contents of the file. Analysts who do not do the second step lose time later.
+
+## `read_csv`
+
+```python
+pd.read_csv("orders.csv").head()
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed |
+| 2 | 3 | 2 | 3 | 2024-01-15 | 1 | 349.0 | completed |
+| 3 | 4 | 3 | 4 | 2024-01-18 | 4 | 796.0 | completed |
+| 4 | 5 | 4 | 5 | 2024-01-22 | 10 | 49.9 | NaN |
+
+One function and one file path give you a DataFrame. The playground holds `orders.csv`, `customers.csv`, and `products.csv` on disk, so you can read them. In other work the path is a real path such as `"data/sales_2024.csv"`, or a URL.
+
+The `NaN` in the last row is a missing value. The CSV file had no characters between two commas at that position.
+
+## The four checks for a new file
+
+### 1. `head()` and `tail()`: what does a row contain?
+
+```python
+orders.head(3)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed |
+| 2 | 3 | 2 | 3 | 2024-01-15 | 1 | 349.0 | completed |
+
+`head()` shows the first five rows by default. `tail()` shows the last five rows. Use `tail()` to find incomplete files and unwanted footer rows.
+
+### 2. `shape`: how much data is there?
+
+```python
+print(orders.shape)
+```
+
+**Output:**
+
+```text
+(30, 7)
+```
+
+The table has 30 rows and seven columns. If you expected 30,000 rows, this check finds the problem in five seconds.
+
+### 3. `info()`: what is the type of each column, and which values are missing?
+
+```python
+orders.info()
+```
+
+**Output:**
+
+```text
+<class 'pandas.DataFrame'>
+RangeIndex: 30 entries, 0 to 29
+Data columns (total 7 columns):
+ #   Column        Non-Null Count  Dtype         
+---  ------        --------------  -----         
+ 0   order_id      30 non-null     int64         
+ 1   customer_id   30 non-null     int64         
+ 2   product_id    30 non-null     int64         
+ 3   order_date    30 non-null     datetime64[us]
+ 4   quantity      30 non-null     int64         
+ 5   total_amount  29 non-null     float64       
+ 6   status        28 non-null     str           
+dtypes: datetime64[us](1), float64(1), int64(4), str(1)
+memory usage: 1.8 KB
+```
+
+This is the most useful line in pandas. Read the `Non-Null Count` column from the top to the bottom: 30, 30, 30, 30, 30, **29**, **28**. One order has no amount, and two orders have no status. You know this before the missing values corrupt a total.
+
+The `Dtype` column shows the type of each column: `int64` for whole numbers, `float64` for decimal numbers, `str` for text, and `datetime64[us]` for dates.
+
+### 4. `describe()`: what are the values of the numbers?
+
+```python
+orders["total_amount"].describe()
+```
+
+**Result:**
+
+|   | total_amount |
+|---|--------------|
+| count | 29.0 |
+| mean | 378.3551724 |
+| std | 342.5885092 |
+| min | 24.95 |
+| 25% | 89.97 |
+| 50% | 249.0 |
+| 75% | 498.0 |
+| max | 999.0 |
+
+The order amounts go from 24.95 to 999. Half of the amounts are less than 249. `count` is 29 and not 30, again because of the missing amount. Run `orders.describe()` with no column name. Pandas then gives the same summary for every numeric column.
+
+## You must request dates
+
+By default, `read_csv` reads dates as text:
+
+```python
+pd.read_csv("orders.csv").dtypes
+```
+
+**Result:**
+
+|   | value |
+|---|-------|
+| order_id | int64 |
+| customer_id | int64 |
+| product_id | int64 |
+| order_date | str |
+| quantity | int64 |
+| total_amount | float64 |
+| status | str |
+
+Pandas read `order_date` as `str`, so `"2024-01-05"` is only characters. You cannot subtract one value from another value. You also cannot find the month. Tell pandas which columns hold dates:
+
+```python
+pd.read_csv("orders.csv", parse_dates=["order_date"]).dtypes
+```
+
+**Result:**
+
+|   | value |
+|---|-------|
+| order_id | int64 |
+| customer_id | int64 |
+| product_id | int64 |
+| order_date | datetime64[us] |
+| quantity | int64 |
+| total_amount | float64 |
+| status | str |
+
+The column now holds a date. The playground loads the `orders` DataFrame with this option, so the dates are ready for use.
+
+:::warning Check the dtypes before you calculate
+A column of numbers that arrives as text causes errors that show no message. `"5" + "5"` returns `"55"`. A `sum()` on a text column joins the values, it does not add them. If `info()` shows `str` for a number column, correct the type before you do other work.
+:::
+
+## Practice
+
+Load the three files into `customers`, `products`, and `orders`. Read the date columns as dates and not as text.
+
+- `customers.csv` has a `signup_date` column
+- `orders.csv` has an `order_date` column
+- `products.csv` has no date column
+
+Then show the types of the `customers` columns, to prove that the date is correct.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# parse_dates= names the columns that hold dates.
+# Without it, pandas reads these dates as text.
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+# products.csv has no date, so it needs no option.
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+# dtypes shows the type of every column.
+customers.dtypes
+```
+
+**Result:**
+
+|   | value |
+|---|-------|
+| customer_id | int64 |
+| name | str |
+| email | str |
+| city | str |
+| country | str |
+| signup_date | datetime64[us] |
+
+`signup_date` is now `datetime64[us]` and not `str`. The `orders` DataFrame gives the same result for `order_date`.
+
+These are the lines that you write at the start of every analysis. The playground writes them for you in the lessons after this one.
+
+</details>

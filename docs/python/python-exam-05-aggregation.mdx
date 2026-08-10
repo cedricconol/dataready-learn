@@ -1,0 +1,106 @@
+---
+id: python-exam-05-aggregation
+title: "Exam 5: Aggregation"
+sidebar_label: "Exam 5: Aggregation"
+sidebar_position: 104
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 5: Aggregation
+
+**Difficulty:** Intermediate
+
+**Topics covered:** `groupby`, `agg`, named aggregations, filtering groups
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+How many orders does each status have?
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# count() counts the values that are not missing. Every
+# order has an ID, so this counts the orders.
+orders.groupby("status")["order_id"].count()`}
+/>
+
+---
+
+## Question 2
+
+What is the total revenue of each customer? Round the values to two decimals.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# Group, select the value column, then aggregate.
+by_customer = orders.groupby("customer_id")
+by_customer["total_amount"].sum().round(2)`}
+/>
+
+---
+
+## Question 3
+
+For each status, return the total revenue in a column with the name `revenue`. Return the average quantity in a column with the name `avg_quantity`. Round both values to two decimals.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# The named form lets you choose the output names.
+orders.groupby("status").agg(
+    revenue=("total_amount", "sum"),
+    avg_quantity=("quantity", "mean"),
+).round(2)`}
+/>
+
+---
+
+## Question 4
+
+Which customers made four or more orders? Return a table with an `order_count` column.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# 1. One row for each customer, holding its order count.
+summary = orders.groupby("customer_id").agg(
+    order_count=("order_id", "count"),
+)
+
+# 2. Filter that summary like any other DataFrame.
+summary.query("order_count >= 4")`}
+/>
+
+---
+
+## Question 5
+
+How many units did each product category sell?
+
+<PythonExercise
+  frames={["orders", "products"]}
+  solution={`# The category lives in products, so merge it in first.
+sales = orders.merge(products, on="product_id")
+
+sales.groupby("category")["quantity"].sum()`}
+/>

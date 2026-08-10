@@ -1,0 +1,183 @@
+---
+id: pandas-merge
+title: "merge: Combining Two DataFrames"
+sidebar_label: "merge"
+sidebar_position: 19
+youtube_url: ""
+---
+
+# `merge`: Combining Two DataFrames
+
+Data is almost never in one table. `orders` records a purchase of product 1. Only `products` records that product 1 is a Laptop with a price of 999. `merge` combines the two tables.
+
+## The method
+
+The two tables have one common column: `product_id`. A merge matches the rows on that common value and joins the columns.
+
+```python
+orders.merge(products, on="product_id").head(5)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status | name | category | price |
+|---|----------|-------------|------------|------------|----------|--------------|--------|------|----------|-------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed | Laptop | Electronics | 999.0 |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed | Mouse | Electronics | 29.99 |
+| 2 | 3 | 2 | 3 | 2024-01-15 | 1 | 349.0 | completed | Desk | Furniture | 349.0 |
+| 3 | 4 | 3 | 4 | 2024-01-18 | 4 | 796.0 | completed | Chair | Furniture | 199.0 |
+| 4 | 5 | 4 | 5 | 2024-01-22 | 10 | 49.9 | NaN | Notebook | Stationery | 4.99 |
+
+The result has ten columns: the seven columns from `orders` and the three new columns from `products`. Each order now has the details of its product.
+
+Read `orders.merge(products, on="product_id")` as a sentence: take orders, add products, and match the rows on product_id.
+
+## How to keep only the necessary columns
+
+The merged table is usually too wide to read, so select the columns in the same step:
+
+```python
+merged = orders.merge(products, on="product_id")
+
+cols = ["order_id", "name", "category", "total_amount"]
+merged[cols].head(5)
+```
+
+**Result:**
+
+|   | order_id | name | category | total_amount |
+|---|----------|------|----------|--------------|
+| 0 | 1 | Laptop | Electronics | 999.0 |
+| 1 | 2 | Mouse | Electronics | 59.98 |
+| 2 | 3 | Desk | Furniture | 349.0 |
+| 3 | 4 | Chair | Furniture | 796.0 |
+| 4 | 5 | Notebook | Stationery | 49.9 |
+
+You can now read each row as a sentence: order 1 was a Laptop, an Electronics item, with a value of 999.
+
+## How to merge on a different key
+
+The same call works with `customers`. Match the rows on `customer_id`:
+
+```python
+merged = orders.merge(customers, on="customer_id")
+
+cols = ["order_id", "name", "country", "total_amount"]
+merged[cols].head(5)
+```
+
+**Result:**
+
+|   | order_id | name | country | total_amount |
+|---|----------|------|---------|--------------|
+| 0 | 1 | Alice Johnson | USA | 999.0 |
+| 1 | 2 | Alice Johnson | USA | 59.98 |
+| 2 | 3 | Bob Smith | UK | 349.0 |
+| 3 | 4 | Carol White | Australia | 796.0 |
+| 4 | 5 | Dave Brown | Canada | 49.9 |
+
+Alice Johnson occurs two times, because that customer made two orders. This result is correct. There is one row for each order, and the customer details repeat. The rows multiply on the "many" side of the relation. This is the correct shape for an analysis.
+
+## When the columns have different names
+
+Different systems often give different names to the same key: `product_id` in one table, and `pid` or `sku` in another table.
+
+```python
+orders.merge(
+    other_table,
+    left_on="product_id",
+    right_on="pid",
+)
+```
+
+`left_on` names the column in the left table. `right_on` names the column in the right table. The result contains both columns, so remove one of them if you do not need it.
+
+## Always check the row count
+
+```python
+orders.shape   # (30, 7)
+
+merged = orders.merge(products, on="product_id")
+merged.shape   # (30, 10)
+```
+
+The merge takes 30 rows and returns 30 rows. This result is correct: each order matched exactly one product.
+
+If the row count *increases*, the right table has duplicate keys, and each match multiplied the rows. If the row count *decreases*, some rows found no match, and pandas removed them. Both problems are common, and both give incorrect totals with no error message. A two-second check of the shape finds both problems.
+
+:::warning Pandas adds a suffix to a repeated column name
+If both tables have a column with the same name, and that column is not the key, pandas keeps both columns. It renames them `name_x` and `name_y`. `customers` and `products` both have a `name` column, so a merge of all three tables shows this:
+
+```python
+with_customer = orders.merge(customers, on="customer_id")
+both = with_customer.merge(products, on="product_id")
+
+both[["order_id", "name_x", "name_y"]].head(3)
+```
+
+**Result:**
+
+|   | order_id | name_x | name_y |
+|---|----------|--------|--------|
+| 0 | 1 | Alice Johnson | Laptop |
+| 1 | 2 | Alice Johnson | Mouse |
+| 2 | 3 | Bob Smith | Desk |
+
+`name_x` is the customer, and `name_y` is the product, but the headers do not say this. When you see an `_x` column and a `_y` column, set the suffixes yourself:
+
+```python
+both = with_customer.merge(
+    products,
+    on="product_id",
+    suffixes=("_customer", "_product"),
+)
+
+cols = ["order_id", "name_customer", "name_product"]
+both[cols].head(3)
+```
+
+**Result:**
+
+|   | order_id | name_customer | name_product |
+|---|----------|---------------|--------------|
+| 0 | 1 | Alice Johnson | Laptop |
+| 1 | 2 | Alice Johnson | Mouse |
+| 2 | 3 | Bob Smith | Desk |
+:::
+
+:::note Coming from SQL?
+`orders.merge(products, on="product_id")` is `SELECT * FROM orders JOIN products USING (product_id)`. The operation is the same, and you can use the same mental model. The next lesson teaches `how=`, which is the `LEFT`, `RIGHT`, and `FULL` part.
+:::
+
+## Practice
+
+Show the customer name and the country for each order above 800.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# 1. Filter first, so the merge handles fewer rows.
+big = orders[orders["total_amount"] > 800]
+
+# 2. customer_id is the key shared by both tables.
+merged = big.merge(customers, on="customer_id")
+
+# 3. The merged table is wide, so keep only what we need.
+cols = ["order_id", "name", "country", "total_amount"]
+merged[cols]
+```
+
+**Result:**
+
+|   | order_id | name | country | total_amount |
+|---|----------|------|---------|--------------|
+| 0 | 1 | Alice Johnson | USA | 999.0 |
+| 1 | 9 | Carol White | Australia | 999.0 |
+| 2 | 11 | Bob Smith | UK | 999.0 |
+| 3 | 18 | Grace Kim | South Korea | 999.0 |
+| 4 | 22 | Alice Johnson | USA | 999.0 |
+
+Filter first, then merge. This order is a good habit. The merge processes less data, and the result is easier to read.
+
+</details>

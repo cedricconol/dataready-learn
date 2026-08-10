@@ -1,0 +1,99 @@
+---
+id: python-exam-03-shaping
+title: "Exam 3: Shaping Results"
+sidebar_label: "Exam 3: Shaping"
+sidebar_position: 102
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 3: Shaping Results
+
+**Difficulty:** Beginner
+
+**Topics covered:** `rename`, `assign`, `nunique`, `sort_values`, `nlargest`
+
+One question depends on the row order. That question says so.
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+Rename the `total_amount` column of `orders` to `revenue`. Return the result.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# The dictionary format is {"old name": "new name"}.
+orders.rename(columns={"total_amount": "revenue"})`}
+/>
+
+---
+
+## Question 2
+
+Add a column with the name `price_with_tax` to `products`. Its value is 12% more than `price`, rounded to two decimals.
+
+<PythonExercise
+  frames={["products"]}
+  solution={`# Calculate first, so the assign call stays short.
+price_with_tax = (products["price"] * 1.12).round(2)
+
+products.assign(price_with_tax=price_with_tax)`}
+/>
+
+---
+
+## Question 3
+
+How many distinct customers made an order? Return one number.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# nunique() counts the distinct values in the column.
+orders["customer_id"].nunique()`}
+/>
+
+---
+
+## Question 4
+
+Return every product, sorted from the highest price to the lowest price. **The row order is important here.**
+
+<PythonExercise
+  frames={["products"]}
+  ordered
+  solution={`# ascending=False puts the largest value first.
+products.sort_values("price", ascending=False)`}
+/>
+
+---
+
+## Question 5
+
+Return the three orders with the largest `quantity`.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# nlargest sorts and takes the top rows in one step.
+orders.nlargest(3, "quantity")`}
+/>

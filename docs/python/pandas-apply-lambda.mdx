@@ -1,0 +1,156 @@
+---
+id: pandas-apply-lambda
+title: "apply"
+sidebar_label: "apply"
+sidebar_position: 28
+youtube_url: ""
+---
+
+# `apply`
+
+`apply` runs your own function on a column or on the rows. Use it for logic that column operations cannot express. Many analysts use `apply` too often. Learn the method, then learn when to avoid it.
+
+## Write the function first
+
+`apply` needs a function. Write the function with `def`, then give its name to `apply`. Do not put parentheses after the name. `apply` calls the function for you.
+
+```python
+def add_tax(price):
+    return price * 1.12
+```
+
+The function takes one price and returns one price. It knows nothing about pandas.
+
+## `apply` on a column
+
+```python
+def add_tax(price):
+    return price * 1.12
+
+products["price"].apply(add_tax).head(3)
+```
+
+**Result:**
+
+|   | price |
+|---|-------|
+| 0 | 1118.88 |
+| 1 | 33.5888 |
+| 2 | 390.88 |
+
+The function runs one time for each value. Pandas puts the results in a new Series.
+
+But this example is an incorrect use of `apply`. `products["price"] * 1.12` gives the same answer. It is shorter, and it is much faster, because it never calls Python for each value. **If a column operation can do the work, use the column operation.**
+
+## Where `apply` is useful
+
+Use `apply` for logic with several branches that no arithmetic expression can hold:
+
+```python
+def band(price):
+    if price > 500:
+        return "premium"
+    if price > 100:
+        return "standard"
+    return "budget"
+
+products.assign(band=products["price"].apply(band))
+```
+
+**Result:**
+
+|   | product_id | name | category | price | band |
+|---|-----------|------|----------|-------|------|
+| 0 | 1 | Laptop | Electronics | 999.0 | premium |
+| 1 | 2 | Mouse | Electronics | 29.99 | budget |
+| 2 | 3 | Desk | Furniture | 349.0 | standard |
+| 3 | 4 | Chair | Furniture | 199.0 | standard |
+| 4 | 5 | Notebook | Stationery | 4.99 | budget |
+| 5 | 6 | Monitor | Electronics | 249.0 | standard |
+
+The name `band` tells the reader what the column holds. Give the function a name that says what it returns. Note that `np.select` in the [next lesson](/python/pandas-np-where) does the same work in vectorized code. Use `np.select` in most cases.
+
+## `apply` on the rows
+
+With `axis=1`, the function receives each **row** and not each value:
+
+```python
+def make_label(row):
+    quantity = row["quantity"]
+    product = row["product_id"]
+    return f"{quantity} x product {product}"
+
+labels = orders.apply(make_label, axis=1)
+labelled = orders.assign(label=labels)
+labelled.head(3)[["order_id", "label"]]
+```
+
+**Result:**
+
+|   | order_id | label |
+|---|----------|-------|
+| 0 | 1 | 1 x product 1 |
+| 1 | 2 | 2 x product 2 |
+| 2 | 3 | 1 x product 3 |
+
+Inside the function, `row["column_name"]` reads the value of that row. This code is the slowest code in this lesson, because pandas builds a Series for each row. But it is clear and easy to read for a label that comes from several columns.
+
+Be careful with the quotes. The f-string uses double quotes on the outside, so the column names inside need single quotes.
+
+## How to choose a method
+
+| Your task | Method |
+|-----------|-----|
+| Arithmetic on columns | `df["a"] * 2`, `df["a"] + df["b"]` |
+| A condition with two results | `np.where` |
+| A condition with more than two results | `np.select` |
+| Text operations | The `.str` methods |
+| Custom logic on each row | `apply(..., axis=1)` |
+
+:::warning `apply` is a loop with a different name
+`apply` is not vectorized. It calls your Python function one time for each value or for each row. On large data it can be one hundred times slower than the equivalent column operation. `apply` is acceptable on a small dataset, and it is acceptable when no other method can express the logic. But replace it in code that runs every day.
+:::
+
+## Practice
+
+Add a `label` column to `products` with the form `"Laptop (Electronics)"`.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# axis=1 gives the function one row at a time, so the
+# function can read more than one column.
+def make_label(row):
+    return f"{row['name']} ({row['category']})"
+
+# Pass the function by name. Do not add parentheses: apply
+# calls it for you, once per row.
+labels = products.apply(make_label, axis=1)
+
+labelled = products.assign(label=labels)
+labelled[["product_id", "label"]]
+```
+
+**Result:**
+
+|   | product_id | label |
+|---|-----------|-------|
+| 0 | 1 | Laptop (Electronics) |
+| 1 | 2 | Mouse (Electronics) |
+| 2 | 3 | Desk (Furniture) |
+| 3 | 4 | Chair (Furniture) |
+| 4 | 5 | Notebook (Stationery) |
+| 5 | 6 | Monitor (Electronics) |
+
+A vectorized form of this code also exists. It shows how often you can avoid `apply`:
+
+```python
+# + joins two text columns one row at a time, so this
+# needs no Python function and no apply.
+products["name"] + " (" + products["category"] + ")"
+```
+
+The `+` operator joins two text columns one row at a time. It calls no Python function.
+
+</details>

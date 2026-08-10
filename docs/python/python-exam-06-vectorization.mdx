@@ -1,0 +1,128 @@
+---
+id: python-exam-06-vectorization
+title: "Exam 6: Vectorization & Chaining"
+sidebar_label: "Exam 6: Vectorization"
+sidebar_position: 105
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 6: Vectorization & Chaining
+
+**Difficulty:** Intermediate
+
+**Topics covered:** column arithmetic, `assign`, `query`, method chaining
+
+Do not write a loop. Every question here has a vectorized answer that makes one pass over the data.
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+Use `orders`. Return the columns `order_id`, `quantity`, `total_amount`, and a new `unit_price` column. The value of `unit_price` is `total_amount` divided by `quantity`, rounded to two decimals.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# One expression over the whole column: no loop needed.
+unit_price = (
+    orders["total_amount"] / orders["quantity"]
+).round(2)
+
+priced = orders.assign(unit_price=unit_price)
+
+cols = [
+    "order_id",
+    "quantity",
+    "total_amount",
+    "unit_price",
+]
+priced[cols]`}
+/>
+
+---
+
+## Question 2
+
+Use a chain to return the total completed revenue of each customer. Round the values to two decimals.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`(
+    orders
+    # 1. Completed orders only.
+    .query("status == 'completed'")
+    # 2. One group for each customer.
+    .groupby("customer_id")["total_amount"]
+    .sum()
+    .round(2)
+)`}
+/>
+
+---
+
+## Question 3
+
+How many orders have a quantity above 2? Return one number. Do not filter the DataFrame first.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# The comparison gives a True/False column, and True
+# counts as 1, so sum() counts the matching rows.
+(orders["quantity"] > 2).sum()`}
+/>
+
+---
+
+## Question 4
+
+Use the orders with two or more units. Return the total revenue of each product category in a column with the name `revenue`. Round the values to two decimals.
+
+<PythonExercise
+  frames={["orders", "products"]}
+  solution={`(
+    orders
+    # 1. Keep the orders of two units or more.
+    .query("quantity >= 2")
+    # 2. Bring in the category from products.
+    .merge(products, on="product_id")
+    .groupby("category")
+    .agg(revenue=("total_amount", "sum"))
+    .round(2)
+)`}
+/>
+
+---
+
+## Question 5
+
+How many orders have a `total_amount` above 500? Add a new column `is_big` to `orders`. This column holds `True` when `total_amount` is above 500, and `False` when it is not. Then add the values in that column. Return one number.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# A comparison gives a column of True/False values.
+is_big = orders["total_amount"] > 500
+
+# Put that column in the frame, then add its values.
+# True counts as 1, so the sum is a count of rows.
+orders.assign(is_big=is_big)["is_big"].sum()`}
+/>

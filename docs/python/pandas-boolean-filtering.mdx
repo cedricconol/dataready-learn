@@ -1,0 +1,195 @@
+---
+id: pandas-boolean-filtering
+title: "Boolean Filtering"
+sidebar_label: "Boolean filtering"
+sidebar_position: 10
+youtube_url: ""
+---
+
+# Boolean Filtering
+
+You will use this pattern more than any other pandas pattern: keep only the rows that agree with a condition. The next four lessons show variations of this pattern.
+
+## The method in two steps
+
+First, compare a column to a value. Pandas returns `True` or `False` for every row:
+
+```python
+orders["quantity"] > 5
+```
+
+**Result (first rows):**
+
+|   | quantity |
+|---|----------|
+| 0 | False |
+| 1 | False |
+| 2 | False |
+| 3 | False |
+| 4 | True |
+| ... | ... |
+
+This Series of `True` and `False` values is a **mask**. Second, give the mask to the DataFrame in square brackets. Pandas then keeps the rows that have `True`:
+
+```python
+orders[orders["quantity"] > 5]
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 4 | 5 | 4 | 5 | 2024-01-22 | 10 | 49.9 | NaN |
+| 16 | 17 | 3 | 5 | 2024-03-15 | 20 | 99.8 | completed |
+| 23 | 24 | 5 | 5 | 2024-04-16 | 15 | 74.85 | completed |
+| 26 | 27 | 2 | 5 | 2024-05-02 | 8 | 39.92 | completed |
+
+The result has four large orders. The index values (4, 16, 23, 26) are the original row labels. Pandas keeps these labels, so you can always find the original row.
+
+The full pattern is `df[condition]`. You always write the condition with a column name.
+
+## How to match text
+
+```python
+orders[orders["status"] == "pending"]
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 8 | 9 | 3 | 1 | 2024-02-09 | 1 | 999.0 | pending |
+| 22 | 23 | 4 | 6 | 2024-04-12 | 2 | 498.0 | pending |
+
+A text comparison is exact, and it is case sensitive. `"Pending"` matches no rows.
+
+## How to combine conditions
+
+For two or more conditions you need two things: the correct operator, and brackets around each condition.
+
+| Meaning | Operator |
+|---------|----------|
+| and | `&` |
+| or | `\|` |
+| not | `~` |
+
+```python
+big_qty = orders["quantity"] > 1
+big_amount = orders["total_amount"] > 500
+
+orders[big_qty & big_amount]
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 3 | 4 | 3 | 4 | 2024-01-18 | 4 | 796.0 | completed |
+| 25 | 26 | 7 | 4 | 2024-04-26 | 3 | 597.0 | completed |
+
+Use `|` for "or":
+
+```python
+status = orders["status"]
+
+orders[(status == "pending") | (status == "cancelled")]
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 6 | 7 | 1 | 3 | 2024-02-01 | 1 | 349.0 | cancelled |
+| 8 | 9 | 3 | 1 | 2024-02-09 | 1 | 999.0 | pending |
+| 15 | 16 | 5 | 3 | 2024-03-11 | 1 | 349.0 | cancelled |
+| 22 | 23 | 4 | 6 | 2024-04-12 | 2 | 498.0 | pending |
+
+`~` reverses a condition. This code returns every customer outside the USA:
+
+```python
+customers[~(customers["country"] == "USA")]
+```
+
+**Result:**
+
+|   | customer_id | name | email | city | country | signup_date |
+|---|-------------|------|-------|------|---------|-------------|
+| 1 | 2 | Bob Smith | bob@example.com | London | UK | 2023-12-15 |
+| 2 | 3 | Carol White | carol@example.com | Sydney | Australia | 2024-01-08 |
+| 3 | 4 | Dave Brown | dave@example.com | Toronto | Canada | 2024-01-20 |
+| 6 | 7 | Grace Kim | grace@example.com | Seoul | South Korea | 2024-02-01 |
+| 7 | 8 | Henry Cruz | henry@example.com | Manila | Philippines | 2024-02-10 |
+| 8 | 9 | Ivy Nakamura | ivy@example.com | Tokyo | Japan | 2024-04-02 |
+
+## Two common errors
+
+:::warning Use `&`, not `and`
+```python
+quantity = orders["quantity"]
+amount = orders["total_amount"]
+
+orders[quantity > 5 and amount > 100]
+```
+```text
+ValueError: The truth value of a Series is ambiguous.
+```
+The Python `and` operator reduces a full column to one answer. Pandas does not know which answer you want, so it shows an error. The `&` operator compares one row at a time. This is the correct behavior for a filter.
+:::
+
+:::warning Bracket every condition
+```python
+status = orders["status"]
+
+orders[status == "pending" | status == "cancelled"]
+```
+```text
+TypeError: unsupported operand type(s) for |: 'str' and 'StringArray'
+```
+`&` and `|` have a higher priority than `==`. Without brackets, Python tries to combine `"pending"` with a full column. Always put brackets around each condition: `(A) & (B)` or `(A) | (B)`.
+:::
+
+## How to count the rows
+
+A mask is a column of `True` and `False` values. `True` has the value 1, so `.sum()` counts the rows that match:
+
+```python
+(orders["quantity"] > 5).sum()
+```
+
+**Result:** `4`
+
+This code answers the question "how many rows match?" and does not print the rows.
+
+:::note Coming from SQL?
+`df[df["quantity"] > 5]` is `SELECT * FROM orders WHERE quantity > 5`. There are three differences. You write the DataFrame name a second time inside the brackets. `AND` and `OR` become `&` and `|`. Every condition needs its own brackets.
+:::
+
+## Practice
+
+Find every order with a `total_amount` above 500 and a status of `completed`.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# Build one mask for each condition, and give each a name
+# that says what it selects.
+is_big = orders["total_amount"] > 500
+is_done = orders["status"] == "completed"
+
+# & means "and". Both masks must be True for a row to stay.
+orders[is_big & is_done]
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 3 | 4 | 3 | 4 | 2024-01-18 | 4 | 796.0 | completed |
+| 10 | 11 | 2 | 1 | 2024-02-18 | 1 | 999.0 | completed |
+| 17 | 18 | 7 | 1 | 2024-03-19 | 1 | 999.0 | completed |
+| 21 | 22 | 1 | 1 | 2024-04-07 | 1 | 999.0 | completed |
+| 25 | 26 | 7 | 4 | 2024-04-26 | 3 | 597.0 | completed |
+
+</details>
