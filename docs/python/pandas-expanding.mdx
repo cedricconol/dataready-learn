@@ -1,0 +1,129 @@
+---
+id: pandas-expanding
+title: "expanding: Running Calculations"
+sidebar_label: "expanding"
+sidebar_position: 39
+youtube_url: ""
+---
+
+# `expanding`: Running Calculations
+
+`rolling` reads a window of a fixed size. `expanding` reads *every row until this row*, and the window grows by one row at a time. Use `expanding` for the question "what is our average until today?" and not for "what is our average this quarter?".
+
+## The average until now and the total until now
+
+```python
+monthly = (
+    orders
+    .set_index("order_date")
+    .resample("ME")["total_amount"]
+    .sum()
+    .round(2)
+)
+
+monthly.to_frame("revenue").assign(
+    avg_to_date=monthly.expanding().mean().round(2),
+    total_to_date=monthly.expanding().sum().round(2),
+)
+```
+
+**Result:**
+
+| order_date | revenue | avg_to_date | total_to_date |
+|------------|---------|-------------|---------------|
+| 2024-01-31 | 2751.88 | 2751.88 | 2751.88 |
+| 2024-02-29 | 3108.92 | 2930.4 | 5860.8 |
+| 2024-03-31 | 2075.74 | 2645.51 | 7936.54 |
+| 2024-04-30 | 2547.84 | 2621.1 | 10484.38 |
+| 2024-05-31 | 487.92 | 2194.46 | 10972.3 |
+
+The window starts with one row and grows. January averages one month, and May averages all five months. There is no `NaN` value, because each window has one or more rows.
+
+`expanding().sum()` returns the same numbers as `cumsum()`. But `expanding()` is more general, because it also gives `mean`, `max`, `std`, and every other aggregation.
+
+## The highest value until now
+
+```python
+monthly.expanding().max()
+```
+
+**Result:**
+
+| order_date | total_amount |
+|------------|--------------|
+| 2024-01-31 | 2751.88 |
+| 2024-02-29 | 3108.92 |
+| 2024-03-31 | 3108.92 |
+| 2024-04-30 | 3108.92 |
+| 2024-05-31 | 3108.92 |
+
+This column shows the best month until each point in time. February set the highest value, and no later month is higher.
+
+## `rolling` or `expanding`?
+
+| Question | Method |
+|----------|------|
+| What are the results in the recent period? | `rolling(n)` |
+| What are the results in the full period until now? | `expanding()` |
+
+`rolling` ignores the old data, so use it for a trend. `expanding` uses every row, so use it for a lifetime figure. A running total of revenue needs `expanding`. A three-month trend needs `rolling`.
+
+## Inside a group
+
+Both methods work with `groupby`. Use this combination to build running figures for each customer:
+
+```python
+by_customer = orders.groupby("customer_id")
+by_customer["total_amount"].expanding().mean()
+```
+
+This code shows the change in the average order value of each customer over time. It is a better churn signal than one lifetime average.
+
+:::tip A useful combination
+Put `expanding().mean()` next to the raw value. The two columns answer the question "is this month above or below our long-term average?", and you need no other code. This comparison is the basis of much monitoring work.
+:::
+
+:::note Coming from SQL?
+`expanding().sum()` is `SUM(x) OVER (ORDER BY date)`. That is the default window frame, from the first row to the current row. `expanding().mean()` is the same window with `AVG`.
+:::
+
+## Practice
+
+Show the monthly revenue next to the highest monthly revenue until that month.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# 1. One revenue figure for each month, in date order.
+monthly = (
+    orders
+    .set_index("order_date")
+    .resample("ME")["total_amount"]
+    .sum()
+    .round(2)
+)
+
+# 2. expanding().max() reads every month until this month,
+# so each row holds the best month up to that point.
+best_month_so_far = monthly.expanding().max()
+
+# 3. Put the raw values and the running best side by side.
+monthly.to_frame("revenue").assign(
+    best_month_so_far=best_month_so_far,
+)
+```
+
+**Result:**
+
+| order_date | revenue | best_month_so_far |
+|------------|---------|-------------------|
+| 2024-01-31 | 2751.88 | 2751.88 |
+| 2024-02-29 | 3108.92 | 3108.92 |
+| 2024-03-31 | 2075.74 | 3108.92 |
+| 2024-04-30 | 2547.84 | 3108.92 |
+| 2024-05-31 | 487.92 | 3108.92 |
+
+`monthly.cummax()` returns the same column. But `expanding()` works with any aggregation that you need next.
+
+</details>

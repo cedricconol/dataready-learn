@@ -1,0 +1,152 @@
+---
+id: python-first-code
+title: "Running Python in the Browser"
+sidebar_label: "Your First Code"
+sidebar_position: 3
+youtube_url: ""
+---
+
+# Running Python in the Browser
+
+The playground at the end of every lesson is a Python interpreter. This lesson teaches three skills: how to show output, how to write notes in your code, and how to read an error.
+
+:::note The button tells you when Python is ready
+The first load takes a few seconds, because the browser downloads Python and pandas. The text on the button shows the stage:
+
+| Button text | Meaning |
+| --- | --- |
+| **Starting Python…** | The browser downloads Python. Wait. |
+| **Loading pandas…** | The browser installs pandas. Wait. |
+| **▶ Run** | Python is ready. Click to run your code. |
+| **Running…** | Your code runs now. |
+
+This wait occurs one time for each browser session.
+:::
+
+## Two ways to show output
+
+### 1. The playground shows the last line
+
+An **expression** is code that has a value. If your code ends with an expression, the playground shows that value.
+
+```python
+2 + 2
+```
+
+**Result:** `4`
+
+For this reason, many pandas examples end with `orders.head()` and no `print`. The value of the last line is the output.
+
+### 2. `print()` shows any value at any point
+
+`print()` writes a value immediately. You can therefore show more than one value from one run.
+
+```python
+print("first")
+print("second")
+7 * 6
+```
+
+**Output:**
+
+```text
+first
+second
+```
+
+**Result:** `42`
+
+The playground shows both: first the printed lines, then the value of the last line.
+
+:::warning An assignment is not an expression
+```python
+revenue = 100 * 3
+```
+This code produces no output. To store a value and to show a value are two different actions. To show the value, write the name on a new line after the assignment:
+
+```python
+revenue = 100 * 3
+revenue
+```
+**Result:** `300`
+:::
+
+## Comments
+
+Python ignores all text after a `#`. Comments help the person who reads the code later. Usually that person is you.
+
+```python
+# Revenue for a single line item
+price = 4.99
+quantity = 20
+price * quantity
+```
+
+**Result:** `99.80000000000001`
+
+The final `000000001` is not an error in pandas or in your code. Computers store decimal numbers in binary. Some decimal numbers have no exact binary form, in the same way that `1/3` has no exact decimal form. This effect occurs in every programming language. If the extra digits are a problem in a report, round the value: `round(price * quantity, 2)` returns `99.8`.
+
+## How to read an error
+
+Errors are normal. Every programmer makes them. Python shows the cause of the error on the last line of the message.
+
+```python
+totl_amount
+```
+
+**Output:**
+
+```text
+NameError: name 'totl_amount' is not defined
+```
+
+Read this message as: "you used a name that I do not know." The cause is usually a spelling error, or a variable that you did not create. You will see these three errors most often in this track:
+
+| Error | The usual cause |
+|-------|----------------------|
+| `NameError` | A spelling error in a variable name, or you did not create the variable |
+| `KeyError` | A spelling error in a **column** name, for example `orders["ammount"]` |
+| `SyntaxError` | A missing bracket, quote, or colon |
+
+An error stops the run. An error does not damage anything. Correct the line and run the code again.
+
+## Keyboard shortcut
+
+Press **Cmd + Enter** (Mac) or **Ctrl + Enter** (Windows and Linux) to run the code without the mouse. The Tab key indents by four spaces. Indentation becomes important when you write loops and functions.
+
+## Practice
+
+In the playground, write code that does these tasks:
+
+1. Print the word `Subtotal`
+2. Create a `price` variable with the value `199`
+3. Create a `quantity` variable with the value `5`
+4. Show the product of the two variables as the result
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# print() writes text as output.
+print("Subtotal")
+
+# An assignment stores a value and shows nothing.
+price = 199
+quantity = 5
+
+# The last line is an expression, so the playground shows
+# its value as the result.
+price * quantity
+```
+
+**Output:**
+
+```text
+Subtotal
+```
+
+**Result:** `995`
+
+The two assignment lines produce no output. The total therefore needs its own line at the end. This is the purpose of the exercise: to store a value and to show a value are separate actions.
+
+</details>

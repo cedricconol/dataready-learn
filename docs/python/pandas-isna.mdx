@@ -1,0 +1,125 @@
+---
+id: pandas-isna
+title: "isna and notna: Missing Data"
+sidebar_label: "isna / notna"
+sidebar_position: 14
+youtube_url: ""
+---
+
+# `isna` and `notna`: Missing Data
+
+Every real dataset has missing values. A person did not complete a field, a join found no match, or a sensor was offline. Pandas shows a missing value as `NaN`. This lesson teaches you how to find them.
+
+## Why `== None` does not work
+
+This code returns no error, but it gives an incorrect result:
+
+```python
+orders[orders["total_amount"] == None]
+```
+
+This code returns zero rows, but one order has no amount. A missing value is not equal to any value. It is not equal to itself, and it is not equal to `None`. This rule is not a pandas problem. It is the definition of a missing value: the value is unknown, so no comparison can be true.
+
+Use the two methods below instead.
+
+## `isna`: the rows where the value is missing
+
+```python
+orders[orders["status"].isna()]
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 4 | 5 | 4 | 5 | 2024-01-22 | 10 | 49.9 | NaN |
+| 19 | 20 | 6 | 2 | 2024-03-29 | 2 | 59.98 | NaN |
+
+Two orders have no status. Find this problem before you report "24 completed orders out of 28".
+
+## `notna`: the rows where the value is present
+
+```python
+orders[orders["total_amount"].notna()].shape
+```
+
+**Result:** `(29, 7)`
+
+29 orders out of 30 have an amount. `notna` is the opposite of `isna`. `~orders["total_amount"].isna()` gives the same result, but it is more difficult to read.
+
+## The one-line check
+
+Run this line on every new dataset:
+
+```python
+orders.isna().sum()
+```
+
+**Result:**
+
+|   | value |
+|---|-------|
+| order_id | 0 |
+| customer_id | 0 |
+| product_id | 0 |
+| order_date | 0 |
+| quantity | 0 |
+| total_amount | 1 |
+| status | 2 |
+
+`isna()` on a full DataFrame returns `True` or `False` for every cell. `.sum()` then adds the values in each column. The result shows one missing amount and two missing statuses. All other values are present. This check takes ten seconds, and it prevents an incorrect number in a report.
+
+## How to find missing values in a different table
+
+```python
+customers[customers["city"].isna()]
+```
+
+**Result:**
+
+|   | customer_id | name | email | city | country | signup_date |
+|---|-------------|------|-------|------|---------|-------------|
+| 5 | 6 | Frank Lee | frank@example.com | NaN | USA | 2024-01-30 |
+
+Frank Lee did not supply a city.
+
+## How to remove rows with missing values
+
+```python
+orders.dropna(subset=["total_amount"]).shape
+```
+
+**Result:** `(29, 7)`
+
+`dropna` removes the rows that have missing values. The `subset` argument limits the check to the columns that you select. This argument is important. `orders.dropna()` without a subset also removes the two orders that have no status, and you probably want to keep those orders.
+
+:::warning A missing value is not zero
+An order with `NaN` as the amount is not an order with a value of zero. It is an order with an unknown value. If you replace the value with 0, your average changes. If you remove the row, your count changes. Neither action is always correct, so pandas asks you to choose. [Missing Data](/python/pandas-missing-data) explains how to decide.
+:::
+
+:::note Coming from SQL?
+`isna()` is `IS NULL`. `notna()` is `IS NOT NULL`. `== None` fails in pandas for the same reason that `= NULL` fails in SQL.
+:::
+
+## Practice
+
+How many orders have both a status and an amount?
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# notna() is the opposite of isna(): True where a value
+# is present.
+has_status = orders["status"].notna()
+has_amount = orders["total_amount"].notna()
+
+# & keeps only the rows where both are True.
+orders[has_status & has_amount].shape
+```
+
+**Result:** `(27, 7)`
+
+The data has 27 complete rows out of 30. The three incomplete rows are all different: two rows have no status, and one row has no amount.
+
+</details>

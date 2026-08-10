@@ -1,0 +1,158 @@
+---
+id: python-variables
+title: "Variables and Data Types"
+sidebar_label: "Variables & Types"
+sidebar_position: 4
+youtube_url: ""
+---
+
+# Variables and Data Types
+
+You need only a small quantity of Python syntax. This lesson teaches that minimum: how to name a value, and the five types of value that you use in a data job.
+
+## Variables
+
+A variable is a name for a value. The `=` sign means "store this value with this name". It does not mean "is equal to".
+
+```python
+price = 999.0
+quantity = 3
+total = price * quantity
+total
+```
+
+**Result:** `2997.0`
+
+You choose the names, but you must obey three rules. Use only letters, numbers, and underscores. Do not use spaces. Do not start a name with a number. Python users write names in `lower_snake_case`. For this reason, every column in this data has a name like `total_amount` and not `TotalAmount`.
+
+Choose names that describe the value. `t = 2997.0` and `total_revenue = 2997.0` run in the same way. But only the second name is still clear after three weeks.
+
+## The five types that you need
+
+| Type | Name in Python | Example | Where you use it |
+|------|---------------|---------|-------------------|
+| Whole number | `int` | `5` | Row counts, quantities, IDs |
+| Decimal number | `float` | `4.99` | Prices, revenue, averages |
+| Text | `str` | `"Laptop"` | Names, categories, statuses |
+| True or false | `bool` | `True` | The result of every comparison |
+| Nothing | `NoneType` | `None` | A missing value |
+
+```python
+print(type(5))
+print(type(4.99))
+print(type("Laptop"))
+print(type(True))
+print(type(None))
+```
+
+**Output:**
+
+```text
+<class 'int'>
+<class 'float'>
+<class 'str'>
+<class 'bool'>
+<class 'NoneType'>
+```
+
+Types are very important. `"5" + "5"` returns `"55"`, because the `+` operator joins two pieces of text. But `5 + 5` returns `10`. If a CSV file supplies a column of numbers as text, every calculation on that column gives an incorrect result, and Python shows no error. Always check the types first when you receive new data.
+
+## Text
+
+Quotes make text. You can use single quotes or double quotes. You must close the text with the same quote character that you opened it with.
+
+An **f-string** puts a value inside a piece of text. Write an `f` before the opening quote, and write the name in braces:
+
+```python
+name = "Laptop"
+price = 999.0
+print(f"{name} costs {price}")
+```
+
+**Output:**
+
+```text
+Laptop costs 999.0
+```
+
+Use an f-string to write output that is easy to read. `f"Revenue was {total}"` is clearer than a join of separate pieces of text with `+`.
+
+## Numbers
+
+```python
+print(7 / 2)
+print(7 // 2)
+print(7 % 2)
+```
+
+**Output:**
+
+```text
+3.5
+3
+1
+```
+
+`/` always returns a decimal number. `//` divides and removes the remainder. `%` returns only the remainder. You use `/` most of the time. But `%` is useful for a question such as "is this row number even?".
+
+## Comparisons produce booleans
+
+Every comparison returns `True` or `False`:
+
+```python
+price = 999.0
+print(price > 500)
+print(price == 999)
+```
+
+**Output:**
+
+```text
+True
+True
+```
+
+| Operator | Meaning |
+|----------|-------|
+| `==` | equal to |
+| `!=` | not equal to |
+| `>` `<` | greater than, less than |
+| `>=` `<=` | greater than or equal, less than or equal |
+
+:::warning `=` and `==` are different
+`price = 999` stores a value. `price == 999` asks a question. Beginners confuse these two operators more often than any other pair, in every programming language.
+:::
+
+Comparisons are very important in pandas. To filter a DataFrame, you apply one comparison to a full column. [Boolean Filtering](/python/pandas-boolean-filtering) teaches this method.
+
+## Practice
+
+Create a variable for a product price of `29.99`. Create a second variable for a quantity of `4`. Then print a sentence in this exact form:
+
+```text
+4 units at 29.99 each is 119.96
+```
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# Store the two values, then calculate from them.
+price = 29.99
+quantity = 4
+total = price * quantity
+
+# An f-string puts a value inside text. The f before the
+# quote is required, and each {} holds a variable name.
+print(f"{quantity} units at {price} each is {total}")
+```
+
+**Output:**
+
+```text
+4 units at 29.99 each is 119.96
+```
+
+This calculation gives an exact number. Many calculations do not. Put the value in `round(total, 2)` before you show it. Start this habit early.
+
+</details>

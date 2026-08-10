@@ -1,0 +1,168 @@
+---
+id: pandas-series-dataframe
+title: "Series vs DataFrame"
+sidebar_label: "Series & DataFrame"
+sidebar_position: 7
+youtube_url: ""
+---
+
+# Series vs DataFrame
+
+Pandas has two objects that you must know. All other topics in this track are methods on one of these two objects.
+
+- A **DataFrame** is a table. It has many columns and many rows.
+- A **Series** is one column of that table, with the row labels.
+
+Always know which object you have. The object controls which methods you can use next.
+
+## A DataFrame is a table
+
+```python
+products
+```
+
+**Result:**
+
+|   | product_id | name | category | price |
+|---|-----------|------|----------|-------|
+| 0 | 1 | Laptop | Electronics | 999.0 |
+| 1 | 2 | Mouse | Electronics | 29.99 |
+| 2 | 3 | Desk | Furniture | 349.0 |
+| 3 | 4 | Chair | Furniture | 199.0 |
+| 4 | 5 | Notebook | Stationery | 4.99 |
+| 5 | 6 | Monitor | Electronics | 249.0 |
+
+The column on the left with no header is the **index**. The index holds the label of each row. Here the labels are row numbers that start at 0, which is the default. In later lessons the index holds values with a meaning, such as a category name.
+
+```python
+print(products.columns)
+print(products.shape)
+```
+
+**Output:**
+
+```text
+Index(['product_id', 'name', 'category', 'price'], dtype='str')
+(6, 4)
+```
+
+`.shape` is always `(rows, columns)`.
+
+## A Series is one column
+
+Select one column with square brackets and a column name:
+
+```python
+orders["total_amount"].head()
+```
+
+**Result:**
+
+|   | total_amount |
+|---|--------------|
+| 0 | 999.0 |
+| 1 | 59.98 |
+| 2 | 349.0 |
+| 3 | 796.0 |
+| 4 | 49.9 |
+
+The index stays with the column. This is the purpose of a Series: each value keeps the label of its original row. Pandas can therefore align the values correctly when you combine columns later.
+
+Check the types:
+
+```python
+print(type(products))
+print(type(products["price"]))
+```
+
+**Output:**
+
+```text
+<class 'pandas.DataFrame'>
+<class 'pandas.Series'>
+```
+
+## Why the difference is important
+
+A Series can summarize its own values:
+
+```python
+print(orders["quantity"].sum())
+print(orders["quantity"].mean())
+print(orders["quantity"].max())
+```
+
+**Output:**
+
+```text
+98
+3.2666666666666666
+20
+```
+
+These methods work on one column of numbers. If you call `.sum()` on a full DataFrame, pandas returns one sum for each column. This is often not the result that you want. Always ask yourself this question: "do I have a table or a column?". The question prevents most beginner errors.
+
+:::warning One bracket or two
+```python
+orders["status"]      # Series: one column
+orders[["status"]]    # DataFrame: a table with one column
+```
+The two results look almost the same, but they behave differently. Double brackets mean "return a table with this list of columns". A list with one item is still a list. If a method shows an error because it needs a DataFrame and you supplied a Series, use double brackets.
+:::
+
+## How to build a DataFrame manually
+
+```python
+pd.DataFrame({
+    "product": ["Laptop", "Mouse"],
+    "price": [999.0, 29.99],
+})
+```
+
+**Result:**
+
+|   | product | price |
+|---|---------|-------|
+| 0 | Laptop | 999.0 |
+| 1 | Mouse | 29.99 |
+
+Each dictionary key becomes a column name. Each list becomes the values of that column. Pandas creates the index automatically. This is the fastest way to test the behavior of a pandas method.
+
+:::note Coming from SQL?
+A DataFrame is a table, and a Series is a column. But there is one important difference. A DataFrame keeps its row order and its row labels. SQL results have no order unless you request one. Pandas always keeps the order, so you can compare a row to the previous row.
+:::
+
+## Practice
+
+Print the average of the `price` column of `products`. Then show that column as a Series.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# print() shows a value as output on its own line.
+print(products["price"].mean())
+
+# Single brackets return a Series. The playground shows the
+# value of the last line, so this is the displayed result.
+products["price"]
+```
+
+**Output:**
+
+```text
+305.16333333333336
+```
+
+**Result:**
+
+|   | price |
+|---|-------|
+| 0 | 999.0 |
+| 1 | 29.99 |
+| 2 | 349.0 |
+| 3 | 199.0 |
+| 4 | 4.99 |
+| 5 | 249.0 |
+
+</details>

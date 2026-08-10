@@ -1,0 +1,125 @@
+---
+id: pandas-head-nlargest
+title: "head and nlargest: Limiting Output"
+sidebar_label: "head & nlargest"
+sidebar_position: 18
+youtube_url: ""
+---
+
+# `head` and `nlargest`: Limiting Output
+
+You reduce a table for two reasons. Sometimes you want a fast view of the data. Sometimes you want the highest values. Each task has its own method.
+
+## `head` and `tail`: a fast view
+
+```python
+orders.head(3)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed |
+| 2 | 3 | 2 | 3 | 2024-01-15 | 1 | 349.0 | completed |
+
+`head()` with no number returns five rows. `tail()` returns five rows from the bottom.
+
+These methods take the rows *in the current order of the data*. They do not show you the largest values. To find the largest values, sort the data first.
+
+## `nlargest`: the highest N values
+
+```python
+orders.nlargest(3, "quantity")
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 16 | 17 | 3 | 5 | 2024-03-15 | 20 | 99.8 | completed |
+| 23 | 24 | 5 | 5 | 2024-04-16 | 15 | 74.85 | completed |
+| 4 | 5 | 4 | 5 | 2024-01-22 | 10 | 49.9 | NaN |
+
+The result shows the three largest orders by quantity, in the correct order. One call replaces the two steps of `sort_values(...).head(3)`, and it states your intent clearly.
+
+`nsmallest` does the opposite:
+
+```python
+products.nsmallest(3, "price")
+```
+
+**Result:**
+
+|   | product_id | name | category | price |
+|---|-----------|------|----------|-------|
+| 4 | 5 | Notebook | Stationery | 4.99 |
+| 1 | 2 | Mouse | Electronics | 29.99 |
+| 3 | 4 | Chair | Furniture | 199.0 |
+
+## How to combine this with a column selection
+
+Take the highest rows and only the necessary columns:
+
+```python
+top = orders.nlargest(5, "quantity")
+top[["order_id", "quantity", "total_amount"]]
+```
+
+**Result:**
+
+|   | order_id | quantity | total_amount |
+|---|----------|----------|--------------|
+| 16 | 17 | 20 | 99.8 |
+| 23 | 24 | 15 | 74.85 |
+| 4 | 5 | 10 | 49.9 |
+| 26 | 27 | 8 | 39.92 |
+| 9 | 10 | 5 | 24.95 |
+
+Examine that result carefully. The five largest orders by quantity are also the five smallest orders by total amount. Those customers bought notebooks at 4.99 each. The term "top orders" has no meaning until you name the column.
+
+## Which method to use
+
+| Question | Method |
+|----------|------|
+| What does this data contain? | `head()` |
+| Which values are the largest? | `nlargest(n, "column")` |
+| Which rows are first after a sort on more than one column? | `sort_values([...]).head(n)` |
+
+`nlargest` sorts by one column only. If two rows have the same value and you must sort them by a second column, use `sort_values`.
+
+:::warning `head` after a filter does not give the highest N values
+```python
+orders[orders["status"] == "completed"].head(3)
+```
+This code returns the first three completed orders in the file. It does not return the three largest orders. Use `sort_values` or `nlargest` to make a ranking.
+:::
+
+:::note Coming from SQL?
+`head(3)` is `LIMIT 3`. `nlargest(3, "quantity")` is `ORDER BY quantity DESC LIMIT 3`.
+:::
+
+## Practice
+
+Which two products have the highest price?
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# nlargest(2, "price") sorts and takes the top rows in one
+# step, so no separate sort_values call is needed.
+top = products.nlargest(2, "price")
+
+top[["name", "price"]]
+```
+
+**Result:**
+
+|   | name | price |
+|---|------|-------|
+| 0 | Laptop | 999.0 |
+| 2 | Desk | 349.0 |
+
+</details>

@@ -1,0 +1,62 @@
+---
+id: pandas-vs-sql
+title: "Pandas vs SQL: When to Reach for Each"
+sidebar_label: "Pandas vs SQL"
+sidebar_position: 43
+youtube_url: ""
+hide_playground: true
+---
+
+# Pandas vs SQL: When to Reach for Each
+
+You now know the pandas methods. The last topic is the choice between pandas and SQL. A working analyst uses both languages, and the position of the line between them is an important skill.
+
+This lesson is complete on its own if you do not know SQL. If you completed the [SQL track](/sql), this lesson connects the two languages.
+
+## The two languages do almost the same work
+
+Almost every method in this track has a SQL equivalent:
+
+| Task | pandas | SQL |
+|------|--------|-----|
+| Filter rows | `df[df["x"] > 5]` | `WHERE x > 5` |
+| Pick columns | `df[["a", "b"]]` | `SELECT a, b` |
+| Combine tables | `df.merge(other, on="id")` | `JOIN ... ON` |
+| Summarize by group | `groupby().agg()` | `GROUP BY` |
+| Filter groups | `.query()` after `agg` | `HAVING` |
+| Sort | `sort_values()` | `ORDER BY` |
+| Limit | `head(n)` | `LIMIT n` |
+| Rank | `rank()` | `RANK()` |
+| Previous row | `shift()` | `LAG()` |
+| Running total | `cumsum()` | `SUM() OVER` |
+
+The question is therefore never "can pandas do this?". The question is "which language must do this?".
+
+## Use SQL when
+
+**The database holds the data, and the data is large.** A database filters and aggregates millions of rows near the storage. A transfer of all those rows across the network into memory is slower, and it is sometimes impossible.
+
+**Other people need the result.** Analysts, BI tools, and colleagues who do not use Python can all read a view or a scheduled query. They cannot read a notebook on your computer.
+
+**The task is a simple filter, join, and aggregate.** The declarative style of SQL suits this shape, and the engine optimizes this exact pattern.
+
+**The data is larger than the memory.** Pandas holds every row in RAM. Ten million rows work on a modern computer. One billion rows do not.
+
+## Use pandas when
+
+**You examine the data.** You reshape it, filter it in three different ways, look at the result, and then try a different method. Pandas is best for fast repeated tests on a dataset that you already have.
+
+**The logic is difficult in SQL.** Examples are conditional rules with several steps, custom functions, statistical calculations, and any input to a model.
+
+**You combine different types of source.** One script can merge a CSV from the finance department, an API response, and a database extract. SQL reads only the database.
+
+**The output goes to other Python code.** Examples are a chart, a model, an export, and a report.
+
+## Your next steps
+
+You now know the pandas that most analyst work needs. Take these next steps:
+
+- **The ten [practice exams](/python/python-exam-01-reading-selecting)** in this track. Each exam checks your answers against the real data.
+- **The [SQL track](/sql)**, if you did not complete it. You can then work on both sides of the line.
+- **Visualization** with matplotlib or plotly. Change your results into charts that people want to read.
+- **Your own data.** A CSV file from your own work is more useful than any tutorial dataset. Load it, run `info()`, and ask questions.

@@ -1,0 +1,173 @@
+---
+id: pandas-method-chaining
+title: "Method Chaining"
+sidebar_label: "Method chaining"
+sidebar_position: 25
+youtube_url: ""
+---
+
+# Method Chaining
+
+You now know sufficient methods to answer real questions. This lesson teaches you how to write those methods clearly, so that you can read your code again tomorrow.
+
+## The problem
+
+Here is a real question. How much completed revenue did each product category produce, and how many orders produced it? Here is the answer as separate steps:
+
+```python
+completed = orders[orders["status"] == "completed"]
+with_products = completed.merge(products, on="product_id")
+grouped = with_products.groupby("category")
+by_category = grouped["total_amount"].sum()
+by_category.round(2)
+```
+
+**Result:**
+
+| category | total_amount |
+|----------|--------------|
+| Electronics | 5540.9 |
+| Furniture | 2887.0 |
+| Stationery | 239.52 |
+
+This code works. But it creates three intermediate names, and each name exists only for the next line. These names also add a risk. Two weeks later you change the middle line, you forget the line below it, and you get an incorrect answer with no error message.
+
+One long line is worse:
+
+```python
+orders[orders["status"] == "completed"].merge(products, on="product_id").groupby("category")["total_amount"].sum().round(2)
+```
+
+This line gives the correct result. But you cannot read it, and you cannot add a comment to a step.
+
+## The chain
+
+Put the full expression in parentheses, and write one step on each line:
+
+```python
+(
+    orders
+    .query("status == 'completed'")
+    .merge(products, on="product_id")
+    .groupby("category")
+    .agg(
+        revenue=("total_amount", "sum"),
+        orders=("order_id", "count"),
+    )
+    .sort_values("revenue", ascending=False)
+    .round(2)
+)
+```
+
+**Result:**
+
+| category | revenue | orders |
+|----------|---------|--------|
+| Electronics | 5540.9 | 13 |
+| Furniture | 2887.0 | 7 |
+| Stationery | 239.52 | 4 |
+
+You can now read the code from the top to the bottom as a recipe. Start with orders. Keep the completed orders. Add the product details. Group the rows by category. Calculate the revenue and the count. Sort the result. Round the numbers.
+
+The outer parentheses make this format legal. Without the parentheses, Python ends the statement at the first line break. With the parentheses, you can break the line at any point.
+
+## Why chains use `query`
+
+The standard filter needs the name of the DataFrame inside the brackets:
+
+```python
+orders[orders["status"] == "completed"]
+```
+
+In the middle of a chain there is no name, because you filter the result of the previous step, and that result has no name. `query` accepts a text condition instead:
+
+```python
+.query("status == 'completed'")
+.query("quantity > 5 and total_amount > 100")
+```
+
+Inside the text, write the column names with no brackets and no quotes. The words `and` and `or` work correctly here. Be careful with the quotes. Use double quotes on the outside and single quotes around a text value, or use the opposite arrangement.
+
+## How to add comments
+
+The main advantage of a chain is that each step has its own line for a comment:
+
+```python
+(
+    orders
+    .query("status == 'completed'")   # drop cancelled ones
+    .merge(products, on="product_id")  # bring in category
+    .groupby("category")
+    .agg(revenue=("total_amount", "sum"))
+    .round(2)
+)
+```
+
+A reviewer can now check your logic one line at a time.
+
+## When not to use a chain
+
+A chain is a style, not a rule. Do not use a chain in these three cases:
+
+- You need an intermediate result more than one time
+- The chain has more than about eight steps, and you cannot follow it
+- You are debugging, and you must examine a middle step
+
+A chain is easy to debug. Make the lines below your step into comments, then run the remaining lines. This is another advantage of one step on each line.
+
+:::warning A chain also returns a copy
+```python
+unit_price = orders["total_amount"] / orders["quantity"]
+
+(
+    orders
+    .assign(unit_price=unit_price)
+)
+orders.head()   # no unit_price
+```
+The chain created a new DataFrame, and Python then removed it. Give the result a name if you need it later: `priced = (orders...)`.
+:::
+
+:::note Coming from SQL?
+A chain is a SQL query with the steps in execution order. First `FROM`, then `WHERE`, then `JOIN`, then `GROUP BY`, then `ORDER BY`. Many people find the pandas order easier to follow, because it matches the real sequence of operations.
+:::
+
+## Practice
+
+Write this code as a chain:
+
+```python
+big = orders[orders["quantity"] > 2]
+joined = big.merge(products, on="product_id")
+result = joined.groupby("category")["quantity"].sum()
+result
+```
+
+<details>
+<summary>Show answer</summary>
+
+```python
+(
+    orders
+    # query() filters without naming `orders` again, so it
+    # works in the middle of a chain.
+    .query("quantity > 2")
+    # The category lives in products, so merge it in.
+    .merge(products, on="product_id")
+    # One group for each category, summing the quantities.
+    .groupby("category")["quantity"]
+    .sum()
+)
+```
+
+**Result:**
+
+| category | quantity |
+|----------|----------|
+| Electronics | 7 |
+| Furniture | 7 |
+| Stationery | 58 |
+
+Stationery has the highest unit count, but it produces almost no revenue. You find this type of result only when a question is easy to ask a second time.
+
+</details>

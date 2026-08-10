@@ -79,12 +79,19 @@ const TRACKS: Track[] = [
   {
     icon: <Code weight="duotone" />,
     title: "Python",
-    count: "Coming soon",
+    count: "42 lessons + 10 practice exams",
     description:
-      "A hands-on Python track for data analytics, built the same learn-by-doing way. It's in the kitchen.",
-    topics: ["Variables & types", "Data structures", "pandas", "Analysis"],
+      "Pandas from the ground up: load a messy CSV, clean it, reshape it, and answer the question your spreadsheet could not.",
+    topics: [
+      "Python basics",
+      "Series & DataFrames",
+      "Filtering",
+      "merge & groupby",
+      "Reshaping",
+      "Rolling & time series",
+      "10 practice exams",
+    ],
     href: "/python",
-    comingSoon: true,
   },
 ];
 
@@ -93,7 +100,7 @@ const FEATURES = [
     icon: <CursorClick weight="duotone" />,
     title: "A live editor in every lesson",
     description:
-      "Write real SQL and shell commands and run them in your browser. Nothing to install, nothing to configure.",
+      "Write real SQL, Python, and shell commands and run them in your browser. Nothing to install, nothing to configure.",
   },
   {
     icon: <PencilSimpleLine weight="duotone" />,
@@ -105,7 +112,7 @@ const FEATURES = [
     icon: <Exam weight="duotone" />,
     title: "Practice exams",
     description:
-      "Ten timed-style SQL exams let you prove the skills stuck before you move on.",
+      "Ten timed-style exams per track let you prove the skills stuck before you move on.",
   },
   {
     icon: <ChartLineUp weight="duotone" />,
@@ -212,7 +219,7 @@ function Hero() {
             <span className={styles.accentText}>for free</span>.
           </h1>
           <p className={styles.heroSubtitle}>
-            Learn by doing: interactive SQL, Terminal, and Git lessons that run
+            Learn by doing: interactive SQL, Python, Terminal, and Git lessons that run
             right in your browser. Start with the fundamentals every analyst
             needs, with more advanced tracks on the way.
           </p>
@@ -429,7 +436,7 @@ export default function Home(): React.JSX.Element {
   return (
     <Layout
       title={siteConfig.title}
-      description="Open-source data analytics curriculum. Learn SQL, Terminal, and Git by doing, free and in your browser."
+      description="Open-source data analytics curriculum. Learn SQL, Python, Terminal, and Git by doing, free and in your browser."
     >
       <div className={styles.homepageRoot}>
         <Hero />

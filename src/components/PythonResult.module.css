@@ -1,0 +1,95 @@
+.stdout {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: #07090f;
+  color: #94a3b8;
+  font-family: var(--ifm-font-family-monospace, monospace);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  border-bottom: 1px solid #1e2d45;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  background: #07090f;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.table th {
+  padding: 0.5rem 0.75rem;
+  background: #0f1623;
+  color: #60a5fa;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-align: left;
+  border-bottom: 1px solid #1e2d45;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.45rem 0.75rem;
+  color: #cbd5e1;
+  border-bottom: 1px solid #0f1623;
+  white-space: nowrap;
+  font-family: var(--ifm-font-family-monospace, monospace);
+  font-size: 0.82rem;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: rgba(30, 45, 69, 0.4);
+}
+
+/* Index cells: pandas prints them, but they are labels rather than data. */
+.indexHead {
+  color: #475569 !important;
+  font-weight: 600;
+}
+
+.indexCell {
+  color: #64748b;
+  background: rgba(15, 22, 35, 0.6);
+}
+
+.dtype {
+  display: block;
+  font-weight: 400;
+  font-size: 0.68rem;
+  color: #475569;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.na {
+  color: #475569;
+  font-style: italic;
+}
+
+.meta {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  color: #475569;
+  border-top: 1px solid #1e2d45;
+  background: #0f1623;
+}
+
+.text {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: #07090f;
+  color: #e2e8f0;
+  font-family: var(--ifm-font-family-monospace, monospace);
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}

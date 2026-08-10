@@ -1,0 +1,152 @@
+---
+id: pandas-loc-iloc
+title: "Selecting Columns and Rows"
+sidebar_label: "loc & iloc"
+sidebar_position: 9
+youtube_url: ""
+---
+
+# Selecting Columns and Rows
+
+Almost no analysis needs the full table. This lesson teaches four ways to select a part of a table.
+
+## Columns: square brackets
+
+```python
+customers["city"]
+```
+
+**Result:**
+
+|   | city |
+|---|------|
+| 0 | New York |
+| 1 | London |
+| 2 | Sydney |
+| 3 | Toronto |
+| 4 | New York |
+| 5 | NaN |
+| 6 | Seoul |
+| 7 | Manila |
+| 8 | Tokyo |
+
+One name returns a Series. A list of names returns a DataFrame:
+
+```python
+customers[["name", "city"]]
+```
+
+**Result:**
+
+|   | name | city |
+|---|------|------|
+| 0 | Alice Johnson | New York |
+| 1 | Bob Smith | London |
+| 2 | Carol White | Sydney |
+| 3 | Dave Brown | Toronto |
+| 4 | Eve Davis | New York |
+| 5 | Frank Lee | NaN |
+| 6 | Grace Kim | Seoul |
+| 7 | Henry Cruz | Manila |
+| 8 | Ivy Nakamura | Tokyo |
+
+Pandas returns the columns in the order that you requested. Use this method to change the column order of a table.
+
+## `loc`: select by label
+
+`loc` takes the rows first and the columns second. Put a comma between them:
+
+```python
+customers.loc[0:2, ["name", "country"]]
+```
+
+**Result:**
+
+|   | name | country |
+|---|------|---------|
+| 0 | Alice Johnson | USA |
+| 1 | Bob Smith | UK |
+| 2 | Carol White | Australia |
+
+Read the code as `df.loc[which rows, which columns]`.
+
+:::warning A `loc` slice includes the last label
+`0:2` returned three rows and not two rows. In all other Python code, a range stops before the end value. But `loc` uses labels and not positions, and it includes the last label that you name. Remember this exception.
+:::
+
+## `iloc`: select by position
+
+`iloc` uses row numbers and column numbers. It ignores the labels:
+
+```python
+customers.iloc[0:3, 0:3]
+```
+
+**Result:**
+
+|   | customer_id | name | email |
+|---|-------------|------|-------|
+| 0 | 1 | Alice Johnson | alice@example.com |
+| 1 | 2 | Bob Smith | bob@example.com |
+| 2 | 3 | Carol White | carol@example.com |
+
+Here `0:3` behaves in the usual Python way. It stops before position 3 and returns three rows and three columns.
+
+| Your goal | Use |
+|----------|-----|
+| Select rows and columns by name | `loc` |
+| Select rows and columns by number | `iloc` |
+| Select some columns only | `df[["a", "b"]]` |
+
+In real work you use `loc` and square brackets very often. You use `iloc` less often, usually as `df.iloc[0]` to look at one row.
+
+## `loc` with a condition
+
+You will use this pattern most often. Give `loc` a condition instead of row labels:
+
+```python
+in_usa = customers["country"] == "USA"
+customers.loc[in_usa, ["name", "city"]]
+```
+
+**Result:**
+
+|   | name | city |
+|---|------|------|
+| 0 | Alice Johnson | New York |
+| 4 | Eve Davis | New York |
+| 5 | Frank Lee | NaN |
+
+The result has three customers from the USA and only the two requested columns. The index keeps the original labels: 0, 4, 5. Each row keeps the label of its original position. This behavior is correct, and it is useful.
+
+The next lesson, [Boolean Filtering](/python/pandas-boolean-filtering), explains the condition in full.
+
+:::note Coming from SQL?
+`df.loc[condition, ["a", "b"]]` is `SELECT a, b FROM df WHERE condition`. The `SELECT` part and the `WHERE` part change position, but you make the same two decisions.
+:::
+
+## Practice
+
+Use `loc` to select the `name` and the `price` of the first three products.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# loc reads labels, and a loc slice includes both ends,
+# so 0:2 returns three rows. The list after the comma
+# chooses the columns.
+products.loc[0:2, ["name", "price"]]
+```
+
+**Result:**
+
+|   | name | price |
+|---|------|-------|
+| 0 | Laptop | 999.0 |
+| 1 | Mouse | 29.99 |
+| 2 | Desk | 349.0 |
+
+`products.head(3)[["name", "price"]]` gives the same result. Both forms are correct, but `loc` shows the full intent in one step.
+
+</details>

@@ -1,0 +1,143 @@
+---
+id: python-lists-dicts
+title: "Lists and Dictionaries"
+sidebar_label: "Lists & Dicts"
+sidebar_position: 5
+youtube_url: ""
+---
+
+# Lists and Dictionaries
+
+Pandas is built on these two structures. A pandas Series is a list with more functions. A pandas DataFrame is a dictionary of Series with more functions. Learn both structures now. The pandas lessons are then much easier to understand.
+
+## Lists
+
+A list is an ordered collection. You write a list in square brackets:
+
+```python
+cities = ["New York", "London", "Sydney", "Toronto"]
+print(cities[0])
+print(cities[-1])
+print(cities[:2])
+print(len(cities))
+```
+
+**Output:**
+
+```text
+New York
+Toronto
+['New York', 'London']
+4
+```
+
+That code shows four rules. All four rules also apply in pandas:
+
+- **Counting starts at 0.** The first item is `cities[0]`, not `cities[1]`. Every beginner makes an error here, but only one time.
+- **A negative number counts from the end.** `cities[-1]` is the last item.
+- **A slice takes a range.** `cities[:2]` means "from the start to position 2, but do not include position 2". You therefore get two items.
+- **`len()` counts the items.**
+
+You can change a list after you create it:
+
+```python
+cities = ["New York", "London"]
+cities.append("Manila")
+cities
+```
+
+**Result:** `['New York', 'London', 'Manila']`
+
+## Dictionaries
+
+A dictionary stores values with labels and not with positions. You write a dictionary in curly braces as `key: value` pairs:
+
+```python
+order = {
+    "order_id": 1,
+    "customer": "Alice Johnson",
+    "total": 999.0,
+}
+print(order["customer"])
+print(order.keys())
+print(order.values())
+```
+
+**Output:**
+
+```text
+Alice Johnson
+dict_keys(['order_id', 'customer', 'total'])
+dict_values([1, 'Alice Johnson', 999.0])
+```
+
+You find a value by name and not by position. You select a pandas column in the same way: `orders["total_amount"]`.
+
+## Why this is important for pandas
+
+Give a list to pandas, and pandas returns a **Series**. A Series is one column of data with a label on every row:
+
+```python
+pd.Series([999.0, 59.98, 349.0])
+```
+
+**Result:**
+
+|   | value |
+|---|-------|
+| 0 | 999.0 |
+| 1 | 59.98 |
+| 2 | 349.0 |
+
+The `0, 1, 2` on the left is the **index**. The index holds the row labels. Pandas created the index automatically, in the same way that a list has positions.
+
+Give a dictionary of lists to pandas, and pandas returns a **DataFrame**. A DataFrame is a full table. Each key becomes a column name:
+
+```python
+pd.DataFrame({
+    "city": ["New York", "London"],
+    "orders": [7, 5],
+})
+```
+
+**Result:**
+
+|   | city | orders |
+|---|------|--------|
+| 0 | New York | 7 |
+| 1 | London | 5 |
+
+This is the complete idea. A DataFrame is a dictionary of columns. Each column is a Series. Each Series is a list with an index.
+
+:::tip When to build a DataFrame manually
+Usually your data comes from a CSV file or a database, and you do not type it. But a small manual DataFrame is the fastest way to test an idea. Use one to answer a question such as "does `merge` do what I expect?" without a change to the real data.
+:::
+
+## Practice
+
+Build a DataFrame with two columns: `category` and `products`. Use these values: Electronics with 3, Furniture with 2, and Stationery with 1.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# A dictionary of lists becomes a DataFrame. Each key is a
+# column name, and each list holds that column's values.
+# The lists must have the same length.
+pd.DataFrame({
+    "category": ["Electronics", "Furniture", "Stationery"],
+    "products": [3, 2, 1],
+})
+```
+
+**Result:**
+
+|   | category | products |
+|---|----------|----------|
+| 0 | Electronics | 3 |
+| 1 | Furniture | 2 |
+| 2 | Stationery | 1 |
+
+These numbers come from the real data. After the next lessons, run `products["category"].value_counts()`. Pandas then counts them for you.
+
+</details>

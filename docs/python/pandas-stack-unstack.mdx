@@ -1,0 +1,168 @@
+---
+id: pandas-stack-unstack
+title: "stack and unstack"
+sidebar_label: "stack & unstack"
+sidebar_position: 34
+youtube_url: ""
+---
+
+# `stack` and `unstack`
+
+A group by two columns gives a result with an index that has layers. That index is difficult to read and difficult to use. `unstack` corrects the shape. It moves one layer into the columns.
+
+## The result with layers
+
+```python
+group_keys = ["customer_id", "status"]
+totals = orders.groupby(group_keys)["total_amount"].sum()
+
+totals.head(8)
+```
+
+**Result:**
+
+|   | total_amount |
+|---|--------------|
+| (1, 'cancelled') | 349.0 |
+| (1, 'completed') | 2505.98 |
+| (2, 'completed') | 2084.92 |
+| (3, 'completed') | 925.79 |
+| (3, 'pending') | 999.0 |
+| (4, 'completed') | 398.0 |
+| (4, 'pending') | 498.0 |
+| (5, 'cancelled') | 349.0 |
+
+Each row label is a pair of values. This index is a **MultiIndex**: an index with more than one level. It holds the correct data, but the shape is inconvenient. To compare two customers, you must read a long list of pairs.
+
+## `unstack`: move a level into the columns
+
+```python
+group_keys = ["customer_id", "status"]
+totals = orders.groupby(group_keys)["total_amount"].sum()
+
+totals.unstack()
+```
+
+**Result:**
+
+| customer_id | cancelled | completed | pending |
+|-------------|-----------|-----------|---------|
+| 1 | 349.0 | 2505.98 | NaN |
+| 2 | NaN | 2084.92 | NaN |
+| 3 | NaN | 925.79 | 999.0 |
+| 4 | NaN | 398.0 | 498.0 |
+| 5 | 349.0 | 164.82 | NaN |
+| 6 | NaN | 273.95 | NaN |
+| 7 | NaN | 1845.0 | NaN |
+| 8 | NaN | 468.96 | NaN |
+
+The last index level, `status`, is now the columns. The result has one row for each customer and one column for each status. You can read it quickly.
+
+`NaN` marks a combination that does not occur in the data. Customer 2 has no cancelled orders. For a total, a zero is usually easier to read:
+
+```python
+group_keys = ["customer_id", "status"]
+totals = orders.groupby(group_keys)["total_amount"].sum()
+
+totals.unstack(fill_value=0)
+```
+
+**Result:**
+
+| customer_id | cancelled | completed | pending |
+|-------------|-----------|-----------|---------|
+| 1 | 349.0 | 2505.98 | 0.0 |
+| 2 | 0.0 | 2084.92 | 0.0 |
+| 3 | 0.0 | 925.79 | 999.0 |
+| 4 | 0.0 | 398.0 | 498.0 |
+| 5 | 349.0 | 164.82 | 0.0 |
+| 6 | 0.0 | 273.95 | 0.0 |
+| 7 | 0.0 | 1845.0 | 0.0 |
+| 8 | 0.0 | 468.96 | 0.0 |
+
+## `stack`: move the columns back into the index
+
+`stack` is the reverse operation. It changes the columns back into an index level:
+
+```python
+group_keys = ["customer_id", "status"]
+totals = orders.groupby(group_keys)["total_amount"].sum()
+
+grid = totals.unstack()
+grid.stack().head(6)
+```
+
+This code returns the pairs. In real work you use `stack` much less often than `unstack`, because your data is usually already in the long format.
+
+## `reset_index`: the most useful option
+
+Often you do not want a grid. You want ordinary columns:
+
+```python
+group_keys = ["customer_id", "status"]
+totals = orders.groupby(group_keys)["total_amount"].sum()
+
+totals.reset_index().head(5)
+```
+
+**Result:**
+
+|   | customer_id | status | total_amount |
+|---|-------------|--------|--------------|
+| 0 | 1 | cancelled | 349.0 |
+| 1 | 1 | completed | 2505.98 |
+| 2 | 2 | completed | 2084.92 |
+| 3 | 3 | completed | 925.79 |
+| 4 | 3 | pending | 999.0 |
+
+Each index level becomes an ordinary column, and the result is a standard DataFrame. You can merge it, filter it, or export it.
+
+## Which method to use
+
+| Your goal | Method |
+|----------|-----|
+| A grid to read | `.unstack()` |
+| A flat table for more work | `.reset_index()` |
+| A change from a grid back into pairs | `.stack()` |
+
+`groupby(...).unstack()` and `pivot_table` produce the same type of output. Use the method that is clearer in your code. If you already have a grouped result, `unstack` needs one word.
+
+:::warning Two levels of column labels
+An `unstack` on a result with more than one value column creates a MultiIndex on the columns. You must then select with pairs: `result[("total_amount", "completed")]`. If this happens, call `reset_index()` and return to flat columns.
+:::
+
+## Practice
+
+Build a grid of order **counts**. Put `customer_id` down the side and `status` across the top. Put a zero in each empty cell.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# Group by both columns at once.
+group_keys = ["customer_id", "status"]
+
+# size() counts the rows in each group, so no value column
+# is needed here.
+counts = orders.groupby(group_keys).size()
+
+# Move "status" into the columns, and put 0 in empty cells.
+counts.unstack(fill_value=0)
+```
+
+**Result:**
+
+| customer_id | cancelled | completed | pending |
+|-------------|-----------|-----------|---------|
+| 1 | 1 | 5 | 0 |
+| 2 | 0 | 5 | 0 |
+| 3 | 0 | 3 | 1 |
+| 4 | 0 | 1 | 1 |
+| 5 | 1 | 2 | 0 |
+| 6 | 0 | 2 | 0 |
+| 7 | 0 | 3 | 0 |
+| 8 | 0 | 3 | 0 |
+
+`size()` counts rows, so you need no value column. The row for customer 4 shows the advantage of the zeros: one completed order, one pending order, and no other orders.
+
+</details>

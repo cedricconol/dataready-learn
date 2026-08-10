@@ -1,0 +1,149 @@
+---
+id: pandas-np-where
+title: "np.where and np.select"
+sidebar_label: "np.where & np.select"
+sidebar_position: 29
+youtube_url: ""
+---
+
+# `np.where` and `np.select`
+
+Every analysis needs conditional columns. You mark the large orders, you put the prices into bands, or you separate the new customers from the returning customers. These two functions do that work in vectorized code.
+
+Both functions come from NumPy. Pandas is built on NumPy. The playground imports NumPy as `np`.
+
+## `np.where`: two results
+
+```python
+np.where(condition, value_if_true, value_if_false)
+```
+
+```python
+price_band = np.where(
+    products["price"] > 300, "expensive", "cheap"
+)
+products.assign(price_band=price_band)
+```
+
+**Result:**
+
+|   | product_id | name | category | price | price_band |
+|---|-----------|------|----------|-------|------------|
+| 0 | 1 | Laptop | Electronics | 999.0 | expensive |
+| 1 | 2 | Mouse | Electronics | 29.99 | cheap |
+| 2 | 3 | Desk | Furniture | 349.0 | expensive |
+| 3 | 4 | Chair | Furniture | 199.0 | cheap |
+| 4 | 5 | Notebook | Stationery | 4.99 | cheap |
+| 5 | 6 | Monitor | Electronics | 249.0 | cheap |
+
+Read the code as "where the price is above 300, write expensive. In all other rows, write cheap". This code makes one pass over the column, and it calls no Python function for each row.
+
+The outputs can also be values from a column:
+
+```python
+adjusted = np.where(
+    orders["status"] == "cancelled",
+    0,
+    orders["total_amount"],
+)
+with_adjusted = orders.assign(adjusted=adjusted)
+
+cols = ["order_id", "status", "total_amount", "adjusted"]
+with_adjusted.head(8)[cols]
+```
+
+**Result (first eight rows):**
+
+|   | order_id | status | total_amount | adjusted |
+|---|----------|--------|--------------|----------|
+| 0 | 1 | completed | 999.0 | 999.0 |
+| 1 | 2 | completed | 59.98 | 59.98 |
+| 2 | 3 | completed | 349.0 | 349.0 |
+| 3 | 4 | completed | 796.0 | 796.0 |
+| 4 | 5 | NaN | 49.9 | 49.9 |
+| 5 | 6 | completed | 498.0 | 498.0 |
+| 6 | 7 | cancelled | 349.0 | 0.0 |
+| 7 | 8 | completed | 89.97 | 89.97 |
+
+The cancelled orders now have the value 0. All other orders keep their amount. This is a common method to build a column of the revenue that counts.
+
+## `np.select`: more than two results
+
+```python
+price = products["price"]
+
+conditions = [price > 500, price > 100]
+choices = ["premium", "standard"]
+
+band = np.select(conditions, choices, default="budget")
+products.assign(band=band)
+```
+
+**Result:**
+
+|   | product_id | name | category | price | band |
+|---|-----------|------|----------|-------|------|
+| 0 | 1 | Laptop | Electronics | 999.0 | premium |
+| 1 | 2 | Mouse | Electronics | 29.99 | budget |
+| 2 | 3 | Desk | Furniture | 349.0 | standard |
+| 3 | 4 | Chair | Furniture | 199.0 | standard |
+| 4 | 5 | Notebook | Stationery | 4.99 | budget |
+| 5 | 6 | Monitor | Electronics | 249.0 | standard |
+
+Note three rules:
+
+1. `conditions` and `choices` are two lists in the same order. The first condition selects the first choice.
+2. **`np.select` uses the first condition that matches.** The Desk has a price of 349. That price matches `> 100` but not `> 500`, so the band is `standard`. The Laptop matches both conditions, and it takes `premium` because that condition is first.
+3. `default` sets the value for the rows that match no condition.
+
+The order of the conditions is very important. If you exchange the two conditions, every premium product becomes standard, and pandas shows no error.
+
+This code gives the same result as the `apply` example in the previous lesson, but it calls no Python function for each row.
+
+## Which function to use
+
+| Number of results | Method |
+|----------|------|
+| 2 | `np.where` |
+| 3 or more | `np.select` |
+| Complex logic that depends on the row | `apply(..., axis=1)` |
+
+You can put one `np.where` inside another `np.where`, but the second level is difficult to read. Use `np.select` when you need three results.
+
+:::warning Check the condition order in `np.select`
+Conditions usually overlap, and only the first match counts. Write the most specific condition first and the least specific condition last. Always set a `default`, or the rows with no match get the value `0`.
+:::
+
+:::note Coming from SQL?
+`np.where` is a two-branch `CASE WHEN ... THEN ... ELSE ... END`. `np.select` is the full multi-branch `CASE`, with the same first-match-wins rule.
+:::
+
+## Practice
+
+Add a `size_band` column to `orders`. The value is `"bulk"` when the quantity is 5 or more. In all other rows the value is `"regular"`. Then count the rows in each band.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# np.where picks the first value where the test is True,
+# and the second value everywhere else.
+size_band = np.where(
+    orders["quantity"] >= 5, "bulk", "regular"
+)
+
+# Attach the column, then count the rows in each band.
+banded = orders.assign(size_band=size_band)
+banded["size_band"].value_counts()
+```
+
+**Result:**
+
+| size_band | count |
+|-----------|-------|
+| regular | 25 |
+| bulk | 5 |
+
+The data has five bulk orders out of 30. Create the column, then count the values. Both steps are in one chain.
+
+</details>

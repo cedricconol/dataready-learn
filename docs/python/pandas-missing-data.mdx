@@ -1,0 +1,160 @@
+---
+id: pandas-missing-data
+title: "Missing Data: fillna and dropna"
+sidebar_label: "Missing data"
+sidebar_position: 40
+youtube_url: ""
+---
+
+# Missing Data: `fillna` and `dropna`
+
+An earlier lesson taught you how to *find* missing values. This lesson teaches you what to do with them. This decision needs judgement, not a technique. An incorrect decision changes your numbers, but your code still runs correctly.
+
+## Start with a check
+
+```python
+orders.isna().sum()
+```
+
+**Result:**
+
+|   | value |
+|---|-------|
+| order_id | 0 |
+| customer_id | 0 |
+| product_id | 0 |
+| order_date | 0 |
+| quantity | 0 |
+| total_amount | 1 |
+| status | 2 |
+
+Before you decide, find the number of missing values and their positions. One missing amount out of 30 is a small error. Twenty missing amounts show a problem in the data pipeline. Report that problem. Do not correct it in your analysis.
+
+## `fillna`: replace the missing values
+
+```python
+status = orders["status"].fillna("unknown")
+filled = orders.assign(status=status)
+
+filled["status"].value_counts()
+```
+
+**Result:**
+
+| status | count |
+|--------|-------|
+| completed | 24 |
+| unknown | 2 |
+| cancelled | 2 |
+| pending | 2 |
+
+For a category, `"unknown"` is usually the correct value. It keeps the rows, and it is accurate. Those orders are not completed orders. They are orders with no record of a status. The value `"completed"` creates data that does not exist.
+
+Numbers are more difficult:
+
+```python
+amount = orders["total_amount"]
+
+# Use zero:
+amount.fillna(0)
+
+# Use the usual value:
+amount.fillna(amount.mean())
+```
+
+Both options change your results. The value 0 says that the order had no value, and it decreases the average. The mean, 378.36, keeps the average unchanged, but it creates a number that nobody recorded. Choose the value from the meaning of the missing data. A missing *count* is often really 0. A missing *price* is almost never 0.
+
+## `ffill`: copy the last value forward
+
+```python
+orders["status"].ffill()
+```
+
+Row 4 has no status, so it takes the value from row 3. This method is correct for a time series where a value stays the same until it changes, such as a price or a daily measurement. It is incorrect for separate records such as orders. Use `ffill` only when the value really continues. Do not use it by default.
+
+## `dropna`: remove the rows
+
+```python
+orders.dropna().shape          # (27, 7)
+```
+
+`dropna()` with no arguments removes every row that has a missing value in any column. Here it removed three orders: one order with no amount, and two orders with no status. This result is usually too severe.
+
+```python
+orders.dropna(subset=["total_amount"]).shape   # (29, 7)
+```
+
+`subset` limits the operation to the columns that your calculation needs. If you only add the amounts, do not remove an order because it has no status. That action removes good data.
+
+## How to choose
+
+| Your data | Correct action |
+|-----------|-----------------|
+| A few missing values in a column that the calculation needs | `dropna(subset=[...])`, and report the number of removed rows |
+| A missing category label | `fillna("unknown")` |
+| A missing count where no event happened | `fillna(0)` |
+| A missing value in a time series where values continue | `ffill()` |
+| A column where most values are missing | Remove the column, or return to the data source |
+
+Obey two rules:
+
+1. **Report your action.** Write "This report excludes 1 order with no recorded amount" in the report. Do not write it only in the code.
+2. **Do not fill the values before an average.** `mean()` already ignores the missing values. If you replace them with 0 first, the answer changes. This error is common, and it is difficult to find.
+
+## Aggregations already ignore missing values
+
+```python
+orders["total_amount"].mean()    # 378.3551724137931
+orders["total_amount"].count()   # 29
+orders["total_amount"].size      # 30
+```
+
+`sum`, `mean`, `min`, `max`, and the other aggregations all ignore the missing values. This behavior is convenient, but always remember it. An average of 29 values is not an average of 30 orders. If you report it as an average of 30 orders, the number is incorrect, and no reader can find the error.
+
+:::warning `fillna(0)` before an average
+```python
+# 378.36, over 29 orders:
+orders["total_amount"].mean()
+
+# 365.74, over 30 orders:
+orders["total_amount"].fillna(0).mean()
+```
+Both numbers are correct, but they answer different questions. The problem is that the report contains only one number, and it does not say which question that number answers.
+:::
+
+## Practice
+
+Replace the missing statuses with `"unknown"` and the missing amount with 0. Then check that no missing values remain.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# assign() can build both columns in one call.
+clean = orders.assign(
+    # A missing label becomes its own category.
+    status=orders["status"].fillna("unknown"),
+    # A missing amount becomes 0 here, because the question
+    # asked for it. Note that this lowers the average.
+    total_amount=orders["total_amount"].fillna(0),
+)
+
+# Every count should now be 0.
+clean.isna().sum()
+```
+
+**Result:**
+
+|   | value |
+|---|-------|
+| order_id | 0 |
+| customer_id | 0 |
+| product_id | 0 |
+| order_date | 0 |
+| quantity | 0 |
+| total_amount | 0 |
+| status | 0 |
+
+Every count is zero. Remember that `clean["total_amount"].mean()` is now lower than before, because one order has the value 0.
+
+</details>

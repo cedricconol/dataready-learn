@@ -1,0 +1,130 @@
+---
+id: pandas-vectorization
+title: "Vectorization vs Loops"
+sidebar_label: "Vectorization"
+sidebar_position: 26
+youtube_url: ""
+---
+
+# Vectorization vs Loops
+
+Programmers usually write a loop for a task such as "add tax to every order". In pandas a loop is the incorrect choice. This lesson teaches you the correct method.
+
+## The usual method
+
+```python
+totals = []
+for amount in orders["total_amount"]:
+    totals.append(amount * 1.12)
+```
+
+This code is correct in standard Python. But in pandas it is slow, it is long, and it is easy to write incorrectly.
+
+## The pandas method
+
+```python
+orders["total_amount"] * 1.12
+```
+
+**Result (first rows):**
+
+|   | total_amount |
+|---|--------------|
+| 0 | 1118.88 |
+| 1 | 67.1776 |
+| 2 | 390.88 |
+
+This code applies one operation to the full column. This method is **vectorization**. You write the calculation one time. Pandas then runs it on every value in compiled code. Python does not process each row separately.
+
+## Vectorization also works between columns
+
+```python
+unit_price = orders["total_amount"] / orders["quantity"]
+priced = orders.assign(unit_price=unit_price)
+
+cols = [
+    "order_id",
+    "quantity",
+    "total_amount",
+    "unit_price",
+]
+priced.head(3)[cols]
+```
+
+**Result:**
+
+|   | order_id | quantity | total_amount | unit_price |
+|---|----------|----------|--------------|------------|
+| 0 | 1 | 1 | 999.0 | 999.0 |
+| 1 | 2 | 2 | 59.98 | 29.99 |
+| 2 | 3 | 1 | 349.0 | 349.0 |
+
+Pandas aligns the two columns by index and divides one row at a time. There is no loop, no manual record of the position, and no risk of a match between the incorrect rows.
+
+## Why vectorization is much faster
+
+A Python loop over one million rows makes one million calls to the interpreter. For each row, the interpreter reads a value, changes it into a Python object, multiplies it, and stores it. Vectorized pandas gives the full column to compiled code, and that code reads one block of memory in one pass.
+
+With these 30 rows you cannot see a difference. With one million rows, the loop takes minutes and the vectorized code takes an instant. The vectorized code is also shorter and clearer, so there is no disadvantage.
+
+## The vocabulary
+
+Almost every method in this track is vectorized.
+
+| Instead of a loop that does this | Write this |
+|--------------------------|-------|
+| Multiply every value | `df["col"] * 1.12` |
+| Combine two columns | `df["a"] + df["b"]` |
+| Test a condition on each row | `df["col"] > 100` |
+| Count the rows that match | `(df["col"] > 100).sum()` |
+| Change every text value to uppercase | `df["col"].str.upper()` |
+| Select between two values | `np.where(cond, a, b)` |
+| Calculate a total for each group | `df.groupby("g")["v"].sum()` |
+
+Before you write `for` in pandas, ask yourself which row of this table you need.
+
+## The rare exception
+
+Some logic cannot use vectorization. Two examples are a call to an external API for each row, and a rule that is too complex for column operations. Use [apply](/python/pandas-apply-lambda) for these cases. `apply` also processes one row at a time, so use it only as the last option.
+
+:::warning Do not use `iterrows`
+```python
+for index, row in orders.iterrows():   # avoid
+    ...
+```
+`iterrows` looks like the correct way to read a DataFrame, but it is one of the slowest operations in pandas. Pandas copies each row into a new Series. If your code contains `iterrows`, a vectorized form almost always exists. That form is shorter, and it is hundreds of times faster.
+:::
+
+:::note Coming from SQL?
+You already use this method. `SELECT total_amount * 1.12 FROM orders` also names no rows. You describe the transformation, and the engine applies it to every row. Pandas works in the same way. For this reason, SQL users often learn pandas faster than programmers do.
+:::
+
+## Practice
+
+Add a `with_tax` column to `orders`. The value is 12% more than `total_amount`, rounded to two decimals. Do not write a loop.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# One expression over the whole column: no loop needed.
+# .round(2) is vectorized too, so this is still one pass.
+with_tax = (orders["total_amount"] * 1.12).round(2)
+
+taxed = orders.assign(with_tax=with_tax)
+
+cols = ["order_id", "total_amount", "with_tax"]
+taxed.head(3)[cols]
+```
+
+**Result:**
+
+|   | order_id | total_amount | with_tax |
+|---|----------|--------------|----------|
+| 0 | 1 | 999.0 | 1118.88 |
+| 1 | 2 | 59.98 | 67.18 |
+| 2 | 3 | 349.0 | 390.88 |
+
+`.round(2)` is also vectorized, so the full calculation is one pass over the column. The order with no amount stays missing. It does not become an incorrect number. This behavior is correct.
+
+</details>

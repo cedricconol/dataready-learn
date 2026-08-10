@@ -1,0 +1,160 @@
+---
+id: pandas-sort-values
+title: "sort_values: Ordering Results"
+sidebar_label: "sort_values"
+sidebar_position: 17
+youtube_url: ""
+---
+
+# `sort_values`: Ordering Results
+
+A sort changes a table into an answer. To answer "which products cost the most?", put the price column in the correct order.
+
+## Syntax
+
+```python
+# Smallest value first:
+df.sort_values("column")
+
+# Largest value first:
+df.sort_values("column", ascending=False)
+
+# Sort by col1, then by col2:
+df.sort_values(["col1", "col2"])
+```
+
+## One column
+
+```python
+products.sort_values("price")
+```
+
+**Result:**
+
+|   | product_id | name | category | price |
+|---|-----------|------|----------|-------|
+| 4 | 5 | Notebook | Stationery | 4.99 |
+| 1 | 2 | Mouse | Electronics | 29.99 |
+| 3 | 4 | Chair | Furniture | 199.0 |
+| 5 | 6 | Monitor | Electronics | 249.0 |
+| 2 | 3 | Desk | Furniture | 349.0 |
+| 0 | 1 | Laptop | Electronics | 999.0 |
+
+The index stays with the rows. Row 4 is now at the top, but it keeps its label. A sort moves the rows. It does not give them new numbers. To get a new 0, 1, 2 count, add `.reset_index(drop=True)`.
+
+Put the largest value first:
+
+```python
+products.sort_values("price", ascending=False)
+```
+
+**Result:**
+
+|   | product_id | name | category | price |
+|---|-----------|------|----------|-------|
+| 0 | 1 | Laptop | Electronics | 999.0 |
+| 2 | 3 | Desk | Furniture | 349.0 |
+| 5 | 6 | Monitor | Electronics | 249.0 |
+| 3 | 4 | Chair | Furniture | 199.0 |
+| 1 | 2 | Mouse | Electronics | 29.99 |
+| 4 | 5 | Notebook | Stationery | 4.99 |
+
+## More than one column
+
+Supply a list. Pandas sorts by the first column. If two rows have the same value, pandas then sorts them by the second column:
+
+```python
+orders.sort_values(["customer_id", "order_date"]).head(5)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed |
+| 6 | 7 | 1 | 3 | 2024-02-01 | 1 | 349.0 | cancelled |
+| 14 | 15 | 1 | 6 | 2024-03-06 | 1 | 249.0 | completed |
+| 21 | 22 | 1 | 1 | 2024-04-07 | 1 | 999.0 | completed |
+
+The result shows the orders of customer 1, with the oldest order first. This layout groups the rows by customer and orders them by date. Every "compare each row to the previous row" calculation later in this track needs this layout.
+
+Each column can have its own direction:
+
+```python
+sort_keys = ["customer_id", "total_amount"]
+directions = [True, False]
+
+orders.sort_values(sort_keys, ascending=directions).head(5)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 21 | 22 | 1 | 1 | 2024-04-07 | 1 | 999.0 | completed |
+| 6 | 7 | 1 | 3 | 2024-02-01 | 1 | 349.0 | cancelled |
+| 14 | 15 | 1 | 6 | 2024-03-06 | 1 | 249.0 | completed |
+| 27 | 28 | 1 | 4 | 2024-05-08 | 1 | 199.0 | completed |
+
+The customer numbers increase, and the order values decrease. The `ascending` list must have the same length as the column list.
+
+## Where does pandas put the missing values?
+
+By default, pandas puts the missing values at the bottom in both directions. Move them to the top when you want to examine them:
+
+```python
+orders.sort_values(
+    "total_amount", na_position="first"
+).head(3)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status |
+|---|----------|-------------|------------|------------|----------|--------------|--------|
+| 28 | 29 | 8 | 1 | 2024-05-14 | 1 | NaN | completed |
+| 9 | 10 | 6 | 5 | 2024-02-14 | 5 | 24.95 | completed |
+| 24 | 25 | 3 | 2 | 2024-04-21 | 1 | 29.99 | completed |
+
+:::warning Sorting returns a new DataFrame
+```python
+orders.sort_values("total_amount")
+orders.head()   # unchanged
+```
+Almost every pandas method returns a copy, and `sort_values` returns a sorted copy. Give the result a name if you want to keep it.
+:::
+
+:::note Coming from SQL?
+`sort_values("price", ascending=False)` is `ORDER BY price DESC`. There is one important difference. In pandas the row order is part of the data, so an earlier sort is still correct in the next step.
+:::
+
+## Practice
+
+Which three customers signed up most recently?
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# ascending=False puts the newest signup date first.
+newest = customers.sort_values(
+    "signup_date", ascending=False
+)
+
+# Take the first three rows, then the useful columns.
+newest.head(3)[["name", "signup_date"]]
+```
+
+**Result:**
+
+|   | name | signup_date |
+|---|------|-------------|
+| 8 | Ivy Nakamura | 2024-04-02 |
+| 7 | Henry Cruz | 2024-02-10 |
+| 4 | Eve Davis | 2024-02-03 |
+
+First sort the rows in descending order. Then take the first three rows. Then keep the two useful columns. The next lesson shows a shorter form of this code.
+
+</details>

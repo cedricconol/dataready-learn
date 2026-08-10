@@ -1,0 +1,167 @@
+---
+id: pandas-rolling
+title: "rolling: Moving Averages"
+sidebar_label: "rolling"
+sidebar_position: 38
+youtube_url: ""
+---
+
+# `rolling`: Moving Averages
+
+Raw daily numbers and monthly numbers change quickly. A moving average removes that noise and shows the trend. For this reason, almost every business chart has a moving average.
+
+## First build a time series
+
+`rolling` needs data in time order, with one row for each period. Change the orders into monthly revenue:
+
+```python
+monthly = (
+    orders
+    .set_index("order_date")
+    .resample("ME")["total_amount"]
+    .sum()
+    .round(2)
+)
+monthly
+```
+
+**Result:**
+
+| order_date | total_amount |
+|------------|--------------|
+| 2024-01-31 | 2751.88 |
+| 2024-02-29 | 3108.92 |
+| 2024-03-31 | 2075.74 |
+| 2024-04-30 | 2547.84 |
+| 2024-05-31 | 487.92 |
+
+That code has two new methods:
+
+- `set_index("order_date")` makes the date the row label. The time-based methods need this index.
+- `resample("ME")` groups the rows by calendar period. `"ME"` is the end of the month. `"D"` is a day, `"W"` is a week, `"QE"` is the end of a quarter, and `"YE"` is the end of a year. `resample` is a `groupby` for dates.
+
+## The moving average
+
+```python
+monthly.rolling(3).mean().round(2)
+```
+
+**Result:**
+
+| order_date | total_amount |
+|------------|--------------|
+| 2024-01-31 | NaN |
+| 2024-02-29 | NaN |
+| 2024-03-31 | 2645.51 |
+| 2024-04-30 | 2577.5 |
+| 2024-05-31 | 1703.83 |
+
+`rolling(3)` opens a window of three rows. `.mean()` averages the values inside that window. The window then moves down one row at a time.
+
+The first two months are `NaN`, because a three-month window needs three months of data. This result is correct. In January there is no three-month average.
+
+## The two columns together
+
+A rolling column is most useful next to the raw column:
+
+```python
+rolling_3 = monthly.rolling(3).mean().round(2)
+
+monthly.to_frame("revenue").assign(rolling_3=rolling_3)
+```
+
+**Result:**
+
+| order_date | revenue | rolling_3 |
+|------------|---------|-----------|
+| 2024-01-31 | 2751.88 | NaN |
+| 2024-02-29 | 3108.92 | NaN |
+| 2024-03-31 | 2075.74 | 2645.51 |
+| 2024-04-30 | 2547.84 | 2577.5 |
+| 2024-05-31 | 487.92 | 1703.83 |
+
+The monthly revenue moves between 487 and 3108. The rolling average decreases slowly from 2645 to 1703. The large monthly changes are noise. The slow decrease is the real result. Note that the data covers only part of May. This is a very common reason for a chart with a large fall at the end.
+
+## How to fill the early rows
+
+```python
+monthly.rolling(3, min_periods=1).mean().round(2)
+```
+
+**Result:**
+
+| order_date | total_amount |
+|------------|--------------|
+| 2024-01-31 | 2751.88 |
+| 2024-02-29 | 2930.4 |
+| 2024-03-31 | 2645.51 |
+| 2024-04-30 | 2577.5 |
+| 2024-05-31 | 1703.83 |
+
+`min_periods=1` means "average the available values". January averages one month. February averages two months. From March, the window is full. This option is useful for a chart that must not start with a gap. But it is also inaccurate, because the first values are not three-month averages. Always state which option you used.
+
+## Other rolling calculations
+
+Every aggregation works inside the window:
+
+```python
+# The total of two months:
+monthly.rolling(2).sum()
+
+# The highest value of the last three months:
+monthly.rolling(3).max()
+
+# The variation in the last three months:
+monthly.rolling(3).std()
+```
+
+Use a rolling sum to build a "last 12 months" figure.
+
+:::warning The index must be in time order
+`rolling` reads the rows beside each row, so the answer depends on the row order. Always sort or resample by date first. On unsorted data, `rolling` returns numbers with no meaning, and it shows no warning.
+:::
+
+:::note Coming from SQL?
+`rolling(3).mean()` is `AVG(x) OVER (ORDER BY date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)`. The pandas form is much shorter. For this reason, analysts usually do time-series work in pandas and not in the warehouse.
+:::
+
+## Practice
+
+Build a two-month rolling total of the revenue. Show it next to the monthly values.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# 1. One revenue figure for each month, in date order.
+monthly = (
+    orders
+    .set_index("order_date")
+    .resample("ME")["total_amount"]
+    .sum()
+    .round(2)
+)
+
+# 2. rolling(2).sum() adds each month to the month before.
+rolling_2_total = monthly.rolling(2).sum().round(2)
+
+# 3. to_frame() gives the raw values a column name, so the
+# two columns can sit next to each other.
+monthly.to_frame("revenue").assign(
+    rolling_2_total=rolling_2_total,
+)
+```
+
+**Result:**
+
+| order_date | revenue | rolling_2_total |
+|------------|---------|-----------------|
+| 2024-01-31 | 2751.88 | NaN |
+| 2024-02-29 | 3108.92 | 5860.8 |
+| 2024-03-31 | 2075.74 | 5184.66 |
+| 2024-04-30 | 2547.84 | 4623.58 |
+| 2024-05-31 | 487.92 | 3035.76 |
+
+Each row holds the total of its own month and the previous month.
+
+</details>

@@ -1,0 +1,149 @@
+---
+id: pandas-rename-assign
+title: "rename and assign"
+sidebar_label: "rename & assign"
+sidebar_position: 15
+youtube_url: ""
+---
+
+# `rename` and `assign`
+
+Every analysis needs these two tasks. First, give a column a better name. Second, calculate a new column from the existing columns.
+
+## `rename`: better column names
+
+```python
+orders.rename(columns={"total_amount": "revenue"}).head(3)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | revenue | status |
+|---|----------|-------------|------------|------------|----------|---------|--------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed |
+| 2 | 3 | 2 | 3 | 2024-01-15 | 1 | 349.0 | completed |
+
+The dictionary format is `{"old name": "new name"}`. You can rename more than one column in one call. Pandas does not change the columns that you do not name.
+
+A rename is most important before you send the results to another person. `total_amount` is correct for your own work, but the report needs `Revenue (USD)`.
+
+You can also change every name in one call. Supply a function:
+
+```python
+products.rename(columns=str.upper).head(2)
+```
+
+**Result:**
+
+|   | PRODUCT_ID | NAME | CATEGORY | PRICE |
+|---|-----------|------|----------|-------|
+| 0 | 1 | Laptop | Electronics | 999.0 |
+| 1 | 2 | Mouse | Electronics | 29.99 |
+
+## `assign`: new columns
+
+`assign` adds a column and returns a new DataFrame:
+
+```python
+unit_price = orders["total_amount"] / orders["quantity"]
+orders.assign(unit_price=unit_price).head(3)
+```
+
+**Result:**
+
+|   | order_id | customer_id | product_id | order_date | quantity | total_amount | status | unit_price |
+|---|----------|-------------|------------|------------|----------|--------------|--------|------------|
+| 0 | 1 | 1 | 1 | 2024-01-05 | 1 | 999.0 | completed | 999.0 |
+| 1 | 2 | 1 | 2 | 2024-01-10 | 2 | 59.98 | completed | 29.99 |
+| 2 | 3 | 2 | 3 | 2024-01-15 | 1 | 349.0 | completed | 349.0 |
+
+Examine the calculation. `total_amount / quantity` divided the two columns one row at a time. It processed all 30 rows in one operation, with no loop. This behavior is **vectorization**, and it is the primary principle of pandas.
+
+You can create more than one column in one call. Put a comma between them:
+
+```python
+products.assign(
+    price_with_tax=products["price"] * 1.12,
+    is_cheap=products["price"] < 100,
+)
+```
+
+**Result:**
+
+|   | product_id | name | category | price | price_with_tax | is_cheap |
+|---|-----------|------|----------|-------|----------------|----------|
+| 0 | 1 | Laptop | Electronics | 999.0 | 1118.88 | False |
+| 1 | 2 | Mouse | Electronics | 29.99 | 33.5888 | True |
+| 2 | 3 | Desk | Furniture | 349.0 | 390.88 | False |
+| 3 | 4 | Chair | Furniture | 199.0 | 222.88 | False |
+| 4 | 5 | Notebook | Stationery | 4.99 | 5.5888 | True |
+| 5 | 6 | Monitor | Electronics | 249.0 | 278.88 | False |
+
+A comparison creates a column of `True` and `False` values. You can store this column and filter on it later.
+
+## `assign` compared to bracket assignment
+
+You will see both of these forms in real code:
+
+```python
+unit_price = orders["total_amount"] / orders["quantity"]
+
+# Modifies orders:
+orders["unit_price"] = unit_price
+
+# Returns a new DataFrame:
+orders.assign(unit_price=unit_price)
+```
+
+The first line changes `orders` directly. The second line does not change `orders`. It returns a copy with the extra column.
+
+Use `assign`. It keeps your original data, so an error costs you one run and not a full reload. `assign` also works inside a chain of steps. [Method Chaining](/python/pandas-method-chaining) teaches this method.
+
+:::warning Pandas saves nothing until you save it
+```python
+unit_price = orders["total_amount"] / orders["quantity"]
+orders.assign(unit_price=unit_price)
+
+orders.head()   # no unit_price column
+```
+`assign` returns a new DataFrame. It does not change the original DataFrame. To keep the result, give it a name: `priced = orders.assign(...)`. Every beginner makes this error one time.
+:::
+
+:::note Coming from SQL?
+`assign` is the calculated-column part of a `SELECT`: `SELECT *, total_amount / quantity AS unit_price FROM orders`. `rename` is `AS` applied to an existing column.
+:::
+
+## Practice
+
+Add a column with the name `total_with_tax` to `products`. The value is 12% more than `price`. Then rename `price` to `base_price`.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# 1. Calculate the new column. * 1.12 adds 12%.
+total_with_tax = products["price"] * 1.12
+
+# 2. Add it while "price" still has its original name.
+with_tax = products.assign(total_with_tax=total_with_tax)
+
+# 3. Only now rename the column. The order matters: after
+# the rename there is no "price" column to calculate from.
+with_tax.rename(columns={"price": "base_price"})
+```
+
+**Result:**
+
+|   | product_id | name | category | base_price | total_with_tax |
+|---|-----------|------|----------|------------|----------------|
+| 0 | 1 | Laptop | Electronics | 999.0 | 1118.88 |
+| 1 | 2 | Mouse | Electronics | 29.99 | 33.5888 |
+| 2 | 3 | Desk | Furniture | 349.0 | 390.88 |
+| 3 | 4 | Chair | Furniture | 199.0 | 222.88 |
+| 4 | 5 | Notebook | Stationery | 4.99 | 5.5888 |
+| 5 | 6 | Monitor | Electronics | 249.0 | 278.88 |
+
+Use `assign` first, then use `rename`. The order is important. If you rename `price` first, the calculation cannot find the column.
+
+</details>

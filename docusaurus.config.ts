@@ -93,9 +93,10 @@ const config: Config = {
           label: "Git",
         },
         {
-          to: "/python",
-          label: "Python",
+          type: "docSidebar",
+          sidebarId: "pythonSidebar",
           position: "left",
+          label: "Python",
         },
         {
           href: "https://github.com/cedricconol/dataready-learn",

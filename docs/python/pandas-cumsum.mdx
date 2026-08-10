@@ -1,0 +1,179 @@
+---
+id: pandas-cumsum
+title: "cumsum and cumcount: Running Totals"
+sidebar_label: "cumsum & cumcount"
+sidebar_position: 36
+youtube_url: ""
+---
+
+# `cumsum` and `cumcount`: Running Totals
+
+A running total answers the question "how much until now?" at every point in time. It changes a list of transactions into a chart that increases.
+
+## `cumsum`: the running total
+
+```python
+running_total = orders["total_amount"].cumsum().round(2)
+with_total = orders.assign(running_total=running_total)
+
+cols = [
+    "order_id",
+    "order_date",
+    "total_amount",
+    "running_total",
+]
+with_total.head(5)[cols]
+```
+
+**Result:**
+
+|   | order_id | order_date | total_amount | running_total |
+|---|----------|------------|--------------|---------------|
+| 0 | 1 | 2024-01-05 | 999.0 | 999.0 |
+| 1 | 2 | 2024-01-10 | 59.98 | 1058.98 |
+| 2 | 3 | 2024-01-15 | 349.0 | 1407.98 |
+| 3 | 4 | 2024-01-18 | 796.0 | 2203.98 |
+| 4 | 5 | 2024-01-22 | 49.9 | 2253.88 |
+
+Each row adds its own amount to the sum of the rows above it. The last row holds the total of the full column.
+
+:::warning Sort the rows first
+`cumsum` adds the values in the current row order. If the DataFrame is not in date order, your "running total over time" has no meaning. This `orders` DataFrame is already in date order. But write the sort in your code when the order is important:
+
+```python
+orders.sort_values("order_date")["total_amount"].cumsum()
+```
+:::
+
+## Running totals inside a group
+
+Add `groupby`, and each customer gets a separate running total:
+
+```python
+by_customer = orders.groupby("customer_id")
+running = by_customer["total_amount"].cumsum().round(2)
+
+with_running = orders.assign(customer_running=running)
+
+cols = [
+    "order_id",
+    "order_date",
+    "total_amount",
+    "customer_running",
+]
+with_running.query("customer_id == 1")[cols]
+```
+
+**Result:**
+
+|   | order_id | order_date | total_amount | customer_running |
+|---|----------|------------|--------------|------------------|
+| 0 | 1 | 2024-01-05 | 999.0 | 999.0 |
+| 1 | 2 | 2024-01-10 | 59.98 | 1058.98 |
+| 6 | 7 | 2024-02-01 | 349.0 | 1407.98 |
+| 14 | 15 | 2024-03-06 | 249.0 | 1656.98 |
+| 21 | 22 | 2024-04-07 | 999.0 | 2655.98 |
+| 27 | 28 | 2024-05-08 | 199.0 | 2854.98 |
+
+This column shows the total spending of customer 1 after each order. The final value, 2854.98, is the same value that `groupby("customer_id")["total_amount"].sum()` returned earlier. This match is a good check of your work.
+
+This column answers questions that one total cannot answer. When did the total pass 1000? How many days did the total need to reach 2000?
+
+## `cumcount`: number the rows inside a group
+
+```python
+order_number = orders.groupby("customer_id").cumcount() + 1
+numbered = orders.assign(order_number=order_number)
+
+cols = [
+    "order_id",
+    "customer_id",
+    "order_date",
+    "order_number",
+]
+numbered.query("customer_id == 2")[cols]
+```
+
+**Result:**
+
+|   | order_id | customer_id | order_date | order_number |
+|---|----------|-------------|------------|--------------|
+| 2 | 3 | 2 | 2024-01-15 | 1 |
+| 5 | 6 | 2 | 2024-01-28 | 2 |
+| 10 | 11 | 2 | 2024-02-18 | 3 |
+| 18 | 19 | 2 | 2024-03-24 | 4 |
+| 26 | 27 | 2 | 2024-05-02 | 5 |
+
+The column shows the first order, the second order, the third order, and so on for customer 2. `cumcount` starts at 0, so add `+ 1` for a normal count.
+
+This method is the basis of retention analysis. Filter with `order_number == 1` for the first purchase of each customer. Filter with `>= 2` for repeat purchases.
+
+## The other running calculations
+
+| Method | Result |
+|--------|-------|
+| `cumsum()` | The running total |
+| `cumcount()` | The running row number inside a group |
+| `cummax()` | The largest value until this row |
+| `cummin()` | The smallest value until this row |
+| `cumprod()` | The running product, for compound rates |
+
+```python
+best_so_far = orders["total_amount"].cummax()
+with_best = orders.assign(best_so_far=best_so_far)
+
+cols = ["order_id", "total_amount", "best_so_far"]
+with_best.head(5)[cols]
+```
+
+**Result:**
+
+|   | order_id | total_amount | best_so_far |
+|---|----------|--------------|-------------|
+| 0 | 1 | 999.0 | 999.0 |
+| 1 | 2 | 59.98 | 999.0 |
+| 2 | 3 | 349.0 | 999.0 |
+| 3 | 4 | 796.0 | 999.0 |
+| 4 | 5 | 49.9 | 999.0 |
+
+A dashboard often needs this "highest value until now" column, and a spreadsheet calculates it with difficulty.
+
+:::note Coming from SQL?
+`cumsum()` is `SUM(...) OVER (ORDER BY ...)`. The grouped form adds `PARTITION BY`. `cumcount() + 1` is `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date)`.
+:::
+
+## Practice
+
+Find the first order of each customer.
+
+<details>
+<summary>Show answer</summary>
+
+```python
+# cumcount() numbers the rows inside each customer, from 0.
+# Add 1, so the first order is number 1 and not number 0.
+n = orders.groupby("customer_id").cumcount() + 1
+
+# Keep only the row numbered 1 for each customer.
+numbered = orders.assign(n=n)
+
+cols = ["order_id", "customer_id", "order_date"]
+numbered.query("n == 1")[cols]
+```
+
+**Result:**
+
+|   | order_id | customer_id | order_date |
+|---|----------|-------------|------------|
+| 0 | 1 | 1 | 2024-01-05 |
+| 2 | 3 | 2 | 2024-01-15 |
+| 3 | 4 | 3 | 2024-01-18 |
+| 4 | 5 | 4 | 2024-01-22 |
+| 7 | 8 | 5 | 2024-02-04 |
+| 9 | 10 | 6 | 2024-02-14 |
+| 11 | 12 | 7 | 2024-02-23 |
+| 13 | 14 | 8 | 2024-03-02 |
+
+The result has eight customers and eight first orders. Customer 9 is absent, because that customer made no orders. `drop_duplicates(subset=["customer_id"])` returns the same rows. But `cumcount` can also give you the second order or the third order.
+
+</details>

@@ -1,0 +1,115 @@
+---
+id: python-exam-04-combining
+title: "Exam 4: Combining Data"
+sidebar_label: "Exam 4: Combining"
+sidebar_position: 103
+youtube_url: ""
+---
+
+import PythonExercise from '@site/src/components/PythonExercise';
+
+# Exam 4: Combining Data
+
+**Difficulty:** Intermediate
+
+**Topics covered:** `merge`, `how=`, finding unmatched rows, `concat`
+
+:::info The data is already loaded
+Each exercise starts as if this code has run:
+
+```python
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+You do not have to write these lines again. Every run starts again with the original data.
+:::
+
+---
+
+## Question 1
+
+Return a table with the `order_id`, the product `name`, and the `total_amount` of every order.
+
+<PythonExercise
+  frames={["orders", "products"]}
+  solution={`# product_id is the key shared by both tables.
+merged = orders.merge(products, on="product_id")
+
+merged[["order_id", "name", "total_amount"]]`}
+/>
+
+---
+
+## Question 2
+
+Merge `customers` with `orders`. Keep every customer. Then return the shape of the result.
+
+<PythonExercise
+  frames={["customers", "orders"]}
+  solution={`# how="left" keeps every customer, matched or not, so the
+# customer with no orders adds one extra row.
+customers.merge(orders, on="customer_id", how="left").shape`}
+/>
+
+---
+
+## Question 3
+
+Which customers made no orders? Return the `customer_id` and the `name` of each one.
+
+<PythonExercise
+  frames={["customers", "orders"]}
+  solution={`# how="left" keeps every customer, matched or not.
+left = customers.merge(orders, on="customer_id", how="left")
+
+# A missing order_id means that customer had no order.
+unmatched = left.query("order_id.isna()")
+
+unmatched[["customer_id", "name"]]`}
+/>
+
+---
+
+## Question 4
+
+Stack the first three orders and the last three orders into one DataFrame. Give the result a new index that starts at 0.
+
+<PythonExercise
+  frames={["orders"]}
+  solution={`# concat takes a list of DataFrames.
+parts = [orders.head(3), orders.tail(3)]
+
+# ignore_index=True numbers the result again from 0.
+pd.concat(parts, ignore_index=True)`}
+/>
+
+---
+
+## Question 5
+
+Return the `order_id`, the customer name, and the product name of every order. Both `customers` and `products` have a `name` column, so use the suffixes `_customer` and `_product` to tell the two apart.
+
+<PythonExercise
+  frames={["orders", "customers", "products"]}
+  solution={`# orders has no name column, so this merge is clean.
+with_customer = orders.merge(customers, on="customer_id")
+
+# products has a name column too, so set the suffixes
+# to keep the two names apart.
+full = with_customer.merge(
+    products,
+    on="product_id",
+    suffixes=("_customer", "_product"),
+)
+
+full[["order_id", "name_customer", "name_product"]]`}
+/>

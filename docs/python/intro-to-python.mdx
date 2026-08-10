@@ -1,0 +1,136 @@
+---
+id: intro-to-python
+title: "Why Python for Data Analysts"
+sidebar_label: "Why Python"
+sidebar_position: 2
+youtube_url: ""
+---
+
+# Why Python for Data Analysts
+
+You do not need to become a software engineer. You need to answer questions about data quickly. You also need to answer the same questions again next month without repeating the work. Python does this job for an analyst.
+
+## The limits of a spreadsheet
+
+Spreadsheets work well for many tasks. But they have three limits:
+
+1. **Size.** A file with several hundred thousand rows opens, but it is very slow. A file with several million rows does not open.
+2. **Repetition.** The report last month needed two hours of clicking. The report this month needs two more hours of the same clicking.
+3. **Questions that a pivot table cannot answer.** "For each customer, how many days are there between the first order and the second order?" No menu gives this answer.
+
+Python removes these limits, but not all of them completely. Python removes the repetition limit and the difficult-question limit completely. Your work becomes a script, and you run the script again each month. You write instructions instead of choosing from a menu, so no question is impossible.
+
+The size limit is different. Pandas holds the full table in memory. Pandas can therefore process the several million rows that stop a spreadsheet. But pandas moves the size limit, it does not remove the limit. If the data is larger than the RAM in your computer, use a database or a tool that works outside memory. [Pandas or SQL?](/python/pandas-vs-sql) shows where this limit is in practice.
+
+## Pandas is the library that you use
+
+**pandas** is a Python library for tabular data. Tabular data has rows and columns, like a spreadsheet or a database table. Pandas is the most-used data tool in Python, and this track teaches it.
+
+Here is a question about real data. How much revenue did each order status produce?
+
+```python
+orders.groupby("status")["total_amount"].sum()
+```
+
+**Result:**
+
+| status | total_amount |
+|--------|--------------|
+| cancelled | 698.0 |
+| completed | 8667.42 |
+| pending | 1497.0 |
+
+This is one line of code. In a spreadsheet the same task needs a sort, a pivot table, and a careful check of the selected range. You can read this line as a sentence: take the orders, group them by status, take the total_amount column, and add the values.
+
+:::note Coming from SQL?
+That line is `SELECT status, SUM(total_amount) FROM orders GROUP BY status`. This track contains more short notes like this one. Each note connects pandas to the equivalent SQL. If you do not know SQL, skip these notes. No later lesson needs them.
+:::
+
+## What you will be able to do
+
+At the end of this track you can take a CSV file that contains problems and do these tasks:
+
+- Load the file and examine the contents
+- Filter the data to the rows that you need
+- Correct the missing values, the incorrect types, and the duplicate rows
+- Join the data to a different dataset
+- Summarize the data by group
+- Reshape the data into the layout that your chart or report needs
+- Do all of these tasks in a script that you run again next month
+
+This is most of the daily work of a data analyst.
+
+## How this track works
+
+:::tip Scroll to the bottom of this page
+Every lesson in this track ends with a **Python playground**. The playground is a Python interpreter with pandas, inside your browser tab. You install nothing. You do not need an account or a notebook server. Press **▶ Run**, and your own computer executes the code.
+:::
+
+:::note The button tells you when Python is ready
+The first load takes a few seconds, because the browser downloads Python and pandas. The text on the button shows the stage:
+
+| Button text | Meaning |
+| --- | --- |
+| **Starting Python…** | The browser downloads Python. Wait. |
+| **Loading pandas…** | The browser installs pandas. Wait. |
+| **▶ Run** | Python is ready. Click to run your code. |
+| **Running…** | Your code runs now. |
+
+This wait occurs one time for each browser session.
+:::
+
+### The setup code that runs first
+
+The playground runs this code before your code:
+
+```python
+import pandas as pd
+
+customers = pd.read_csv(
+    "customers.csv", parse_dates=["signup_date"]
+)
+products = pd.read_csv("products.csv")
+orders = pd.read_csv(
+    "orders.csv", parse_dates=["order_date"]
+)
+```
+
+This is the complete setup. Read it carefully, because you write the same four lines at the start of every real analysis:
+
+- `import pandas as pd` loads the library and gives it the short name `pd`. Almost all pandas users apply this alias, so almost every pandas example online uses it.
+- `pd.read_csv("orders.csv")` reads a CSV file from the disk and returns a **DataFrame**. The DataFrame is the table object that this track teaches.
+- `parse_dates=` tells pandas which columns hold dates and not text. Without `parse_dates=`, `order_date` is a text value, and date calculations do not work.
+
+The three CSV files are in the filesystem of the playground. You can copy these lines into the playground and run them. You get the same three tables. The playground also imports `numpy` as `np`, because some later lessons use it.
+
+### The data you get
+
+| Name | Rows | What it holds |
+|------|------|---------------|
+| `customers` | 9 | One row per customer |
+| `products` | 6 | One row per product |
+| `orders` | 30 | One row per order |
+
+Open the **Data** panel in the playground header. The panel shows every column and its type.
+
+Know these two rules before you start:
+
+- **Every run starts with new data.** The playground removes your changes to `orders` before the next run. You cannot damage anything, so try different code freely.
+- **The playground shows the last line.** If your code ends with an expression, the playground shows the value of that expression. The next lesson gives more detail.
+
+## Practice
+
+Go to the playground and run this code. It shows the total revenue in the `orders` table:
+
+```python
+round(orders["total_amount"].sum(), 2)
+```
+
+<details>
+<summary>Show answer</summary>
+
+The result is `10972.3`.
+
+One order in the data has no amount. Pandas ignored that order and calculated an answer. This behavior is useful here, but it is dangerous in other tasks. [Missing Data](/python/pandas-missing-data) explains it fully.
+
+</details>
