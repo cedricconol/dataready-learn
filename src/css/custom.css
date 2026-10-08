@@ -280,42 +280,6 @@ body:has([class*="homepageRoot"]) {
   margin-top: 0.75rem;
 }
 
-/* ── Doc feedback note ───────────────────────────────────────── */
-.doc-feedback {
-  border: 1px solid rgba(224, 81, 47, 0.35);
-  border-radius: 10px;
-  padding: 0.8rem 0.85rem;
-  background: rgba(224, 81, 47, 0.07);
-  font-size: 0.8rem;
-  line-height: 1.5;
-}
-
-.doc-feedback__eyebrow {
-  margin: 0 0 0.3rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--dr-accent);
-}
-
-.doc-feedback__text {
-  margin: 0 0 0.55rem;
-  color: var(--dr-ink-soft);
-}
-
-.doc-feedback__link {
-  display: inline-block;
-  color: var(--dr-accent);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.doc-feedback__link:hover {
-  color: var(--dr-accent-strong);
-  text-decoration: underline;
-}
-
 /* ── Course promo banner ─────────────────────────────────────── */
 .course-promo {
   display: flex;

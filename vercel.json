@@ -1,0 +1,12 @@
+{
+  "redirects": [
+    { "source": "/sql", "destination": "https://app.menthoro.com/courses/sql-for-data-analysts-d2a5d8190d", "permanent": true },
+    { "source": "/sql/:path*", "destination": "https://app.menthoro.com/courses/sql-for-data-analysts-d2a5d8190d", "permanent": true },
+    { "source": "/python", "destination": "https://app.menthoro.com/courses/python-for-data-analysts-403dc3923b", "permanent": true },
+    { "source": "/python/:path*", "destination": "https://app.menthoro.com/courses/python-for-data-analysts-403dc3923b", "permanent": true },
+    { "source": "/terminal", "destination": "https://app.menthoro.com/courses/terminal-for-data-analysts-b5ed82c1a3", "permanent": true },
+    { "source": "/terminal/:path*", "destination": "https://app.menthoro.com/courses/terminal-for-data-analysts-b5ed82c1a3", "permanent": true },
+    { "source": "/git", "destination": "https://app.menthoro.com/courses/git-for-data-analysts-6f4a321330", "permanent": true },
+    { "source": "/git/:path*", "destination": "https://app.menthoro.com/courses/git-for-data-analysts-6f4a321330", "permanent": true }
+  ]
+}

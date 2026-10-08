@@ -4,13 +4,12 @@ import type TOCDesktopType from "@theme/DocItem/TOC/Desktop";
 import type { WrapperProps } from "@docusaurus/types";
 import { useDoc } from "@docusaurus/plugin-content-docs/client";
 import CoursePromo from "@site/src/components/CoursePromo";
-import DocFeedback from "@site/src/components/DocFeedback";
 
 type Props = WrapperProps<typeof TOCDesktopType>;
 
 /**
- * The pinned slot under the table of contents. Every doc gets the feedback
- * note there; the course promo joins it only where the frontmatter asks.
+ * The pinned slot under the table of contents. The course promo shows only
+ * where the frontmatter asks.
  */
 export default function TOCDesktop(props: Props): JSX.Element {
   const { frontMatter } = useDoc();
@@ -21,7 +20,6 @@ export default function TOCDesktop(props: Props): JSX.Element {
       <OriginalTOCDesktop {...props} />
       <div className="toc-promo-pin">
         {showCoursePromo && <CoursePromo />}
-        <DocFeedback />
       </div>
     </div>
   );
