@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
@@ -11,17 +11,13 @@ import {
   Database,
   Exam,
   GitBranch,
-  GithubLogo,
   PencilSimpleLine,
   TerminalWindow,
 } from "@phosphor-icons/react";
 import Reveal from "@site/src/components/home/Reveal";
 import HeroVisual from "@site/src/components/home/HeroVisual";
+import { MENTHORO_COURSES } from "@site/src/lib/menthoro";
 import styles from "./index.module.css";
-
-const GITHUB_REPO = "https://github.com/cedricconol/dataready-learn";
-const GITHUB_NEW_ISSUE =
-  "https://github.com/cedricconol/dataready-learn/issues/new";
 
 type Track = {
   icon: React.ReactNode;
@@ -48,7 +44,7 @@ const FLAGSHIP_TRACK: Track = {
     "Date functions",
     "10 practice exams",
   ],
-  href: "/sql",
+  href: MENTHORO_COURSES.sql,
 };
 
 const TRACKS: Track[] = [
@@ -59,7 +55,7 @@ const TRACKS: Track[] = [
     description:
       "Get comfortable on the command line: move around, manage files, and chain commands like a pro.",
     topics: ["Navigation", "Files & directories", "Reading files", "Capstone"],
-    href: "/terminal",
+    href: MENTHORO_COURSES.terminal,
   },
   {
     icon: <GitBranch weight="duotone" />,
@@ -74,7 +70,7 @@ const TRACKS: Track[] = [
       "Rebasing",
       "Open-source workflow",
     ],
-    href: "/git",
+    href: MENTHORO_COURSES.git,
   },
   {
     icon: <Code weight="duotone" />,
@@ -91,7 +87,7 @@ const TRACKS: Track[] = [
       "Rolling & time series",
       "10 practice exams",
     ],
-    href: "/python",
+    href: MENTHORO_COURSES.python,
   },
 ];
 
@@ -129,82 +125,6 @@ const TRUST_ITEMS = [
   "MIT + CC BY 4.0",
 ];
 
-function ReportModal({ onClose }: { onClose: () => void }) {
-  return (
-    <div className={styles.modalBackdrop} onClick={onClose}>
-      <div
-        className={styles.modal}
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="report-modal-title"
-      >
-        <div className={styles.modalHeader}>
-          <h2 id="report-modal-title" className={styles.modalTitle}>
-            Report an issue
-          </h2>
-          <button
-            className={styles.modalClose}
-            onClick={onClose}
-            aria-label="Close"
-          >
-            ✕
-          </button>
-        </div>
-
-        <p className={styles.modalIntro}>
-          Found a mistake, a broken exercise, or something confusing? Open a
-          GitHub issue and we'll fix it. Good reports get resolved faster, so
-          here's what to include.
-        </p>
-
-        <ol className={styles.modalSteps}>
-          <li>
-            <strong>A clear title.</strong> Start with the lesson name and
-            briefly describe the problem. For example:{" "}
-            <span className={styles.example}>
-              "Incorrect output in the `ls -l` lesson"
-            </span>{" "}
-            or{" "}
-            <span className={styles.example}>
-              "Playground doesn't accept valid `mkdir -p` command"
-            </span>
-            .
-          </li>
-          <li>
-            <strong>The lesson page URL.</strong> Copy the address from your
-            browser and paste it in. This tells us exactly where to look.
-          </li>
-          <li>
-            <strong>What's wrong.</strong> Describe what you expected versus
-            what you saw. One or two sentences is enough.
-          </li>
-          <li>
-            <strong>A screenshot.</strong> If the issue is visual (wrong output,
-            broken layout, unexpected error) drag a screenshot directly into the
-            GitHub issue text box.
-          </li>
-          <li>
-            <strong>Your suggested fix (optional but welcome).</strong> If you
-            know what the correct answer or wording should be, include it. Pull
-            requests are even better.
-          </li>
-        </ol>
-
-        <Link
-          href={GITHUB_NEW_ISSUE}
-          className={styles.modalCta}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={onClose}
-        >
-          Open an issue on GitHub →
-        </Link>
-      </div>
-    </div>
-  );
-}
-
 function Hero() {
   return (
     <header className={styles.hero}>
@@ -224,18 +144,9 @@ function Hero() {
             needs, with more advanced tracks on the way.
           </p>
           <div className={styles.heroCtaRow}>
-            <Link to="/sql" className={styles.btnPrimary}>
+            <Link href={MENTHORO_COURSES.sql} className={styles.btnPrimary}>
               Start with SQL
               <ArrowRight weight="bold" aria-hidden="true" />
-            </Link>
-            <Link
-              href={GITHUB_REPO}
-              className={styles.btnGhost}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <GithubLogo weight="bold" aria-hidden="true" />
-              View on GitHub
             </Link>
           </div>
         </div>
@@ -273,7 +184,7 @@ function LearnByDoing() {
             see the results instantly. The same hands-on approach runs through
             Terminal and Git.
           </p>
-          <Link to="/sql/intro-to-sql" className={styles.textLink}>
+          <Link href={MENTHORO_COURSES.sql} className={styles.textLink}>
             Try your first query
             <ArrowRight weight="bold" aria-hidden="true" />
           </Link>
@@ -322,7 +233,7 @@ function TrackCard({ track, flagship }: { track: Track; flagship?: boolean }) {
   const { comingSoon } = track;
   return (
     <Link
-      to={track.href}
+      href={track.href}
       className={`${styles.trackCard} ${flagship ? styles.trackCardFlagship : ""} ${
         comingSoon ? styles.trackCardSoon : ""
       }`}
@@ -406,7 +317,7 @@ function WhyDifferent() {
   );
 }
 
-function FinalCta({ onReport }: { onReport: () => void }) {
+function FinalCta() {
   return (
     <section className={styles.finalCta}>
       <Reveal className={styles.finalCtaInner}>
@@ -414,16 +325,10 @@ function FinalCta({ onReport }: { onReport: () => void }) {
         <p className={styles.finalCtaLead}>
           Open the first lesson and run your first query in the next two minutes.
         </p>
-        <Link to="/sql" className={styles.btnOnDark}>
+        <Link href={MENTHORO_COURSES.sql} className={styles.btnOnDark}>
           Start with SQL
           <ArrowRight weight="bold" aria-hidden="true" />
         </Link>
-        <p className={styles.reportLine}>
-          Found a problem in a lesson?{" "}
-          <button className={styles.reportLink} onClick={onReport}>
-            Report an issue
-          </button>
-        </p>
       </Reveal>
     </section>
   );
@@ -431,7 +336,6 @@ function FinalCta({ onReport }: { onReport: () => void }) {
 
 export default function Home(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
-  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <Layout
@@ -445,10 +349,9 @@ export default function Home(): React.JSX.Element {
           <LearnByDoing />
           <Curriculum />
           <WhyDifferent />
-          <FinalCta onReport={() => setModalOpen(true)} />
+          <FinalCta />
         </main>
       </div>
-      {modalOpen && <ReportModal onClose={() => setModalOpen(false)} />}
     </Layout>
   );
 }

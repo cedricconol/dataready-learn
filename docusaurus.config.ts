@@ -2,6 +2,7 @@ import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import * as dotenv from "dotenv";
+import { MENTHORO_COURSES } from "./src/lib/menthoro";
 
 dotenv.config({ path: ".env.local" });
 
@@ -29,6 +30,9 @@ const config: Config = {
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY ?? "",
   },
 
+  // Sends old SQL/Python/Terminal/Git lesson URLs to Menthoro before render.
+  scripts: [{ src: "/menthoro-redirect.js", async: false }],
+
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   markdown: {
@@ -48,7 +52,8 @@ const config: Config = {
       {
         docs: {
           sidebarPath: "./sidebars.ts",
-          editUrl: "https://github.com/cedricconol/dataready-learn/edit/main/",
+          // These tracks moved to Menthoro; their URLs redirect there.
+          exclude: ["sql/**", "python/**", "terminal/**", "git/**"],
           routeBasePath: "/",
         },
         blog: false,
@@ -75,33 +80,28 @@ const config: Config = {
       },
       items: [
         {
-          type: "docSidebar",
-          sidebarId: "sqlSidebar",
-          position: "left",
+          href: MENTHORO_COURSES.sql,
           label: "SQL",
+          position: "left",
+          target: "_self",
         },
         {
-          type: "docSidebar",
-          sidebarId: "terminalSidebar",
-          position: "left",
+          href: MENTHORO_COURSES.terminal,
           label: "Terminal",
+          position: "left",
+          target: "_self",
         },
         {
-          type: "docSidebar",
-          sidebarId: "gitSidebar",
-          position: "left",
+          href: MENTHORO_COURSES.git,
           label: "Git",
-        },
-        {
-          type: "docSidebar",
-          sidebarId: "pythonSidebar",
           position: "left",
-          label: "Python",
+          target: "_self",
         },
         {
-          href: "https://github.com/cedricconol/dataready-learn",
-          label: "GitHub",
-          position: "right",
+          href: MENTHORO_COURSES.python,
+          label: "Python",
+          position: "left",
+          target: "_self",
         },
         {
           type: "custom-user",
@@ -115,23 +115,10 @@ const config: Config = {
         {
           title: "Curriculum",
           items: [
-            { label: "SQL", to: "/sql" },
-            { label: "Terminal", to: "/terminal" },
-            { label: "Git", to: "/git" },
-            { label: "Python", to: "/python" },
-          ],
-        },
-        {
-          title: "Community",
-          items: [
-            {
-              label: "GitHub Issues",
-              href: "https://github.com/cedricconol/dataready-learn/issues",
-            },
-            {
-              label: "Contributing",
-              href: "https://github.com/cedricconol/dataready-learn/blob/main/CONTRIBUTING.md",
-            },
+            { label: "SQL", href: MENTHORO_COURSES.sql, target: "_self" },
+            { label: "Terminal", href: MENTHORO_COURSES.terminal, target: "_self" },
+            { label: "Git", href: MENTHORO_COURSES.git, target: "_self" },
+            { label: "Python", href: MENTHORO_COURSES.python, target: "_self" },
           ],
         },
         {
